@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://bgauep5mf2b7n"]
+[gd_scene load_steps=13 format=3 uid="uid://bgauep5mf2b7n"]
 
 [ext_resource type="Script" uid="uid://cjhiy8brgmk72" path="res://scenes/screens/game_home.gd" id="1_dobo1"]
+[ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_4s0rd"]
 [ext_resource type="Texture2D" uid="uid://csbyuyjrgshiw" path="res://assets/images/buttons/start/start-up.svg" id="2_4765e"]
 [ext_resource type="LabelSettings" uid="uid://dunedlrr27488" path="res://resources/results-label.tres" id="2_rcr06"]
 [ext_resource type="Texture2D" uid="uid://ynyt4cu4a2mx" path="res://assets/images/buttons/start/start-down.svg" id="3_x7o0w"]
@@ -24,13 +25,21 @@ Label/styles/normal = null
 
 [node name="GameHome" type="Node2D"]
 script = ExtResource("1_dobo1")
-metadata/_edit_vertical_guides_ = [960.0]
-metadata/_edit_horizontal_guides_ = [536.0]
+metadata/_edit_vertical_guides_ = [960.0, -354.0, 1920.0]
+metadata/_edit_horizontal_guides_ = [536.0, 1080.0]
 
 [node name="Background" type="TextureRect" parent="."]
+visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = SubResource("GradientTexture2D_2brdo")
+
+[node name="Background2" type="TextureRect" parent="."]
+offset_left = -216.0
+offset_top = -160.0
+offset_right = 2172.0
+offset_bottom = 1508.0
+texture = ExtResource("2_4s0rd")
 
 [node name="Title" type="Label" parent="."]
 offset_left = 97.0

@@ -5,7 +5,7 @@ signal round_result(player: Player, is_correct: bool, points: int)
 const SliderScene = preload("res://scenes/components/Slider.tscn")
 const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
 
-@onready var grid = $CenterContainer/GridContainer1
+@onready var grid = $CenterContainer/GridContainer
 @onready var guess_btn = $GuessBtn
 @onready var current_player_label = $CurrentPlayer
 @onready var prize_label = $Prize
@@ -30,7 +30,7 @@ func _ready() -> void:
 	
 	# Add spacing between sliders
 	grid.add_theme_constant_override("h_separation", 20)
-	grid.add_theme_constant_override("v_separation", 20)
+	grid.add_theme_constant_override("v_separation", 40)
 	
 	# Connect to turn changes so label updates when turn advances
 	PlayerManager.turn_changed.connect(_on_turn_changed)

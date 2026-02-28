@@ -42,10 +42,10 @@ color = Color(0.23137255, 0.050980393, 0.64705884, 0.81960785)
 
 [node name="GuessBtn" type="Button" parent="."]
 layout_mode = 0
-offset_left = 721.0
-offset_top = 736.0
-offset_right = 996.8718
-offset_bottom = 852.0
+offset_left = 822.0
+offset_top = 733.0
+offset_right = 1097.8718
+offset_bottom = 849.0
 theme = ExtResource("1_ll357")
 theme_override_font_sizes/font_size = 64
 text = "Guess"
@@ -86,4 +86,5 @@ offset_bottom = 714.0
 custom_minimum_size = Vector2(1120, 500)
 layout_mode = 2
 theme = SubResource("Theme_ybcsd")
+theme_override_constants/h_separation = 8
 columns = 3

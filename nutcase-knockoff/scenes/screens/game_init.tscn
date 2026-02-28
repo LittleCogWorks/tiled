@@ -1,18 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://ccc4i4pmcqie4"]
+[gd_scene load_steps=15 format=3 uid="uid://ccc4i4pmcqie4"]
 
 [ext_resource type="Script" uid="uid://d10ua6gsw5ta" path="res://scenes/screens/game_init.gd" id="1_nhm8p"]
+[ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_d4pih"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="2_h1k66"]
 [ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="3_g7jhl"]
 [ext_resource type="Theme" uid="uid://cb6tnblk7m60s" path="res://scenes/screens/game_init-settings-list-theme.tres" id="3_h1k66"]
 [ext_resource type="Texture2D" uid="uid://csbyuyjrgshiw" path="res://assets/images/buttons/start/start-up.svg" id="3_xjbsa"]
 [ext_resource type="FontFile" uid="uid://ohhyu6a83aoa" path="res://assets/fonts/Coffee Fills.otf" id="4_g7jhl"]
-
-[sub_resource type="Gradient" id="Gradient_i3a2a"]
-colors = PackedColorArray(0.564706, 0.733333, 1, 1, 0.785641, 0.785641, 0.785641, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0jira"]
-gradient = SubResource("Gradient_i3a2a")
-width = 65
 
 [sub_resource type="LabelSettings" id="LabelSettings_nhm8p"]
 font = ExtResource("2_h1k66")
@@ -56,9 +50,11 @@ metadata/_edit_vertical_guides_ = [960.0]
 metadata/_edit_horizontal_guides_ = [536.0]
 
 [node name="Background" type="TextureRect" parent="."]
-offset_right = 1920.0
-offset_bottom = 1080.0
-texture = SubResource("GradientTexture2D_0jira")
+offset_left = -91.0
+offset_top = -242.0
+offset_right = 2297.0
+offset_bottom = 1426.0
+texture = ExtResource("2_d4pih")
 
 [node name="PlayersContainer" type="HBoxContainer" parent="."]
 visible = false

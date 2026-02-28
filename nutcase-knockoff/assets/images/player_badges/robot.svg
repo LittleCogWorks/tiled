@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg width="100%" height="100%" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g id="robot" transform="matrix(0.996117,0,0,0.981508,-54.3229,-822.949)">
-        <g>
-            <g id="robot1" serif:id="robot">
-                <g transform="matrix(1.00264,0,0,1.01,-146,32)">
-                    <path d="M400,850L400,950C400,977.596 377.596,1000 350,1000L250,1000C222.404,1000 200,977.596 200,950L200,850C200,822.404 222.404,800 250,800L350,800C377.596,800 400,822.404 400,850Z" style="fill:rgb(235,235,235);"/>
-                </g>
-                <g transform="matrix(0.950421,0,0,0.957396,67.5627,785.797)">
+    <g transform="matrix(0.946731,0,0,0.939692,12.9775,-51.683)">
+        <g id="robot">
+            <g>
+                <g id="robot1" serif:id="robot">
                     <g>
                         <g>
-                            <clipPath id="_clip1">
-                                <rect x="0" y="56.615" width="192" height="199.385"/>
-                            </clipPath>
-                            <g clip-path="url(#_clip1)">
-                                <g id="_Image10_" serif:id="_Image10" transform="matrix(1,0,0,1,0,55)">
-                                    <use id="_Image2_" serif:id="_Image2" xlink:href="#_Image2" x="0" y="0" width="192px" height="201px"/>
+                            <g>
+                                <g>
+                                    <clipPath id="_clip1">
+                                        <rect x="0" y="56.615" width="192" height="199.385"/>
+                                    </clipPath>
+                                    <g clip-path="url(#_clip1)">
+                                        <g id="_Image10_" serif:id="_Image10" transform="matrix(1,0,0,1,0,55)">
+                                            <use id="_Image2_" serif:id="_Image2" xlink:href="#_Image2" x="0" y="0" width="192px" height="201px"/>
+                                        </g>
+                                    </g>
                                 </g>
                             </g>
                         </g>

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://blgvh2822ek74"]
 
 [ext_resource type="Script" uid="uid://bhhdxi6xtk1qp" path="res://scenes/screens/game_board.gd" id="1_0h872"]
-[ext_resource type="Texture2D" uid="uid://b8i8nyl45jj1l" path="res://assets/images/backgrounds/Untitled_Artwork.png" id="2_a4shw"]
+[ext_resource type="Texture2D" uid="uid://my76xfh8a2pf" path="res://assets/images/backgrounds/Untitled_Artwork5.png" id="2_a4shw"]
 [ext_resource type="FontFile" uid="uid://dsjw1g8q8n42w" path="res://assets/fonts/Cute Dino.otf" id="2_rwufl"]
 [ext_resource type="FontFile" uid="uid://c0aku4hxc3oms" path="res://assets/fonts/Coffee Fills.ttf" id="3_6xqkr"]
 
