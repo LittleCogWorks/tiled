@@ -1,5 +1,7 @@
 # Game Rules & Mechanics
 
+> Based on the board game *In a Nutshell*.
+
 ## Round Flow
 
 ### Turn Order
@@ -9,14 +11,24 @@
 
 ### Question Lifecycle
 1. Question loads, pot calculated based on difficulty
-2. Players take turns clicking sliders (reveals words, may reduce pot)
-3. Current player can guess at any time
+2. **On their turn, the current player chooses one action:**
+   - **Reveal a slider** — one tile is uncovered:
+     - If it contains a **word**: pot reduces by `prize_per_word`, turn passes to next player
+     - If it is **blank**: player gets a **free pick** — no pot reduction, turn does **not** pass, they may immediately reveal another tile or submit a guess
+   - **Submit a guess** — see Incorrect/Correct Answer below
+3. Only the current (unfrozen) player can take any action — no other player can reveal or guess out of turn
 4. Answer submitted → Correct or Incorrect handling
 
 ## Scoring System
 
+### Pot (Prize)
+- Starting value: `BASE_POT × difficulty_multiplier` (e.g. 100 × 1.5 = 150 for medium)
+- Each word revealed reduces the pot by `prize_per_word = (pot - minimum_pot) / word_count`
+- Minimum pot: 10% of starting value — always guaranteed regardless of how many words are revealed
+- Blank tiles (padding in the 3×3 grid) do **not** reduce the pot and do **not** advance the turn — the current player gets a **free pick** and continues their turn
+
 ### Correct Answer
-- Player receives full current pot value
+- Player receives full **current** pot value (reduced by any reveals so far)
 - Round ends
 - Winner starts next round
 

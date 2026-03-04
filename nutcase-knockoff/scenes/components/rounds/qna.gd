@@ -1,5 +1,19 @@
 extends Control
 
+# QnA Round Scene — qna.gd
+# Manages a single QnA round: displays the slider grid, handles reveal events,
+# and processes the Guess button / answer submission.
+#
+# CURRENT STATE (single-screen local play):
+#   All input (slider clicks, guess button) is handled directly via _gui_input
+#   and Button.pressed signals on this scene.
+#
+# MULTIPLAYER TODO:
+#   This scene needs to be decoupled from direct input. Slider reveals and guesses
+#   should arrive as signals from a NetworkManager rather than from local UI events.
+#   The on-screen slider grid becomes display-only; the player's phone sends actions.
+#   See 04-sprint/2026-03-04-code-review.md § Step 3 for the refactor plan.
+
 signal round_result(player: Player, is_correct: bool, points: int)
 
 const SliderScene = preload("res://scenes/components/Slider.tscn")
@@ -147,9 +161,17 @@ func _setup_slider_navigation(sliders: Array, columns: int) -> void:
 func _on_slider_clicked(word: String, is_blank: bool):
 	print("Slider clicked - Word: '%s', Blank: %s" % [word, is_blank])
 	
-	# Example: Apply penalty only for non-blank sliders
+	# Turn advancement — two separate call sites, mutually exclusive:
+	#   1. Slider reveal (here): next_turn() called after a word tile is clicked.
+	#   2. Wrong guess: freeze_player() in PlayerManager calls next_turn() internally.
+	# These can't both fire in the same interaction, so there is no double-advance.
+	# Note: handle_wrong_answer() in GameManager has a commented-out next_turn() call —
+	# that was correctly removed since freeze_player() already handles it.
+	
+	# Only apply mechanics for non-blank (word-containing) tiles
 	if not is_blank:
-		# current_prize = max(current_prize - prize_per_word, minimum_prize)
+		# Pot reduces with each word revealed — core mechanic. Re-enabled 2026-03-04.
+		current_prize = max(current_prize - prize_per_word, minimum_prize)
 		update_pot_display()
 		PlayerManager.next_turn()	
 	var next_player = PlayerManager.get_current_player()
@@ -176,6 +198,12 @@ func _on_answer_submitted(answer_text: String) -> void:
 	if not current_player:
 		print("No current player to award points to.")
 		return
+	
+	# TODO: Call InputValidator.validate_answer(answer_text) before proceeding.
+	# TODO: Use fuzzy matching (e.g. Levenshtein distance) rather than exact comparison.
+	#   Players typing quickly on phones will typo frequently. Even ±1-2 char tolerance
+	#   makes a big difference in party-game feel. InputValidator is the right home for this.
+	#   See code review doc § 2.4 and § 2.5.
 	var is_correct = answer_text.strip_edges().to_lower() == current_question.answer.strip_edges().to_lower()
 	if is_correct:
 		print("CORRECT ANSWER!")

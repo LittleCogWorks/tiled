@@ -1,9 +1,23 @@
 extends Control
 
-# GameBoard - game_board.gd
-# This script manages the main game board scene, including HUD and round area.
-# The RoundArea will host the 'game play'. That scene handles the game play logic.
-# The GameBoard HUD shows the player list & details, main controls, etc.
+# GameBoard — scenes/screens/game_board.gd
+# Manages the main game board scene. Hosts the HUD (player badges, controls) and
+# the RoundArea (the active round scene, e.g. QnA).
+#
+# Responsibilities:
+#   - Load and swap round scenes based on game type
+#   - Process round results (correct/wrong answer) via _on_round_result
+#   - Show result overlay messages between rounds
+#   - Update player badges (score, current player, leader)
+#
+# MULTIPLAYER TODO:
+#   - In multiplayer, the "Guess" button and slider clicks come from phones via
+#     NetworkManager, not from this screen. This scene remains the authoritative
+#     display but stops being the input surface for players.
+#   - The result overlay (_update_overlay) is host-only; player phones will need
+#     their own state-change feedback (e.g. "Wrong! -50pts" on their device).
+#   - _recursive_set_focus / focus management becomes less critical once input
+#     moves to phones, but keep it for the host's local keyboard fallback.
 
 signal return_to_home
 signal game_ended(winner: Player)
@@ -186,6 +200,12 @@ func _set_round_focus(enabled: bool) -> void:
 		_recursive_set_focus(round_instance, enabled)
 
 func _recursive_set_focus(node: Node, enabled: bool) -> void:
+	# NOTE: Focus state is stored in node metadata (set_meta / get_meta).
+	# This is functional but fragile: if a node is freed while focus is disabled,
+	# the metadata is lost and restore will silently do nothing.
+	# The same pattern is duplicated in answer_modal.gd._disable_background_focus().
+	# Consider a centralised FocusManager or storing state in a Dictionary here
+	# rather than on each node individually. Low priority for now.
 	if node is Control:
 		if enabled:
 			# Restore original focus mode if stored

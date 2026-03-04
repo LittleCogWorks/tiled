@@ -1,5 +1,15 @@
 extends Node
 
+# PlayerManager — scripts/autoload/PlayerManager.gd
+# Autoload singleton. Owns the canonical player list, turn order, and freeze state.
+#
+# MULTIPLAYER TODO:
+#   - Add get_player_by_device_id(device_id: String) -> Player
+#     (currently only get_player_by_id exists; NetworkManager will need device_id lookup)
+#   - Player creation currently happens in GameManager.start_game() from a count.
+#     For MP, players are added one-by-one as they join the lobby via NetworkManager.
+#   - Consider a signal: player_disconnected(player) to handle drops mid-game.
+
 signal turn_changed(player: Player)
 signal player_added(player: Player)
 signal player_removed(player: Player)
@@ -103,14 +113,20 @@ func get_scoreboard() -> Array[Player]:
 	return sorted_players
 
 # Get current leader(s) - returns all players with highest score
+# Returns empty array if no player has scored yet (score stays at 0)
 func get_leaders() -> Array[Player]:
 	if players.is_empty():
 		return []
 	
-	var highest_score = 1
+	# Find the actual highest score across all players
+	var highest_score = players[0].score
 	for player in players:
 		if player.score > highest_score:
 			highest_score = player.score
+	
+	# No leader indicator until someone has actually scored
+	if highest_score <= 0:
+		return []
 	
 	var leaders: Array[Player] = []
 	for player in players:

@@ -1,12 +1,26 @@
 extends Node
 
+# GameManager — scripts/autoload/GameManager.gd
+# Autoload singleton. Owns the game state machine, scoring rules, and question pool.
+#
+# STATE MACHINE NOTES:
+#   LOBBY   — defined but never entered; needed for multiplayer player-join phase.
+#   ROUND_END — defined but never entered; the game jumps directly back to IN_PROGRESS.
+#             Use this state if you want a pause/summary between rounds.
+#
+# MULTIPLAYER TODO:
+#   - start_game() currently creates players from a count. For MP, players are already
+#     in PlayerManager from the lobby. start_game() should only initialise questions/state.
+#   - question deduplication uses question_text as a key — fragile. Add an id field
+#     to Question and use that instead. See code review doc § 2.6.
+
 enum GameState {
     NONE,           # No game active
     MENU,           # Main menu
     SETUP,          # Configuring game settings
-    LOBBY,          # Waiting for players to connect (future)
+    LOBBY,          # Waiting for players to connect (future — needed for multiplayer)
     IN_PROGRESS,    # Game active
-    ROUND_END,      # Between rounds
+    ROUND_END,      # Between rounds (defined but currently unused — see header note)
     GAME_OVER       # Winner declared
 }
 
