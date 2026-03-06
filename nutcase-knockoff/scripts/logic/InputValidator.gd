@@ -4,7 +4,8 @@ enum ValidationResult {
     EXACT,
     INVALID,
     AUTO_ACCEPT,
-    FUZZY
+    FUZZY,
+    INCORRECT
 }
 
 static func validate_player_count(count: int) -> Dictionary:
@@ -54,7 +55,7 @@ static func validate_answer(answer: String, current_question: Question) -> Dicti
     elif distance <= fuzzy_threshold:
         return {"result": ValidationResult.FUZZY, "distance": distance}
     else:
-        return {"result": ValidationResult.INVALID, "distance": distance, "error": "Answer is incorrect."}
+        return {"result": ValidationResult.INCORRECT, "distance": distance, "error": "Answer is incorrect."}
 
 # Normalises a string before comparison:
 #   - strips edges and lowercases

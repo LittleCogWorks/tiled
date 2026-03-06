@@ -14,7 +14,7 @@ extends Control
 #   The on-screen slider grid becomes display-only; the player's phone sends actions.
 #   See 04-sprint/2026-03-04-code-review.md § Step 3 for the refactor plan.
 
-signal round_result(player: Player, is_correct: bool, points: int)
+signal round_result(player: Player, is_correct: int, points: int)
 
 const SliderScene = preload("res://scenes/components/Slider.tscn")
 const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
@@ -37,6 +37,14 @@ var minimum_prize = 10.0
 var prize_per_word = 0.0
 var all_questions: Array[Question] = []
 var current_question: Question = null
+
+# enum SubmissionResult {
+# 	EXACT,
+# 	AUTO_ACCEPT,
+# 	FUZZY,
+# 	INCORRECT,
+# 	INVALID
+# }
 
 func _ready() -> void:
 	print("QnA scene ready")
@@ -205,29 +213,28 @@ func _on_answer_submitted(answer_text: String) -> void:
 	#   distance ≤ 1-2 — so minor typos don't count as wrong on mobile. See review § 2.5.
 	var validation = InputValidator.validate_answer(answer_text, current_question)
 	# Note: the validation result can be INVALID, FUZZY, AUTO_ACCEPT, or VALID.
-
-	# INCORRECT ANSWER - INVALID
-	if validation["result"] == InputValidator.ValidationResult.INVALID:
-		print("Invalid answer submitted: '%s'" % answer_text)
-		round_result.emit(current_player, false, int(current_prize))
+	# INCORRECT ANSWER - INCORRECT
+	if validation["result"] == InputValidator.ValidationResult.INCORRECT:
+		print("Incorrect answer submitted: '%s'" % answer_text)
+		round_result.emit(current_player, GameManager.SubmissionResult.INCORRECT, int(current_prize))
 	# FUZZY MATCH - lauch confirm flow.
 	elif validation["result"] == InputValidator.ValidationResult.FUZZY:
 		print("Fuzzy answer submitted: '%s'" % answer_text)
 		# Treat fuzzy as correct for now.
 		#  Fuzzy should begin the player confirmation and possible vote scenario.
-		round_result.emit(current_player, true, int(current_prize))
+		round_result.emit(current_player, GameManager.SubmissionResult.FUZZY, int(current_prize))
 	# AUTO_ACCEPT - minor issues but close enough to count as correct. No confirm needed.
 	elif validation["result"] == InputValidator.ValidationResult.AUTO_ACCEPT:
 		print("Answer submitted with minor issues: '%s'" % answer_text)
 		print("Levenshtein distance from correct answer: %s" % validation["distance"])
-		round_result.emit(current_player, true, int(current_prize))
+		round_result.emit(current_player, GameManager.SubmissionResult.AUTO_ACCEPT, int(current_prize))
 	# EXACT MATCH - straightforward correct answer.
 	elif validation["result"] == InputValidator.ValidationResult.EXACT:
 		print("Exact answer submitted: '%s'" % answer_text)
-		round_result.emit(current_player, true, int(current_prize))
+		round_result.emit(current_player, GameManager.SubmissionResult.EXACT, int(current_prize))
 	else:
 		print("Unexpected validation result for answer '%s': %s" % [answer_text, validation["result"]])
-		round_result.emit(current_player, false, int(current_prize))
+		round_result.emit(current_player, GameManager.SubmissionResult.INVALID, int(current_prize))
 
 	# var is_correct = answer_text.strip_edges().to_lower() == current_question.answer.strip_edges().to_lower()
 	# if is_correct:

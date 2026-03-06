@@ -24,6 +24,14 @@ enum GameState {
     GAME_OVER       # Winner declared
 }
 
+enum SubmissionResult {
+	EXACT,
+	AUTO_ACCEPT,
+	FUZZY,
+	INCORRECT,
+	INVALID
+}
+
 signal game_started
 signal game_ended(winner: Player)
 signal state_changed(old_state: GameState, new_state: GameState)
@@ -131,7 +139,7 @@ func handle_wrong_answer(player: Player, base_prize: int) -> Dictionary:
     return result
 
 # Handle correct answer with winner checking
-func handle_correct_answer(player: Player, prize: int) -> Dictionary:
+func handle_correct_answer(player: Player, prize: int, type: SubmissionResult) -> Dictionary:
     var result = {
         "player": player,
         "prize": prize,
@@ -145,7 +153,10 @@ func handle_correct_answer(player: Player, prize: int) -> Dictionary:
     PlayerManager.award_points(player, prize)
     player.is_frozen = false  # Unfreeze if they were frozen
     
-    result["message"] = "Correct %s!\nYou get %d points!" % [player.name, prize]
+    if type == SubmissionResult.AUTO_ACCEPT:
+        result["message"] = "Close enough, %s!\nYou get %d points!" % [player.name, prize]
+    else:
+        result["message"] = "Correct %s!\nYou get %d points!" % [player.name, prize]
     
     # Check for winners
     var winners = check_for_winner()

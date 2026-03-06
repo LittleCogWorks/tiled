@@ -43,6 +43,14 @@ const ROUND_SCENES = {
 	# Add other round types here as needed
 }
 
+# enum SubmissionResult {
+# 	EXACT,
+# 	AUTO_ACCEPT,
+# 	FUZZY,
+# 	INCORRECT,
+# 	INVALID
+# }
+
 var round_instance = null
 
 func _ready() -> void:
@@ -113,8 +121,8 @@ func _setup_round_area() -> void:
 	else:
 		push_error("Failed to load round scene at path: %s" % round_scene_path)
 
-func _on_round_result(player: Player, is_correct: bool, prize: int) -> void:
-	if not is_correct:
+func _on_round_result(player: Player, is_correct: int, prize: int) -> void:
+	if is_correct == GameManager.SubmissionResult.INCORRECT:
 		var result = GameManager.handle_wrong_answer(player, prize)
 		print("RESULT DICT: %s" % str(result))
 		_update_all_badges()
@@ -142,8 +150,8 @@ func _on_round_result(player: Player, is_correct: bool, prize: int) -> void:
 			await get_tree().create_timer(1.0).timeout
 			_start_next_round()
 			
-	elif is_correct:
-		var result = GameManager.handle_correct_answer(player, prize)
+	elif is_correct == GameManager.SubmissionResult.EXACT or is_correct == GameManager.SubmissionResult.AUTO_ACCEPT:
+		var result = GameManager.handle_correct_answer(player, prize, is_correct)
 		_update_all_badges()
 		
 		if result["has_winner"]:
