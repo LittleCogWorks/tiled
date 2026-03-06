@@ -149,7 +149,25 @@ func _on_round_result(player: Player, is_correct: int, prize: int) -> void:
 			await _update_overlay("No players left!\nStarting next round...")
 			await get_tree().create_timer(1.0).timeout
 			_start_next_round()
+	elif is_correct == GameManager.SubmissionResult.FUZZY:
+		# For now treat as correct - TODO: add player confirmation and possible vote flow for fuzzy answers
+		var result = GameManager.handle_correct_answer(player, prize, is_correct)
+		_update_all_badges()
+		
+		if result["has_winner"]:
+			# Skip the "Correct!" overlay and go straight to game end
+			round_area.set_process_input(false)
+			# Trigger state change to GAME_OVER
+			GameManager.game_ended.emit(result["winner"])
+			# Tell main to load game end scene
+			game_ended.emit(result["winner"])
+		else:
+			# Show correct message for non-winning answers
+			await _update_overlay(result["message"])  # Wait for dismissal
+			await _update_overlay("No winner yet,\nstarting next round...")  # Wait for dismissal
 			
+			_start_next_round()
+
 	elif is_correct == GameManager.SubmissionResult.EXACT or is_correct == GameManager.SubmissionResult.AUTO_ACCEPT:
 		var result = GameManager.handle_correct_answer(player, prize, is_correct)
 		_update_all_badges()

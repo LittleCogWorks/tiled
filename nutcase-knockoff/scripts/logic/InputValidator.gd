@@ -48,6 +48,9 @@ static func validate_answer(answer: String, current_question: Question) -> Dicti
     var auto_accept_threshold = max(1, answer_length / 8)
     var fuzzy_threshold = max(2, answer_length / 6)
 
+    print("DISTANCE: %d (auto_accept ≤ %d, fuzzy ≤ %d) for submitted '%s' vs correct '%s'"
+        % [distance, auto_accept_threshold, fuzzy_threshold, normalised_submitted, normalised_correct])
+
     if distance == 0:
         return {"result": ValidationResult.EXACT}
     elif distance <= auto_accept_threshold:
