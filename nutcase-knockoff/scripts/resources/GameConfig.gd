@@ -20,6 +20,10 @@ const MAX_PLAYERS: int = 8
 const GAME_MODES: Array[String] = ["qna"]
 const GAME_TARGETS: Array[int] = [200, 1000, 2000, 3000]
 
+# Game Options
+const FUZZY_ENABLED_DEFAULT: bool = true
+const FUZZY_MIN_LENGTH: int = 5  # Only apply fuzzy matching to answers of this length or more
+
 # Timing
 const SPLASH_DURATION: float = 2.0
 const RESULT_DISPLAY_DURATION: float = 2.0

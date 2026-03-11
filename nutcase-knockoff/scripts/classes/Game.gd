@@ -12,6 +12,10 @@ var game_target: int = 1000
 # Is the game currently active
 var is_active: bool = false
 
+# Game Options
+# Fuzzy matching enabled (see GameConfig.FUZZY_ENABLED)
+var fuzzy_enabled: bool = true
+
 # --- Round/question/result history ---
 # Array of dictionaries: {round: int, question: Question, result: Dictionary}
 var round_history: Array = []

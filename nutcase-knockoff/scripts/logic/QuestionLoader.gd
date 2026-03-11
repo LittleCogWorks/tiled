@@ -34,10 +34,19 @@ static func load_questions_from_file(file_path: String) -> Array[Question]:
 			continue
 		
 		var question = Question.new()
+		question.question_id = item.get("id", 0)
 		question.question_text = item.get("question", "")
 		question.answer = item.get("answer", "")
+		question.fun_fact = item.get("fun_fact", "")
 		question.difficulty = item.get("difficulty", "medium")
 		question.category = item.get("category", "General")
+		
+		# Handle alt_answers array
+		if item.has("alt_answers") and item["alt_answers"] is Array:
+			var alt_array: Array[String] = []
+			for alt in item["alt_answers"]:
+				alt_array.append(str(alt))
+			question.alt_answers = alt_array
 		
 		# Handle tags array
 		if item.has("tags") and item["tags"] is Array:

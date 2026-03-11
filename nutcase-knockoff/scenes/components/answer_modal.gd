@@ -7,6 +7,8 @@ extends Control
 signal answer_submitted(answer_text: String)
 signal cancelled
 
+var _stored_focus_modes: Dictionary = {}  # node path -> focus mode
+
 func _ready() -> void:
 	submit_button.pressed.connect(_on_submit_pressed)
 	cancel.pressed.connect(_on_cancel_pressed)
@@ -38,7 +40,7 @@ func _recursive_disable_focus(node: Node, exclude: Node) -> void:
 	if node == exclude:
 		return
 	if node is Control and node.focus_mode != Control.FOCUS_NONE:
-		node.set_meta("original_focus_mode", node.focus_mode)
+		_stored_focus_modes[node.get_path()] = node.focus_mode
 		node.focus_mode = Control.FOCUS_NONE
 	for child in node.get_children():
 		_recursive_disable_focus(child, exclude)
@@ -66,9 +68,11 @@ func _restore_background_focus() -> void:
 		_recursive_restore_focus(parent_scene)
 
 func _recursive_restore_focus(node: Node) -> void:
-	if node is Control and node.has_meta("original_focus_mode"):
-		node.focus_mode = node.get_meta("original_focus_mode")
-		node.remove_meta("original_focus_mode")
+	if node is Control:
+		var key = node.get_path()
+		if _stored_focus_modes.has(key):
+			node.focus_mode = _stored_focus_modes[key]
+			_stored_focus_modes.erase(key)
 	
 	for child in node.get_children():
 		_recursive_restore_focus(child)

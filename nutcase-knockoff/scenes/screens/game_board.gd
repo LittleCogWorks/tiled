@@ -52,6 +52,7 @@ const ROUND_SCENES = {
 # }
 
 var round_instance = null
+var _stored_focus_modes: Dictionary = {}  # node path -> focus mode, used by _recursive_set_focus
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -121,7 +122,7 @@ func _setup_round_area() -> void:
 	else:
 		push_error("Failed to load round scene at path: %s" % round_scene_path)
 
-func _on_round_result(player: Player, is_correct: int, prize: int) -> void:
+func _on_round_result(player: Player, is_correct: int, prize: int, submitted_answer: String) -> void:
 	if is_correct == GameManager.SubmissionResult.INCORRECT:
 		var result = GameManager.handle_wrong_answer(player, prize)
 		print("RESULT DICT: %s" % str(result))
@@ -150,41 +151,49 @@ func _on_round_result(player: Player, is_correct: int, prize: int) -> void:
 			await get_tree().create_timer(1.0).timeout
 			_start_next_round()
 	elif is_correct == GameManager.SubmissionResult.FUZZY:
-		# For now treat as correct - TODO: add player confirmation and possible vote flow for fuzzy answers
-		var result = GameManager.handle_correct_answer(player, prize, is_correct)
-		_update_all_badges()
+		# Find eligible voters: active (unfrozen) players who are not the guesser
+		var eligible_voters: Array[Player] = []
+		for p in PlayerManager.get_active_players():
+			if p != player:
+				eligible_voters.append(p)
 		
-		if result["has_winner"]:
-			# Skip the "Correct!" overlay and go straight to game end
-			round_area.set_process_input(false)
-			# Trigger state change to GAME_OVER
-			GameManager.game_ended.emit(result["winner"])
-			# Tell main to load game end scene
-			game_ended.emit(result["winner"])
+		if eligible_voters.is_empty():
+			# No one to vote — auto-accept silently
+			var result = GameManager.handle_correct_answer(player, prize, is_correct)
+			await _handle_correct_result(result)
 		else:
-			# Show correct message for non-winning answers
-			await _update_overlay(result["message"])  # Wait for dismissal
-			await _update_overlay("No winner yet,\nstarting next round...")  # Wait for dismissal
+			var vote_modal = VoteModal.new()
+			vote_modal.setup(player, submitted_answer, round_instance.current_question.answer, eligible_voters)
+			add_child(vote_modal)
+			var vote_result: Dictionary = await vote_modal.vote_resolved
 			
-			_start_next_round()
+			if vote_result["accepted"]:
+				var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY)
+				await _handle_correct_result(result)
+			else:
+				var no_voters: Array[Player] = vote_result["no_voters"]
+				GameManager.handle_vote_rejection(prize, no_voters)
+				_update_all_badges()
+				if no_voters.is_empty():
+					await _update_overlay("It's a tie!\nNobody wins the prize.")
+				else:
+					await _update_overlay("Rejected!\nThe prize was shared among those who voted no.")
+				_start_next_round()
 
 	elif is_correct == GameManager.SubmissionResult.EXACT or is_correct == GameManager.SubmissionResult.AUTO_ACCEPT:
 		var result = GameManager.handle_correct_answer(player, prize, is_correct)
-		_update_all_badges()
-		
-		if result["has_winner"]:
-			# Skip the "Correct!" overlay and go straight to game end
-			round_area.set_process_input(false)
-			# Trigger state change to GAME_OVER
-			GameManager.game_ended.emit(result["winner"])
-			# Tell main to load game end scene
-			game_ended.emit(result["winner"])
-		else:
-			# Show correct message for non-winning answers
-			await _update_overlay(result["message"])  # Wait for dismissal
-			await _update_overlay("No winner yet,\nstarting next round...")  # Wait for dismissal
-			
-			_start_next_round()
+		await _handle_correct_result(result)
+
+func _handle_correct_result(result: Dictionary) -> void:
+	_update_all_badges()
+	if result["has_winner"]:
+		round_area.set_process_input(false)
+		GameManager.game_ended.emit(result["winner"])
+		game_ended.emit(result["winner"])
+	else:
+		await _update_overlay(result["message"])
+		await _update_overlay("No winner yet,\nstarting next round...")
+		_start_next_round()
 
 func _update_all_badges() -> void:
 	var badges = players_container.get_children()
@@ -226,22 +235,15 @@ func _set_round_focus(enabled: bool) -> void:
 		_recursive_set_focus(round_instance, enabled)
 
 func _recursive_set_focus(node: Node, enabled: bool) -> void:
-	# NOTE: Focus state is stored in node metadata (set_meta / get_meta).
-	# This is functional but fragile: if a node is freed while focus is disabled,
-	# the metadata is lost and restore will silently do nothing.
-	# The same pattern is duplicated in answer_modal.gd._disable_background_focus().
-	# Consider a centralised FocusManager or storing state in a Dictionary here
-	# rather than on each node individually. Low priority for now.
 	if node is Control:
 		if enabled:
-			# Restore original focus mode if stored
-			if node.has_meta("stored_focus_mode"):
-				node.focus_mode = node.get_meta("stored_focus_mode")
-				node.remove_meta("stored_focus_mode")
+			var key = node.get_path()
+			if _stored_focus_modes.has(key):
+				node.focus_mode = _stored_focus_modes[key]
+				_stored_focus_modes.erase(key)
 		else:
-			# Store and disable
 			if node.focus_mode != Control.FOCUS_NONE:
-				node.set_meta("stored_focus_mode", node.focus_mode)
+				_stored_focus_modes[node.get_path()] = node.focus_mode
 				node.focus_mode = Control.FOCUS_NONE
 	
 	for child in node.get_children():

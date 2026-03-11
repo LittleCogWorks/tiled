@@ -45,72 +45,49 @@ The pot reduction (`current_prize = max(current_prize - prize_per_word, minimum_
 
 The `highest_score = 1` was an intentional workaround to suppress the leader indicator before anyone has scored. Replaced with the explicit intent: find the real highest score across all players, then return an empty array if it is `<= 0`. This correctly shows no leader at the start of the game, shows the correct leader once someone scores, and handles ties.
 
-### 2.4 / 2.5 Answer Matching — 🔄 Partially Resolved (2026-03-07)
+### 2.4 / 2.5 Answer Matching — 🔄 Partially Resolved (2026-03-11)
 
 **Files:** `scenes/components/rounds/qna.gd`, `scripts/logic/InputValidator.gd`
 
 #### What's done
 
-`InputValidator.validate_answer()` is now wired into `qna.gd._on_answer_submitted()`. The old bare string comparison is gone. `InputValidator` now implements:
+`InputValidator.validate_answer()` is wired into `qna.gd._on_answer_submitted()`. The old bare string comparison is gone. `InputValidator` now implements:
 
 - **`_normalise()`** — strips edges, lowercases, removes leading articles (`the/a/an`) and common geographical prefixes (`mount/lake/saint` etc), applied symmetrically to both submitted and correct answer.
 - **Levenshtein distance** — full DP matrix implementation.
-- **Four-outcome `ValidationResult` enum**: `EXACT`, `AUTO_ACCEPT`, `FUZZY`, `INCORRECT`/`INVALID`.
-- **Proportional thresholds** based on normalised correct answer length:
+- **Five-outcome `ValidationResult` enum**: `EXACT`, `AUTO_ACCEPT`, `FUZZY`, `INCORRECT`, `INVALID`.
+- **Proportional thresholds** based on normalised best-matching string length:
   - `auto_accept_threshold = max(1, length / 8)`
   - `fuzzy_threshold = max(2, length / 6)`
-- `qna.gd` branches on all four outcomes and emits the matching `GameManager.SubmissionResult`.
+- **`alt_answers` loop** — `validate_answer()` checks main answer and all `alt_answers`, tracks the minimum Levenshtein distance and the length of the best-matching string so thresholds scale correctly.
+- **`FUZZY_MIN_LENGTH` guard** — answers ≤ 5 chars (normalised) require exact match; fuzzy/auto-accept are skipped entirely. Covers short answers like `"Mars"`, `"1945"`, `"Au"`.
+- **`fuzzy_enabled` toggle** — `GameConfig.FUZZY_ENABLED_DEFAULT`, carried through `Game.gd` → `start_game()` → `game_init.gd` settings dict → `main.gd` play-again path. When disabled, behaves as exact-only for all answers.
+- `qna.gd` branches on all four outcomes and emits the matching `GameManager.SubmissionResult`. AUTO_ACCEPT resolves silently as correct (no vote).
 
 #### Current placeholder behaviour
 
 `FUZZY` currently resolves as correct (points awarded, round ends). This is intentional scaffolding — the vote flow is not yet implemented. A `TODO` comment marks the site in `qna.gd`.
 
-#### Outstanding problems
+#### Outstanding
 
-**1. Short answers accept wrong answers**
+**1. Numeric answers not explicitly guarded**
 
-For short correct answers the auto_accept threshold of `max(1, length/8)` evaluates to 1 regardless of how short the word is, meaning a single-character substitution always auto-accepts. Examples:
-- `"Au"` (length 2) — `"Ag"` is distance 1 → wrongly AUTO_ACCEPT
-- `"24"` (length 2) — `"25"` is distance 1 → wrongly AUTO_ACCEPT
-- `"Mars"` (length 4) — `"Cars"` is distance 1 → wrongly AUTO_ACCEPT
+The `FUZZY_MIN_LENGTH = 5` guard catches short year values like `"1492"` (4 chars) but not longer ones like `"1945"` (4 chars — also caught) or `"206"` (3 chars — caught). However `"20000"` (5 chars, exactly at the boundary) would still be fuzzy-eligible. A dedicated `is_valid_int()` check before the length guard would be more robust and intent-revealing.
 
-**Proposed fix — tiered behaviour by length:**
+**2. FUZZY vote flow not implemented**
 
-| Normalised answer length | Behaviour |
-|---|---|
-| ≤ 4 | Exact only — no fuzzy, no auto-accept |
-| 5–7 | FUZZY only (goes to vote), no AUTO_ACCEPT |
-| 8+ | Current proportional thresholds apply |
-
-**2. Numeric answers should always be exact**
-
-A digit off is a completely different answer, not a typo. If `normalised_correct.is_valid_int()` (or `.is_valid_float()`), require exact match regardless of length. Covers `"24"`, `"1945"`, `"101"`, `"206"`.
-
-**3. Alternatives array not yet implemented**
-
-The `Question` class has no `alternatives: Array[String]` field yet, and `questions.json` has no `alternatives` entries. `validate_answer()` has a `TODO` comment for the loop. Until alternatives are added, short-form answers like `"Hastings"` for `"Battle of Hastings"`, or `"Armstrong"` for `"Neil Armstrong"`, will not be accepted.
-
-See §2.6 for the related `id` field work — both should be added to `Question.gd` and `QuestionLoader.gd` together.
+`FUZZY` is a placeholder — treated as correct. Needs a real vote mechanic: show the answer, all active players vote yes/no, majority decides. See §2.7 re `ROUND_END` state as the natural hook.
 
 #### Remaining to do
 
-- [ ] Add length-based guard (≤4 = exact only, 5–7 = FUZZY only) to `validate_answer()`
-- [ ] Add numeric exact-only guard (`is_valid_int()`)
-- [ ] Add `alternatives: Array[String]` to `Question.gd`
-- [ ] Update `QuestionLoader.gd` to read `alternatives` from JSON
-- [ ] Update `validate_answer()` to loop over alternatives, take minimum distance (tracked with its matched-string length for correct threshold calculation)
-- [ ] Add `alternatives` entries to `questions.json` where useful (short-form names, last-name-only, abbreviations)
-- [ ] Implement real FUZZY vote flow in `qna.gd` (replace placeholder)
+- [ ] Add numeric exact-only guard (`normalised_correct.is_valid_int()`) before the length check in `validate_answer()`
+- [ ] Implement real FUZZY vote flow in `qna.gd` and `game_board.gd` (replace placeholder)
 
-### 2.6 Question Deduplication Uses Full Question Text as Key
+### 2.6 Question Deduplication — ✅ Resolved (2026-03-11)
 
 **File:** `scripts/autoload/GameManager.gd` — `get_next_question()`
 
-```gdscript
-used_question_ids.append(next_q.question_text)
-```
-
-The `Question` resource has no `id` field. Deduplication uses the full question text string as the key. This is fragile — any whitespace or punctuation difference between the JSON and the comparison will cause re-use. The `Question` class should have a dedicated `id: String` field.
+`Question.gd` now has `question_id: int = 0`. All 29 questions in `questions.json` have unique integer `id` fields (1-based; 0 is the sentinel for code-created questions). `used_question_ids` is `Array[int]`, deduplication uses `q.question_id`. `QuestionLoader` reads `id` from JSON.
 
 ### 2.7 `ROUND_END` State Is Unused
 
@@ -124,29 +101,29 @@ The state machine defines `ROUND_END` and `_is_valid_transition()` handles it, b
 
 `round_history` and `record_round_result()` are defined but nothing calls `record_round_result()`. History is never built. This is needed for any end-of-game summary, replays, or network state syncing.
 
-### 2.9 `_recursive_set_focus` Uses Node Metadata for State Storage
+### 2.9 `_recursive_set_focus` Uses Node Metadata for State Storage — ✅ Resolved (2026-03-11)
 
-**File:** `scenes/screens/game_board.gd`
+**Files:** `scenes/screens/game_board.gd`, `scenes/components/answer_modal.gd`
 
-Storing focus mode in node metadata (`set_meta("stored_focus_mode", ...)`) works but is fragile — if the node is freed between enable/disable calls, the metadata is lost. The same pattern appears in `answer_modal.gd`. This is fine for now but worth noting as a potential source of hard-to-reproduce bugs.
+Replaced per-node `set_meta`/`get_meta` focus storage with a `var _stored_focus_modes: Dictionary = {}` on each scene, keyed by `node.get_path()`. Both `_recursive_set_focus` (game_board) and `_recursive_disable_focus`/`_recursive_restore_focus` (answer_modal) now read and write the dictionary rather than touching node metadata.
 
 ### 2.10 `game_init.gd` Doesn't Use `InputValidator`
 
 **File:** `scenes/screens/game_init.gd`
 
-Player count selection uses hardcoded buttons with metadata values — fine. But if/when player names are added (needed for multiplayer), `InputValidator.validate_player_name()` should be called there.
+Player count selection uses hardcoded buttons with metadata values — fine. Player name entry is a **planned feature** (needed for multiplayer, and intended for single-screen play too). When that's added, `InputValidator.validate_player_name()` must be wired in at the entry point in `game_init.gd`.
 
-### 2.11 `player_picker` Component Exists But Is Unused
+### 2.11 `player_picker` Component — Intentional Stub for Icon Selection
 
 **File:** `scenes/components/player_picker.gd` / `player_picker.tscn`
 
-This component exists but isn't referenced anywhere in the current flow. Unclear if it's a leftover from an earlier approach or planned for the lobby screen.
+Not yet wired in — **intentionally kept** as the planned home for player icon selection. Currently players are assigned icons randomly; the goal is to let each player choose their own. This component will be used in `game_init.gd` (or a future lobby screen) once icon picking is implemented alongside name entry (§2.10). Do not remove.
 
-### 2.12 `main.gd` `_on_return_to_home` Is Defined But Not Connected in `load_game_init()`
+### 2.12 `main.gd` `_on_return_to_home` Re-entry Path — ✅ Not a Bug (2026-03-11)
 
 **File:** `scenes/screens/main.gd` — `load_game_init()`
 
-`_on_return_to_home` is connected as a callback from `game_init.back_to_home`, but the initial state transition in `_on_game_init_complete` does `GameManager.change_state(MENU)` → `change_state(SETUP)` which works, but if you return to home from `game_init` and then start again, the state machine may complain (MENU → SETUP is valid, but NONE → MENU must happen first via splash). Worth double checking the re-entry path.
+Verified: `_is_valid_transition()` explicitly allows `SETUP → MENU` (back to home from game_init) and `MENU → SETUP` (start again). The re-entry path is clean. `_on_return_to_home` is connected in both `load_game_init()` and `load_game_board()`, so it covers all return paths correctly.
 
 ---
 

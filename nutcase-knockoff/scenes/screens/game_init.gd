@@ -25,7 +25,8 @@ var settings = {
 	"player_count": 2,
 	"game_type": "qna",
 	"game_target": 200,
-	"round_count": 5
+	"round_count": 5,
+	"fuzzy_enabled": GameConfig.FUZZY_ENABLED_DEFAULT
 }
 
 func _ready() -> void:

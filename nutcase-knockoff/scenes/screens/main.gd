@@ -114,7 +114,8 @@ func _on_play_again_requested() -> void:
 	var settings = {
 		"game_type": GameManager.game.game_type,
 		"game_target": GameManager.game.game_target,
-		"player_count": PlayerManager.players.size()
+		"player_count": PlayerManager.players.size(),
+		"fuzzy_enabled": GameManager.game.fuzzy_enabled
 	}
 	
 	# Reset game data

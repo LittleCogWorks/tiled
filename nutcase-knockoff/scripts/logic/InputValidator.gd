@@ -31,34 +31,49 @@ static func validate_player_name(name: String) -> Dictionary:
         return {"valid": false, "error": "Player name contains invalid characters."}
     return {"valid": true, "error": ""}
 
-static func validate_answer(answer: String, current_question: Question) -> Dictionary:
+static func validate_answer(answer: String, current_question: Question, fuzzy_enabled: bool = true) -> Dictionary:
     if answer.strip_edges() == "":
         return {"result": ValidationResult.INVALID, "error": "Answer cannot be empty."}
 
     var normalised_submitted = _normalise(answer)
     var normalised_correct = _normalise(current_question.answer)
 
-    # TODO: When Question gets an `alternatives` array, run this comparison against
-    # each alternative too and take the minimum distance. That's how "Hastings" will
-    # pass for "Battle of Hastings" — list it as an alternative in the data.
-    var distance = levenshtein_distance(normalised_submitted, normalised_correct)
+    # Find minimum distance across main answer and any alternatives.
+    # Track the matched string length so thresholds scale correctly.
+    var best_distance = levenshtein_distance(normalised_submitted, normalised_correct)
+    var best_match_length = normalised_correct.length()
 
-    # Thresholds scale with the normalised correct answer length.
-    var answer_length = normalised_correct.length()
-    var auto_accept_threshold = max(1, answer_length / 8)
-    var fuzzy_threshold = max(2, answer_length / 6)
+    for alt in current_question.alt_answers:
+        var normalised_alt = _normalise(alt)
+        var d = levenshtein_distance(normalised_submitted, normalised_alt)
+        if d < best_distance:
+            best_distance = d
+            best_match_length = normalised_alt.length()
+
+    # Thresholds scale with the length of the best-matching string.
+    var auto_accept_threshold = max(1, best_match_length / 8)
+    var fuzzy_threshold = max(2, best_match_length / 6)
 
     print("DISTANCE: %d (auto_accept ≤ %d, fuzzy ≤ %d) for submitted '%s' vs correct '%s'"
-        % [distance, auto_accept_threshold, fuzzy_threshold, normalised_submitted, normalised_correct])
+        % [best_distance, auto_accept_threshold, fuzzy_threshold, normalised_submitted, normalised_correct])
 
-    if distance == 0:
+    if best_distance == 0:
         return {"result": ValidationResult.EXACT}
-    elif distance <= auto_accept_threshold:
-        return {"result": ValidationResult.AUTO_ACCEPT, "distance": distance}
-    elif distance <= fuzzy_threshold:
-        return {"result": ValidationResult.FUZZY, "distance": distance}
+
+    # Numeric answers must be exact — a digit off is a different answer, not a typo.
+    if normalised_correct.is_valid_int():
+        return {"result": ValidationResult.INCORRECT, "distance": best_distance, "error": "Answer is incorrect."}
+
+    # Short answers and fuzzy-disabled games only accept exact matches (or alts, handled above).
+    if not fuzzy_enabled or best_match_length <= GameConfig.FUZZY_MIN_LENGTH:
+        return {"result": ValidationResult.INCORRECT, "distance": best_distance, "error": "Answer is incorrect."}
+
+    if best_distance <= auto_accept_threshold:
+        return {"result": ValidationResult.AUTO_ACCEPT, "distance": best_distance}
+    elif best_distance <= fuzzy_threshold:
+        return {"result": ValidationResult.FUZZY, "distance": best_distance}
     else:
-        return {"result": ValidationResult.INCORRECT, "distance": distance, "error": "Answer is incorrect."}
+        return {"result": ValidationResult.INCORRECT, "distance": best_distance, "error": "Answer is incorrect."}
 
 # Normalises a string before comparison:
 #   - strips edges and lowercases
