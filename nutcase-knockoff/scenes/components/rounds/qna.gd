@@ -15,6 +15,8 @@ extends Control
 #   See 04-sprint/2026-03-04-code-review.md § Step 3 for the refactor plan.
 
 signal round_result(player: Player, is_correct: int, points: int, submitted_answer: String)
+signal slider_reveal_requested(index: int)
+signal guess_submitted(answer: String)
 
 const SliderScene = preload("res://scenes/components/Slider.tscn")
 const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
@@ -37,6 +39,7 @@ var minimum_prize = 10.0
 var prize_per_word = 0.0
 var all_questions: Array[Question] = []
 var current_question: Question = null
+var _sliders: Array = []  # slider instances by position, for programmatic reveal in multiplayer
 
 # enum SubmissionResult {
 # 	EXACT,
@@ -49,6 +52,8 @@ var current_question: Question = null
 func _ready() -> void:
 	print("QnA scene ready")
 	guess_btn.pressed.connect(_on_guess_btn_pressed)
+	slider_reveal_requested.connect(_handle_slider_reveal)
+	guess_submitted.connect(_on_answer_submitted)  # NetworkManager will emit this with answer text in multiplayer
 	
 	# Add spacing between sliders
 	grid.add_theme_constant_override("h_separation", 20)
@@ -81,6 +86,7 @@ func _on_turn_changed(player: Player) -> void:
  
 func start_new_question(question: Question) -> void:
 	# Clear old sliders
+	_sliders.clear()
 	for child in grid.get_children():
 		child.queue_free()
 	
@@ -120,8 +126,10 @@ func start_new_question(question: Question) -> void:
 		else:
 			s.set_word("", i + 1)  # Blank tile
 		
-		s.clicked.connect(_on_slider_clicked)
+		var idx = i
+		s.clicked.connect(func(_w, _b): slider_reveal_requested.emit(idx))
 		sliders.append(s)
+		_sliders.append(s)
 	
 	# Setup focus navigation in grid order (left-right, top-bottom)
 	await get_tree().process_frame
@@ -165,23 +173,27 @@ func _setup_slider_navigation(sliders: Array, columns: int) -> void:
 		else:
 			slider.focus_next = guess_btn.get_path()
 
-# Advance to next player
-func _on_slider_clicked(word: String, is_blank: bool):
-	print("Slider clicked - Word: '%s', Blank: %s" % [word, is_blank])
+# Handle a slider reveal — triggered via slider_reveal_requested signal.
+# In local play the signal is emitted by the slider's own click callback.
+# In multiplayer it will be emitted by NetworkManager on receiving a click_slider message.
+func _handle_slider_reveal(index: int) -> void:
+	var words = current_question.question_text.split(" ")
+	var is_blank = index >= words.size()
+	
+	_sliders[index].reveal()
+	print("Slider reveal - index: %d, blank: %s" % [index, is_blank])
 	
 	# Turn advancement — two separate call sites, mutually exclusive:
 	#   1. Slider reveal (here): next_turn() called after a word tile is clicked.
 	#   2. Wrong guess: freeze_player() in PlayerManager calls next_turn() internally.
 	# These can't both fire in the same interaction, so there is no double-advance.
-	# Note: handle_wrong_answer() in GameManager has a commented-out next_turn() call —
-	# that was correctly removed since freeze_player() already handles it.
 	
 	# Only apply mechanics for non-blank (word-containing) tiles
 	if not is_blank:
-		# Pot reduces with each word revealed — core mechanic. Re-enabled 2026-03-04.
+		# Pot reduces with each word revealed — core mechanic.
 		current_prize = max(current_prize - prize_per_word, minimum_prize)
 		update_pot_display()
-		PlayerManager.next_turn()	
+		PlayerManager.next_turn()
 	var next_player = PlayerManager.get_current_player()
 	if next_player:
 		print("Next turn: %s" % next_player.name)

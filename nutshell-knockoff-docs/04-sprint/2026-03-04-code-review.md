@@ -80,8 +80,8 @@ The `FUZZY_MIN_LENGTH = 5` guard catches short year values like `"1492"` (4 char
 
 #### Remaining to do
 
-- [ ] Add numeric exact-only guard (`normalised_correct.is_valid_int()`) before the length check in `validate_answer()`
-- [ ] Implement real FUZZY vote flow in `qna.gd` and `game_board.gd` (replace placeholder)
+- [x] Add numeric exact-only guard (`normalised_correct.is_valid_int()`) before the length check in `validate_answer()`
+- [x] Implement real FUZZY vote flow in `qna.gd` and `game_board.gd` (replace placeholder)
 
 ### 2.6 Question Deduplication — ✅ Resolved (2026-03-11)
 

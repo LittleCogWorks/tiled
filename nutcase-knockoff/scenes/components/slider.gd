@@ -39,7 +39,7 @@ func _gui_input(event: InputEvent):
 			var word = word_label.text.strip_edges()
 			var is_blank = word == ""
 			clicked.emit(word, is_blank)
-			reveal()
+			# reveal() is called by qna._handle_slider_reveal, not here
 			
 	# Touch input (mobile)
 	elif event is InputEventScreenTouch and event.pressed:
@@ -47,7 +47,7 @@ func _gui_input(event: InputEvent):
 			var word = word_label.text.strip_edges()
 			var is_blank = word == ""
 			clicked.emit(word, is_blank)
-			reveal()
+			# reveal() is called by qna._handle_slider_reveal, not here
 
 func _input(event: InputEvent):
 	# Only process if this slider has focus
@@ -61,7 +61,7 @@ func _input(event: InputEvent):
 			var is_blank = word == ""
 			print("Slider %d revealed via controller - Word: '%s', Blank: %s" % [word_number, word, is_blank])
 			clicked.emit(word, is_blank)
-			reveal()
+			# reveal() is called by qna._handle_slider_reveal, not here
 			get_viewport().set_input_as_handled()
 	
 	# Debug: show focus movement
