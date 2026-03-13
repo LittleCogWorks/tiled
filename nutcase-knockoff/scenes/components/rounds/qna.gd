@@ -41,14 +41,6 @@ var all_questions: Array[Question] = []
 var current_question: Question = null
 var _sliders: Array = []  # slider instances by position, for programmatic reveal in multiplayer
 
-# enum SubmissionResult {
-# 	EXACT,
-# 	AUTO_ACCEPT,
-# 	FUZZY,
-# 	INCORRECT,
-# 	INVALID
-# }
-
 func _ready() -> void:
 	print("QnA scene ready")
 	guess_btn.pressed.connect(_on_guess_btn_pressed)

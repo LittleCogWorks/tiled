@@ -54,3 +54,6 @@ build/
 
 # Misc
 Thumbs.db
+
+nutcase-knockoff.code-workspace
+*.code-workspace

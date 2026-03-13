@@ -1,5 +1,7 @@
 extends Node
 
+const WEBSOCKET_PORT: int = 9080
+
 # Scoring
 const BASE_POT: float = 100.0
 const MINIMUM_POT_PERCENT: float = 0.1
