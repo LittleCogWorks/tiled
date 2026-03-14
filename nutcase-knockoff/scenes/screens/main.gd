@@ -2,16 +2,13 @@ extends Control
 
 @onready var scene_container = $SceneContainer
 
-# LOAD SPLASH SCREEN
 func _ready() -> void:
 	print("Main scene ready, loading SplashScreen")
 	# Initialize game state
 	GameManager.current_state = GameManager.GameState.NONE
-	var a = GameIdGenerator.get_random_id()
-	print("Generated Game ID: %s" % a)
+	# var a = GameIdGenerator.get_random_id()
+	# print("Generated Game ID: %s" % a)
 	load_splash_screen()
-
-
 
 func load_splash_screen() -> void:
 	var splash_scene = preload("res://scenes/screens/splash_screen.tscn")
@@ -19,13 +16,11 @@ func load_splash_screen() -> void:
 	scene_container.add_child(splash_instance)
 	splash_instance.splash_complete.connect(_on_splash_complete)
 
-
 func _on_splash_complete() -> void:
 	print("Splash screen complete, loading GameHome")
 	cleanup_current_scene()
 	load_game_home()
 
-# LOAD GAME HOME
 func load_game_home() -> void:
 	GameManager.change_state(GameManager.GameState.MENU)
 	var home_scene = preload("res://scenes/screens/game_home.tscn")

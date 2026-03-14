@@ -1,0 +1,203 @@
+[gd_scene format=3 uid="uid://bshmqmi518arx"]
+
+[ext_resource type="Script" uid="uid://bp2ad1l8s4pxm" path="res://scenes/screens/lobby.gd" id="1_rxbpr"]
+[ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_5gglr"]
+[ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="3_pdtbn"]
+[ext_resource type="Texture2D" uid="uid://csbyuyjrgshiw" path="res://assets/images/buttons/start/start-up.svg" id="6_gdom8"]
+[ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="7_56qed"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_nhm8p"]
+font = ExtResource("3_pdtbn")
+font_size = 54
+font_color = Color(0, 0.0313726, 1, 1)
+
+[sub_resource type="Theme" id="Theme_d4pih"]
+default_font = ExtResource("3_pdtbn")
+default_font_size = 54
+
+[sub_resource type="Theme" id="Theme_t11tv"]
+default_font = ExtResource("3_pdtbn")
+default_font_size = 54
+
+[node name="Lobby" type="Node2D" unique_id=392050463]
+script = ExtResource("1_rxbpr")
+metadata/_edit_vertical_guides_ = [960.0]
+metadata/_edit_horizontal_guides_ = [536.0]
+
+[node name="Background" type="TextureRect" parent="." unique_id=1968711665]
+offset_left = -91.0
+offset_top = -242.0
+offset_right = 2297.0
+offset_bottom = 1426.0
+texture = ExtResource("2_5gglr")
+
+[node name="StartBtn" type="TextureButton" parent="." unique_id=1698733788]
+offset_left = 829.0
+offset_top = 807.00006
+offset_right = 1243.0
+offset_bottom = 1021.00006
+scale = Vector2(0.60267645, 0.522713)
+texture_normal = ExtResource("6_gdom8")
+
+[node name="HomeBtn" type="Button" parent="." unique_id=261725871]
+offset_left = 861.0
+offset_top = 950.0
+offset_right = 1054.0
+offset_bottom = 1046.0
+theme_override_font_sizes/font_size = 64
+text = "Home"
+
+[node name="Title" type="Label" parent="." unique_id=581773540]
+offset_left = 552.0
+offset_top = 40.0
+offset_right = 1376.0
+offset_bottom = 172.0
+theme_override_font_sizes/font_size = 96
+text = "Lobby"
+label_settings = ExtResource("7_56qed")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayersConnected" type="VBoxContainer" parent="." unique_id=1974463176]
+offset_left = 1617.0
+offset_top = 158.0
+offset_right = 2150.0
+offset_bottom = 1053.0
+
+[node name="Label" type="Label" parent="PlayersConnected" unique_id=1025832794]
+layout_mode = 2
+text = "Players:"
+label_settings = SubResource("LabelSettings_nhm8p")
+
+[node name="Players" type="VBoxContainer" parent="PlayersConnected" unique_id=511667378]
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_d4pih")
+theme_override_constants/separation = 16
+
+[node name="RoomInfo" type="VBoxContainer" parent="." unique_id=30440664]
+offset_left = 60.0
+offset_top = 184.0
+offset_right = 790.0
+offset_bottom = 378.0
+theme = SubResource("Theme_t11tv")
+
+[node name="Label" type="Label" parent="RoomInfo" unique_id=754499889]
+layout_mode = 2
+text = "Game Code:"
+label_settings = SubResource("LabelSettings_nhm8p")
+
+[node name="Code" type="Label" parent="RoomInfo" unique_id=1792281413]
+layout_mode = 2
+text = "random code"
+label_settings = SubResource("LabelSettings_nhm8p")
+horizontal_alignment = 1
+
+[node name="ConfirmModal" type="Control" parent="." unique_id=352201478]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 312.0
+offset_top = 256.0
+offset_right = 1728.0
+offset_bottom = 776.0
+
+[node name="ColorRect" type="ColorRect" parent="ConfirmModal" unique_id=1116590158]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16394848, 0.21695486, 0.38877624, 1)
+
+[node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=927671841]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 144.0
+offset_right = 845.0
+offset_bottom = 213.0
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players" unique_id=1168805037]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Number of players:"
+vertical_alignment = 1
+
+[node name="PlayersValue" type="Label" parent="ConfirmModal/Players" unique_id=463014617]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "99"
+vertical_alignment = 1
+
+[node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1061044408]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 240.0
+offset_right = 699.0
+offset_bottom = 309.0
+
+[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode" unique_id=35548577]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Game Mode: "
+vertical_alignment = 1
+
+[node name="ModeValue" type="Label" parent="ConfirmModal/Mode" unique_id=2018263523]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "99"
+vertical_alignment = 1
+
+[node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=160179230]
+layout_mode = 0
+offset_left = 328.0
+offset_top = 328.0
+offset_right = 725.0
+offset_bottom = 397.0
+
+[node name="TargetLabel" type="Label" parent="ConfirmModal/Target" unique_id=329135054]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Game Length:"
+vertical_alignment = 1
+
+[node name="TargetValue" type="Label" parent="ConfirmModal/Target" unique_id=172461037]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "99"
+vertical_alignment = 1
+
+[node name="ConfirmLabel" type="Label" parent="ConfirmModal" unique_id=1387025854]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -168.0
+offset_right = 168.0
+offset_bottom = 88.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 64
+text = "Confirm?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ConfirmBtn" type="Button" parent="ConfirmModal" unique_id=1375979581]
+layout_mode = 0
+offset_left = 1144.0
+offset_top = 408.0
+offset_right = 1379.0
+offset_bottom = 495.0
+theme_override_font_sizes/font_size = 50
+text = "Confirm"
+
+[node name="BackBtn" type="Button" parent="ConfirmModal" unique_id=1429988423]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 416.0
+offset_right = 171.0
+offset_bottom = 493.0
+theme_override_font_sizes/font_size = 50
+text = "Back"

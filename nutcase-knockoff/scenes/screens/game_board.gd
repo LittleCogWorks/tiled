@@ -22,7 +22,7 @@ extends Control
 signal return_to_home
 signal game_ended(winner: Player)
 
-const player_badge = preload("res://scenes/components/player_badge.tscn")
+# const player_badge = preload("res://scenes/components/player_badge.tscn")
 const player_badge_sm = preload("res://scenes/components/player_badge_small.tscn")
 
 @onready var controls = $HUD/Controls
@@ -43,14 +43,6 @@ const ROUND_SCENES = {
 	# Add other round types here as needed
 }
 
-# enum SubmissionResult {
-# 	EXACT,
-# 	AUTO_ACCEPT,
-# 	FUZZY,
-# 	INCORRECT,
-# 	INVALID
-# }
-
 var round_instance = null
 var _stored_focus_modes: Dictionary = {}  # node path -> focus mode, used by _recursive_set_focus
 
@@ -64,17 +56,22 @@ func _ready() -> void:
 	if GameManager.game == null:
 		push_error("Game Board loaded but no game exists!")
 		return
-
 	print("Game Board scene ready")
 	res_overlay.visible = false
 	exit_btn.pressed.connect(Callable(self, "_on_exit_btn_pressed"))
 	options_btn.pressed.connect(Callable(self, "_on_options_btn_pressed"))
 	exit_confirm.confirmed.connect(_on_exit_confirmed)
+	
 	# Connect to turn changes to update current player indicator
 	PlayerManager.turn_changed.connect(_on_turn_changed)
 	_setup_players_hud()
 	_setup_round_area()
-	
+
+	if not NetworkManager.is_local:
+		NetworkManager.slider_click_received.connect(_on_network_slider_click)
+		NetworkManager.guess_received.connect(_on_network_guess)
+
+
 	# Enable input handling for overlay
 	set_process_input(true)
 
@@ -92,13 +89,13 @@ func _input(event):
 		get_viewport().set_input_as_handled()
 
 func  _setup_players_hud() -> void:
-	if players_container.get_child_count() > 0:
-		for child in players_container.get_children():
-			child.queue_free()
-	for player in PlayerManager.players:
-		var badge_instance = player_badge.instantiate()
-		players_container.add_child(badge_instance)
-		badge_instance.setup(player)
+	# if players_container.get_child_count() > 0:
+	# 	for child in players_container.get_children():
+	# 		child.queue_free()
+	# for player in PlayerManager.players:
+	# 	var badge_instance = player_badge.instantiate()
+	# 	players_container.add_child(badge_instance)
+	# 	badge_instance.setup(player)
 
 	if player_badges.get_child_count() > 0:
 		for child in player_badges.get_children():
@@ -197,7 +194,7 @@ func _handle_correct_result(result: Dictionary) -> void:
 		_start_next_round()
 
 func _update_all_badges() -> void:
-	var badges = players_container.get_children()
+	var badges = player_badges.get_children()
 	var current_player = PlayerManager.get_current_player()
 	var leaders = PlayerManager.get_leaders()
 	
@@ -253,6 +250,26 @@ func _recursive_set_focus(node: Node, enabled: bool) -> void:
 	
 	for child in node.get_children():
 		_recursive_set_focus(child, enabled)
+
+#  Network event handlers for multiplayer input
+func _on_network_slider_click(device_id: String, slider_index: int) -> void:
+	var sender = PlayerManager.get_player_by_device_id(device_id)
+	var current = PlayerManager.get_current_player()
+	if sender == null or sender != current:
+		print("Received slider click from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
+		return
+	if round_instance:
+		round_instance.slider_reveal_requested.emit(slider_index)
+
+func _on_network_guess(device_id: String, guess_text: String) -> void:
+	var sender = PlayerManager.get_player_by_device_id(device_id)
+	var current = PlayerManager.get_current_player()
+	if sender == null or sender != current:
+		print("Received guess from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
+		return
+	if round_instance:
+		round_instance.guess_submitted.emit(guess_text)
+
 
 # Signal handlers for buttons
 func _on_options_btn_pressed() -> void:

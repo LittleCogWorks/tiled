@@ -171,7 +171,9 @@ func _setup_slider_navigation(sliders: Array, columns: int) -> void:
 func _handle_slider_reveal(index: int) -> void:
 	var words = current_question.question_text.split(" ")
 	var is_blank = index >= words.size()
-	
+	if index < 0 or index >= _sliders.size():
+		push_error("Invalid slider index revealed: %d" % index)
+		return
 	_sliders[index].reveal()
 	print("Slider reveal - index: %d, blank: %s" % [index, is_blank])
 	

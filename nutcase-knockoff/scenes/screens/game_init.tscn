@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://ccc4i4pmcqie4"]
+[gd_scene format=3 uid="uid://ccc4i4pmcqie4"]
 
 [ext_resource type="Script" uid="uid://d10ua6gsw5ta" path="res://scenes/screens/game_init.gd" id="1_nhm8p"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_d4pih"]
@@ -36,6 +36,14 @@ SpinBox/icons/up = SubResource("DPITexture_xjbsa")
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
 
+[sub_resource type="Theme" id="Theme_0ivg7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syn1p"]
+bg_color = Color(1, 0.18299997, 0.13999999, 0.47058824)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akn8v"]
+bg_color = Color(0, 0.38, 0.15833336, 0.6156863)
+
 [sub_resource type="Theme" id="Theme_t11tv"]
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
@@ -44,19 +52,19 @@ default_font_size = 54
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
 
-[node name="GameInit" type="Node2D"]
+[node name="GameInit2" type="Node2D" unique_id=111432682]
 script = ExtResource("1_nhm8p")
 metadata/_edit_vertical_guides_ = [960.0]
 metadata/_edit_horizontal_guides_ = [536.0]
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=330997447]
 offset_left = -91.0
 offset_top = -242.0
 offset_right = 2297.0
 offset_bottom = 1426.0
 texture = ExtResource("2_d4pih")
 
-[node name="PlayersContainer" type="HBoxContainer" parent="."]
+[node name="PlayersContainer" type="HBoxContainer" parent="." unique_id=1270645345]
 visible = false
 offset_left = 84.0
 offset_top = 298.0
@@ -64,12 +72,12 @@ offset_right = 995.0
 offset_bottom = 430.0
 theme_override_constants/separation = 32
 
-[node name="PlayersLabel" type="Label" parent="PlayersContainer"]
+[node name="PlayersLabel" type="Label" parent="PlayersContainer" unique_id=615403282]
 layout_mode = 2
 text = "How many players?"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="PlayerCount" type="SpinBox" parent="PlayersContainer"]
+[node name="PlayerCount" type="SpinBox" parent="PlayersContainer" unique_id=210486399]
 layout_mode = 2
 theme = SubResource("Theme_xjbsa")
 min_value = 2.0
@@ -78,7 +86,7 @@ value = 2.0
 rounded = true
 alignment = 1
 
-[node name="GameSettingsContainer" type="Control" parent="."]
+[node name="GameSettingsContainer" type="Control" parent="." unique_id=287448231]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -86,7 +94,7 @@ offset_top = -184.0
 offset_right = 40.0
 offset_bottom = -144.0
 
-[node name="GameSettings" type="Label" parent="GameSettingsContainer"]
+[node name="GameSettings" type="Label" parent="GameSettingsContainer" unique_id=1990545480]
 layout_mode = 0
 offset_left = 1088.0
 offset_top = 368.0
@@ -95,7 +103,7 @@ offset_bottom = 442.0
 text = "Game"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="GameMode" type="Label" parent="GameSettingsContainer"]
+[node name="GameMode" type="Label" parent="GameSettingsContainer" unique_id=840424226]
 layout_mode = 0
 offset_left = 1088.0
 offset_top = 442.0
@@ -104,7 +112,7 @@ offset_bottom = 516.0
 text = "Mode:"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="GameModes" type="ItemList" parent="GameSettingsContainer"]
+[node name="GameModes" type="ItemList" parent="GameSettingsContainer" unique_id=1656738163]
 layout_mode = 0
 offset_left = 1088.0
 offset_top = 558.0
@@ -118,7 +126,7 @@ item_count = 2
 item_0/text = "QnA"
 item_1/text = "Nothing"
 
-[node name="GameTarget" type="Label" parent="GameSettingsContainer"]
+[node name="GameTarget" type="Label" parent="GameSettingsContainer" unique_id=1915317985]
 layout_mode = 0
 offset_left = 1440.0
 offset_top = 376.0
@@ -128,7 +136,7 @@ text = "Target (Points)"
 label_settings = SubResource("LabelSettings_nhm8p")
 autowrap_mode = 2
 
-[node name="GameTargets" type="ItemList" parent="GameSettingsContainer"]
+[node name="GameTargets" type="ItemList" parent="GameSettingsContainer" unique_id=1193252843]
 layout_mode = 0
 offset_left = 1432.0
 offset_top = 554.0
@@ -144,7 +152,7 @@ item_0/text = "1000"
 item_1/text = "1500"
 item_2/text = "2000"
 
-[node name="StartBtn" type="TextureButton" parent="."]
+[node name="StartBtn" type="TextureButton" parent="." unique_id=751907660]
 offset_left = 822.00006
 offset_top = 779.00006
 offset_right = 1236.0
@@ -152,7 +160,7 @@ offset_bottom = 993.00006
 scale = Vector2(0.60267645, 0.522713)
 texture_normal = ExtResource("3_xjbsa")
 
-[node name="HomeBtn" type="Button" parent="."]
+[node name="HomeBtn" type="Button" parent="." unique_id=868827846]
 offset_left = 859.0
 offset_top = 961.0
 offset_right = 1052.0
@@ -160,7 +168,7 @@ offset_bottom = 1057.0
 theme_override_font_sizes/font_size = 64
 text = "Home"
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=2040698587]
 offset_left = 552.0
 offset_top = 40.0
 offset_right = 1376.0
@@ -171,122 +179,166 @@ label_settings = ExtResource("3_g7jhl")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayerSelect" type="VBoxContainer" parent="."]
-offset_left = 688.0
-offset_top = 196.0
-offset_right = 1221.0
-offset_bottom = 341.0
-alignment = 1
+[node name="PlayerSelect" type="VBoxContainer" parent="." unique_id=282642322]
+offset_left = 87.0
+offset_top = 151.0
+offset_right = 620.0
+offset_bottom = 549.0
 
-[node name="Label" type="Label" parent="PlayerSelect"]
+[node name="Label" type="Label" parent="PlayerSelect" unique_id=1081507672]
 layout_mode = 2
 text = "How many players?"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="Buttons" type="HBoxContainer" parent="PlayerSelect"]
+[node name="Buttons" type="HBoxContainer" parent="PlayerSelect" unique_id=2073384684]
 layout_mode = 2
 theme = SubResource("Theme_d4pih")
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="2" type="Button" parent="PlayerSelect/Buttons"]
+[node name="2" type="Button" parent="PlayerSelect/Buttons" unique_id=37732101]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "2"
 metadata/value = 2
 
-[node name="3" type="Button" parent="PlayerSelect/Buttons"]
+[node name="3" type="Button" parent="PlayerSelect/Buttons" unique_id=971581477]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "3"
 metadata/value = 3
 
-[node name="4" type="Button" parent="PlayerSelect/Buttons"]
+[node name="4" type="Button" parent="PlayerSelect/Buttons" unique_id=1343296375]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "4"
 metadata/value = 4
 
-[node name="5" type="Button" parent="PlayerSelect/Buttons"]
+[node name="5" type="Button" parent="PlayerSelect/Buttons" unique_id=1775802427]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "5"
 metadata/value = 5
 
-[node name="6" type="Button" parent="PlayerSelect/Buttons"]
+[node name="6" type="Button" parent="PlayerSelect/Buttons" unique_id=1856523727]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "6"
 metadata/value = 6
 
-[node name="7" type="Button" parent="PlayerSelect/Buttons"]
+[node name="7" type="Button" parent="PlayerSelect/Buttons" unique_id=1681547652]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "7"
 metadata/value = 7
 
-[node name="8" type="Button" parent="PlayerSelect/Buttons"]
+[node name="8" type="Button" parent="PlayerSelect/Buttons" unique_id=127524568]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "8"
 metadata/value = 8
 
-[node name="ModeSelect" type="VBoxContainer" parent="."]
-offset_left = 885.0
-offset_top = 399.0
-offset_right = 1080.0
-offset_bottom = 541.0
+[node name="HBoxContainer" type="HBoxContainer" parent="PlayerSelect" unique_id=904802376]
+layout_mode = 2
+
+[node name="Single" type="Button" parent="PlayerSelect/HBoxContainer" unique_id=1163498365]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_h1k66")
+theme_override_font_sizes/font_size = 28
+text = "1 Player"
+metadata/value = 8
+
+[node name="Multi" type="Button" parent="PlayerSelect/HBoxContainer" unique_id=986804941]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_h1k66")
+theme_override_font_sizes/font_size = 28
+text = "Multiplayer"
+metadata/value = 8
+
+[node name="FuzzySelect" type="VBoxContainer" parent="." unique_id=8345504]
+offset_left = 1490.0
+offset_top = 610.0
+offset_right = 2023.0
+offset_bottom = 755.0
+
+[node name="Label" type="Label" parent="FuzzySelect" unique_id=1935418705]
+layout_mode = 2
+text = "Fuzzy Matches"
+label_settings = SubResource("LabelSettings_nhm8p")
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="FuzzySelect" unique_id=587196841]
+layout_mode = 2
+theme = SubResource("Theme_d4pih")
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Button" type="Button" parent="FuzzySelect/Buttons" unique_id=1127290010]
+layout_mode = 2
+theme = SubResource("Theme_0ivg7")
+theme_override_styles/normal = SubResource("StyleBoxFlat_syn1p")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_akn8v")
+toggle_mode = true
+text = "ON/OFF"
+
+[node name="ModeSelect" type="VBoxContainer" parent="." unique_id=1452947385]
+offset_left = 1382.0
+offset_top = 195.0
+offset_right = 1577.0
+offset_bottom = 337.0
 theme = SubResource("Theme_t11tv")
 
-[node name="Label" type="Label" parent="ModeSelect"]
+[node name="Label" type="Label" parent="ModeSelect" unique_id=2098367219]
 layout_mode = 2
 text = "Mode:"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="Buttons" type="HBoxContainer" parent="ModeSelect"]
+[node name="Buttons" type="HBoxContainer" parent="ModeSelect" unique_id=1614017250]
 layout_mode = 2
 theme = SubResource("Theme_64jy4")
 theme_override_constants/separation = 16
 
-[node name="qna" type="Button" parent="ModeSelect/Buttons"]
+[node name="qna" type="Button" parent="ModeSelect/Buttons" unique_id=1553933559]
 layout_mode = 2
 text = "Q 'n' A"
 metadata/value = "qna"
 
-[node name="LengthSelect" type="VBoxContainer" parent="."]
+[node name="LengthSelect" type="VBoxContainer" parent="." unique_id=1148475699]
 offset_left = 714.0
 offset_top = 585.0
 offset_right = 1253.0
 offset_bottom = 727.0
 theme = SubResource("Theme_t11tv")
 
-[node name="Label" type="Label" parent="LengthSelect"]
+[node name="Label" type="Label" parent="LengthSelect" unique_id=454009934]
 layout_mode = 2
 text = "Game Length"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="Buttons" type="HBoxContainer" parent="LengthSelect"]
+[node name="Buttons" type="HBoxContainer" parent="LengthSelect" unique_id=744490233]
 layout_mode = 2
 theme = SubResource("Theme_64jy4")
 theme_override_constants/separation = 16
 
-[node name="Short" type="Button" parent="LengthSelect/Buttons"]
+[node name="Short" type="Button" parent="LengthSelect/Buttons" unique_id=1449863624]
 layout_mode = 2
 text = "Short
 "
 metadata/value = 200
 
-[node name="Medium" type="Button" parent="LengthSelect/Buttons"]
+[node name="Medium" type="Button" parent="LengthSelect/Buttons" unique_id=1060266847]
 layout_mode = 2
 text = "Medium"
 metadata/value = 2000
 
-[node name="Long" type="Button" parent="LengthSelect/Buttons"]
+[node name="Long" type="Button" parent="LengthSelect/Buttons" unique_id=1183275851]
 layout_mode = 2
 text = "Long"
 metadata/value = 3000
 
-[node name="ConfirmModal" type="Control" parent="."]
+[node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -295,7 +347,7 @@ offset_top = 256.0
 offset_right = 1728.0
 offset_bottom = 776.0
 
-[node name="ColorRect" type="ColorRect" parent="ConfirmModal"]
+[node name="ColorRect" type="ColorRect" parent="ConfirmModal" unique_id=1032024178]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -304,7 +356,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.16394848, 0.21695486, 0.38877624, 1)
 
-[node name="Players" type="HBoxContainer" parent="ConfirmModal"]
+[node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=1483279617]
 layout_mode = 0
 offset_left = 320.0
 offset_top = 144.0
@@ -313,57 +365,57 @@ offset_bottom = 213.0
 theme_override_constants/separation = 32
 alignment = 1
 
-[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players"]
+[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players" unique_id=979356926]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Number of players:"
 vertical_alignment = 1
 
-[node name="PlayersValue" type="Label" parent="ConfirmModal/Players"]
+[node name="PlayersValue" type="Label" parent="ConfirmModal/Players" unique_id=2016476965]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "99"
 vertical_alignment = 1
 
-[node name="Mode" type="HBoxContainer" parent="ConfirmModal"]
+[node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1226365121]
 layout_mode = 0
 offset_left = 320.0
 offset_top = 240.0
 offset_right = 699.0
 offset_bottom = 309.0
 
-[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode"]
+[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode" unique_id=1471930713]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Game Mode: "
 vertical_alignment = 1
 
-[node name="ModeValue" type="Label" parent="ConfirmModal/Mode"]
+[node name="ModeValue" type="Label" parent="ConfirmModal/Mode" unique_id=1484441573]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "99"
 vertical_alignment = 1
 
-[node name="Target" type="HBoxContainer" parent="ConfirmModal"]
+[node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=1603969943]
 layout_mode = 0
 offset_left = 328.0
 offset_top = 328.0
 offset_right = 725.0
 offset_bottom = 397.0
 
-[node name="TargetLabel" type="Label" parent="ConfirmModal/Target"]
+[node name="TargetLabel" type="Label" parent="ConfirmModal/Target" unique_id=1364750707]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Game Length:"
 vertical_alignment = 1
 
-[node name="TargetValue" type="Label" parent="ConfirmModal/Target"]
+[node name="TargetValue" type="Label" parent="ConfirmModal/Target" unique_id=575787518]
 layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "99"
 vertical_alignment = 1
 
-[node name="ConfirmLabel" type="Label" parent="ConfirmModal"]
+[node name="ConfirmLabel" type="Label" parent="ConfirmModal" unique_id=261706393]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -377,7 +429,7 @@ text = "Confirm?"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ConfirmBtn" type="Button" parent="ConfirmModal"]
+[node name="ConfirmBtn" type="Button" parent="ConfirmModal" unique_id=674056397]
 layout_mode = 0
 offset_left = 1144.0
 offset_top = 408.0
@@ -386,7 +438,7 @@ offset_bottom = 495.0
 theme_override_font_sizes/font_size = 50
 text = "Confirm"
 
-[node name="BackBtn" type="Button" parent="ConfirmModal"]
+[node name="BackBtn" type="Button" parent="ConfirmModal" unique_id=1005975773]
 layout_mode = 0
 offset_left = 48.0
 offset_top = 416.0
