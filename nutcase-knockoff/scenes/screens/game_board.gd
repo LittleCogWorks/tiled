@@ -187,6 +187,7 @@ func _on_round_result(player: Player, is_correct: int, prize: int, submitted_ans
 func _handle_correct_result(result: Dictionary) -> void:
 	_update_all_badges()
 	if result["has_winner"]:
+		GameManager.game.record_round_result(GameManager.game.current_round, GameManager.game.current_question, result)
 		round_area.set_process_input(false)
 		GameManager.game_ended.emit(result["winner"])
 		game_ended.emit(result["winner"])
@@ -212,6 +213,10 @@ func _on_turn_changed(_player: Player) -> void:
 	_update_all_badges()
 
 func _start_next_round() -> void:
+	# Record the completed round before moving on
+	if GameManager.game and GameManager.game.current_question:
+		GameManager.game.record_round_result(GameManager.game.current_round, GameManager.game.current_question, {})
+	
 	# Disable focus on existing round before loading new one
 	if round_instance:
 		_set_round_focus(false)

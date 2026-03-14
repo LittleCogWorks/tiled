@@ -24,6 +24,7 @@ config/icon="res://icon.svg"
 GameManager="*res://scripts/autoload/GameManager.gd"
 GameIdGenerator="*res://scripts/autoload/GameIdGenerator.gd"
 PlayerManager="*res://scripts/autoload/PlayerManager.gd"
+NetworkManager="*res://scripts/autoload/NetworkManager.gd"
 GameConfig="*res://scripts/resources/GameConfig.gd"
 
 [display]

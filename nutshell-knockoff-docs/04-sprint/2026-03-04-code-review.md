@@ -95,11 +95,14 @@ The `FUZZY_MIN_LENGTH = 5` guard catches short year values like `"1492"` (4 char
 
 The state machine defines `ROUND_END` and `_is_valid_transition()` handles it, but the game never enters it. The flow goes `IN_PROGRESS` → `IN_PROGRESS` (via `_start_next_round`). If you want to show a round summary screen or pause between rounds, this state is the hook. Currently it's dead code.
 
-### 2.8 `Game.record_round_result()` Is Never Called
+### 2.8 `Game.record_round_result()` Is Never Called — ✅ Resolved (2026-03-11)
 
-**File:** `scripts/classes/Game.gd`
+**File:** `scripts/classes/Game.gd`, `scenes/screens/game_board.gd`
 
-`round_history` and `record_round_result()` are defined but nothing calls `record_round_result()`. History is never built. This is needed for any end-of-game summary, replays, or network state syncing.
+`round_history` was defined but `record_round_result()` was never called. Fixed:
+- **Game-winning round**: `_handle_correct_result()` now calls `record_round_result()` before emitting `game_ended`.
+- **All other rounds** (INCORRECT, vote rejection, tie, correct-no-winner): covered by a call inside `_start_next_round()`, which is the single exit point for all non-terminal rounds.
+- TODO comment removed from `Game.gd`.
 
 ### 2.9 `_recursive_set_focus` Uses Node Metadata for State Storage — ✅ Resolved (2026-03-11)
 

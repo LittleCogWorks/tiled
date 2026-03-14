@@ -106,6 +106,13 @@ func get_player_by_id(player_id: String) -> Player:
 			return player
 	return null
 
+# Get player by device ID (for multiplayer)
+func get_player_by_device_id(device_id: String) -> Player:
+	for player in players:
+		if player.device_id == device_id:
+			return player
+	return null
+
 # Get scoreboard (sorted by score)
 func get_scoreboard() -> Array[Player]:
 	var sorted_players = players.duplicate()

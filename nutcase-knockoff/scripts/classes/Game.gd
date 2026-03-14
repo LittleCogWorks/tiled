@@ -24,11 +24,7 @@ var current_question: Resource = null
 
 # --- Methods ---
 
-# Record round result
-# TODO: This is never called anywhere — round_history is always empty.
-# Call this from game_board._on_round_result() after each round resolves.
-# Needed for end-of-game summary, stats, and network state sync.
-# See code review doc § 2.8.
+# Record round result — called from game_board after each round resolves.
 func record_round_result(round_num: int, question: Resource, result: Dictionary) -> void:
 	round_history.append({"round": round_num, "question": question, "result": result})
 

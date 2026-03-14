@@ -1,0 +1,6 @@
+{
+    "godotTools.editorPath.godot4": "/Applications/Godot.app/Contents/MacOS/Godot",
+    "[windows]": {
+        "godotTools.editorPath.godot4": "d:\\Godot\\Editors\\4.6.1-stable\\Godot_v4.6.1-stable_win64.exe"
+    }
+}
