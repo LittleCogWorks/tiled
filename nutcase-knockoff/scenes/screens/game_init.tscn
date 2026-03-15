@@ -36,14 +36,6 @@ SpinBox/icons/up = SubResource("DPITexture_xjbsa")
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
 
-[sub_resource type="Theme" id="Theme_0ivg7"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syn1p"]
-bg_color = Color(1, 0.18299997, 0.13999999, 0.47058824)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akn8v"]
-bg_color = Color(0, 0.38, 0.15833336, 0.6156863)
-
 [sub_resource type="Theme" id="Theme_t11tv"]
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
@@ -51,6 +43,14 @@ default_font_size = 54
 [sub_resource type="Theme" id="Theme_64jy4"]
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
+
+[sub_resource type="Theme" id="Theme_0ivg7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_syn1p"]
+bg_color = Color(1, 0.18299997, 0.13999999, 0.47058824)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akn8v"]
+bg_color = Color(0, 0.38, 0.15833336, 0.6156863)
 
 [node name="GameInit2" type="Node2D" unique_id=111432682]
 script = ExtResource("1_nhm8p")
@@ -183,7 +183,7 @@ vertical_alignment = 1
 offset_left = 87.0
 offset_top = 151.0
 offset_right = 620.0
-offset_bottom = 549.0
+offset_bottom = 307.0
 
 [node name="Label" type="Label" parent="PlayerSelect" unique_id=1081507672]
 layout_mode = 2
@@ -238,10 +238,22 @@ size_flags_horizontal = 3
 text = "8"
 metadata/value = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PlayerSelect" unique_id=904802376]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1832525359]
+offset_left = 84.0
+offset_top = 339.0
+offset_right = 388.0
+offset_bottom = 447.0
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=896853207]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_h1k66")
+theme_override_font_sizes/font_size = 51
+text = "Mode"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=904802376]
 layout_mode = 2
 
-[node name="Single" type="Button" parent="PlayerSelect/HBoxContainer" unique_id=1163498365]
+[node name="Single" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1163498365]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_h1k66")
@@ -249,7 +261,7 @@ theme_override_font_sizes/font_size = 28
 text = "1 Player"
 metadata/value = 8
 
-[node name="Multi" type="Button" parent="PlayerSelect/HBoxContainer" unique_id=986804941]
+[node name="Multi" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=986804941]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_h1k66")
@@ -257,59 +269,33 @@ theme_override_font_sizes/font_size = 28
 text = "Multiplayer"
 metadata/value = 8
 
-[node name="FuzzySelect" type="VBoxContainer" parent="." unique_id=8345504]
-offset_left = 1490.0
-offset_top = 610.0
-offset_right = 2023.0
-offset_bottom = 755.0
-
-[node name="Label" type="Label" parent="FuzzySelect" unique_id=1935418705]
-layout_mode = 2
-text = "Fuzzy Matches"
-label_settings = SubResource("LabelSettings_nhm8p")
-horizontal_alignment = 1
-
-[node name="Buttons" type="HBoxContainer" parent="FuzzySelect" unique_id=587196841]
-layout_mode = 2
-theme = SubResource("Theme_d4pih")
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="Button" type="Button" parent="FuzzySelect/Buttons" unique_id=1127290010]
-layout_mode = 2
-theme = SubResource("Theme_0ivg7")
-theme_override_styles/normal = SubResource("StyleBoxFlat_syn1p")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_akn8v")
-toggle_mode = true
-text = "ON/OFF"
-
-[node name="ModeSelect" type="VBoxContainer" parent="." unique_id=1452947385]
-offset_left = 1382.0
-offset_top = 195.0
-offset_right = 1577.0
-offset_bottom = 337.0
+[node name="TypeSelect" type="VBoxContainer" parent="." unique_id=1452947385]
+offset_left = 1223.0
+offset_top = 187.0
+offset_right = 1418.0
+offset_bottom = 329.0
 theme = SubResource("Theme_t11tv")
 
-[node name="Label" type="Label" parent="ModeSelect" unique_id=2098367219]
+[node name="Label" type="Label" parent="TypeSelect" unique_id=2098367219]
 layout_mode = 2
-text = "Mode:"
+text = "Game Type:"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="Buttons" type="HBoxContainer" parent="ModeSelect" unique_id=1614017250]
+[node name="Buttons" type="HBoxContainer" parent="TypeSelect" unique_id=1614017250]
 layout_mode = 2
 theme = SubResource("Theme_64jy4")
 theme_override_constants/separation = 16
 
-[node name="qna" type="Button" parent="ModeSelect/Buttons" unique_id=1553933559]
+[node name="qna" type="Button" parent="TypeSelect/Buttons" unique_id=1553933559]
 layout_mode = 2
 text = "Q 'n' A"
 metadata/value = "qna"
 
 [node name="LengthSelect" type="VBoxContainer" parent="." unique_id=1148475699]
-offset_left = 714.0
-offset_top = 585.0
-offset_right = 1253.0
-offset_bottom = 727.0
+offset_left = 82.0
+offset_top = 544.0
+offset_right = 621.0
+offset_bottom = 686.0
 theme = SubResource("Theme_t11tv")
 
 [node name="Label" type="Label" parent="LengthSelect" unique_id=454009934]
@@ -337,6 +323,32 @@ metadata/value = 2000
 layout_mode = 2
 text = "Long"
 metadata/value = 3000
+
+[node name="FuzzySelect" type="VBoxContainer" parent="." unique_id=8345504]
+offset_left = 1212.0
+offset_top = 451.0
+offset_right = 1745.0
+offset_bottom = 596.0
+
+[node name="Label" type="Label" parent="FuzzySelect" unique_id=1935418705]
+layout_mode = 2
+text = "Fuzzy Matches"
+label_settings = SubResource("LabelSettings_nhm8p")
+
+[node name="Buttons" type="HBoxContainer" parent="FuzzySelect" unique_id=587196841]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = SubResource("Theme_d4pih")
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Button" type="Button" parent="FuzzySelect/Buttons" unique_id=1127290010]
+layout_mode = 2
+theme = SubResource("Theme_0ivg7")
+theme_override_styles/normal = SubResource("StyleBoxFlat_syn1p")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_akn8v")
+toggle_mode = true
+text = "ON/OFF"
 
 [node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
 visible = false

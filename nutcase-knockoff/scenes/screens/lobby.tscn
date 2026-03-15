@@ -58,18 +58,18 @@ label_settings = ExtResource("7_56qed")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PlayersConnected" type="VBoxContainer" parent="." unique_id=1974463176]
+[node name="PlayersList" type="VBoxContainer" parent="." unique_id=1974463176]
 offset_left = 1617.0
 offset_top = 158.0
 offset_right = 2150.0
 offset_bottom = 1053.0
 
-[node name="Label" type="Label" parent="PlayersConnected" unique_id=1025832794]
+[node name="Label" type="Label" parent="PlayersList" unique_id=1025832794]
 layout_mode = 2
 text = "Players:"
 label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="Players" type="VBoxContainer" parent="PlayersConnected" unique_id=511667378]
+[node name="Players" type="VBoxContainer" parent="PlayersList" unique_id=511667378]
 layout_mode = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_d4pih")
@@ -93,111 +93,25 @@ text = "random code"
 label_settings = SubResource("LabelSettings_nhm8p")
 horizontal_alignment = 1
 
-[node name="ConfirmModal" type="Control" parent="." unique_id=352201478]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_left = 312.0
-offset_top = 256.0
-offset_right = 1728.0
-offset_bottom = 776.0
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1818037960]
+offset_left = 33.0
+offset_top = 417.0
+offset_right = 886.0
+offset_bottom = 783.0
 
-[node name="ColorRect" type="ColorRect" parent="ConfirmModal" unique_id=1116590158]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.16394848, 0.21695486, 0.38877624, 1)
-
-[node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=927671841]
-layout_mode = 0
-offset_left = 320.0
-offset_top = 144.0
-offset_right = 845.0
-offset_bottom = 213.0
-theme_override_constants/separation = 32
-alignment = 1
-
-[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players" unique_id=1168805037]
+[node name="Label2" type="Label" parent="VBoxContainer" unique_id=654853190]
 layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Number of players:"
-vertical_alignment = 1
+text = "How to Join"
+label_settings = SubResource("LabelSettings_nhm8p")
 
-[node name="PlayersValue" type="Label" parent="ConfirmModal/Players" unique_id=463014617]
+[node name="instructions" type="RichTextLabel" parent="VBoxContainer" unique_id=176562224]
 layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 42
+bbcode_enabled = true
+text = "Instruction on joining....
 
-[node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1061044408]
-layout_mode = 0
-offset_left = 320.0
-offset_top = 240.0
-offset_right = 699.0
-offset_bottom = 309.0
+blah [b]blah[/b] blah
 
-[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode" unique_id=35548577]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Mode: "
-vertical_alignment = 1
-
-[node name="ModeValue" type="Label" parent="ConfirmModal/Mode" unique_id=2018263523]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=160179230]
-layout_mode = 0
-offset_left = 328.0
-offset_top = 328.0
-offset_right = 725.0
-offset_bottom = 397.0
-
-[node name="TargetLabel" type="Label" parent="ConfirmModal/Target" unique_id=329135054]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Length:"
-vertical_alignment = 1
-
-[node name="TargetValue" type="Label" parent="ConfirmModal/Target" unique_id=172461037]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="ConfirmLabel" type="Label" parent="ConfirmModal" unique_id=1387025854]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -168.0
-offset_right = 168.0
-offset_bottom = 88.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 64
-text = "Confirm?"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ConfirmBtn" type="Button" parent="ConfirmModal" unique_id=1375979581]
-layout_mode = 0
-offset_left = 1144.0
-offset_top = 408.0
-offset_right = 1379.0
-offset_bottom = 495.0
-theme_override_font_sizes/font_size = 50
-text = "Confirm"
-
-[node name="BackBtn" type="Button" parent="ConfirmModal" unique_id=1429988423]
-layout_mode = 0
-offset_left = 48.0
-offset_top = 416.0
-offset_right = 171.0
-offset_bottom = 493.0
-theme_override_font_sizes/font_size = 50
-text = "Back"
+"
+fit_content = true

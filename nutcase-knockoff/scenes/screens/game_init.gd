@@ -5,7 +5,7 @@ signal back_to_home
 
 # Button containers
 @onready var player_buttons = $PlayerSelect/Buttons
-@onready var mode_buttons = $ModeSelect/Buttons
+@onready var game_type = $TypeSelect/Buttons
 @onready var length_buttons = $LengthSelect/Buttons
 
 # Action buttons
@@ -34,7 +34,7 @@ func _ready() -> void:
 	
 	# Setup all option button groups
 	_setup_buttons(player_buttons, "player_count")
-	_setup_buttons(mode_buttons, "game_type")
+	_setup_buttons(game_type, "game_type")
 	_setup_buttons(length_buttons, "game_target")
 	
 	# Connect action buttons
@@ -72,6 +72,7 @@ func _highlight_selected_button(selected: Button, container: Control) -> void:
 	selected.modulate = Color.from_rgba8(251, 237, 43, 255)
 
 func _on_start_button_pressed() -> void:
+	# Show confirmation modal with selected settings
 	confirm_modal.visible = true
 	confirm_players.text = str(settings["player_count"])
 	confirm_mode.text = settings["game_type"]
@@ -99,7 +100,7 @@ func _set_background_focus(enabled: bool) -> void:
 	for button in player_buttons.get_children():
 		if button is Button:
 			button.focus_mode = mode
-	for button in mode_buttons.get_children():
+	for button in game_type.get_children():
 		if button is Button:
 			button.focus_mode = mode
 	for button in length_buttons.get_children():
@@ -114,6 +115,8 @@ func _on_back_button_pressed() -> void:
 	player_buttons.get_child(0).grab_focus()
 
 func _on_confirm_button_pressed() -> void:
+	# TODO: if 1p - load game, if multi - load lobby and pass settings
+	# Emit signal to start game with selected settings
 	_set_background_focus(true)
 	game_init_complete.emit(settings)
 	confirm_modal.visible = false
