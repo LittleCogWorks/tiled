@@ -58,16 +58,34 @@ func _on_game_init_complete(settings: Dictionary) -> void:
 	cleanup_current_scene()
 
 	if settings["game_mode"] == "multi":
+		# Load lobby here, pass settings. Emit signal when ready
 		print("Multiplayer mode selected, loading lobby")
+		load_lobby(settings)
 
 	else:
+		# single player selected, start game directly
 		print("Single-player mode selected, starting game directly")
+		# setup new game in game manger
+		GameManager.start_game(settings)
+		load_game_board()
 
-	# setup new game in game manger
-	GameManager.start_game(settings)
-	
+#  LOAD LOBBY
+func load_lobby(settings: Dictionary) -> void:
+	# LOBBY: show room code, instructions, player list, start button (disabled until 2+ players), back to home button
+	#   Waiting for players to connect - as players connect need to update PlayerManager.players + update ui
+	#  start is only active if at least 2 players connected
 
-	load_game_board()
+	GameManager.change_state(GameManager.GameState.LOBBY)
+	var lobby_scene = preload("res://scenes/screens/lobby.tscn")
+	var lobby_instance = lobby_scene.instantiate()
+	scene_container.add_child(lobby_instance)
+	lobby_instance.lobby_start_requested.connect(_on_lobby_start_requested)
+	lobby_instance.lobby_back_to_home.connect(_on_return_to_home)
+	lobby_instance.lobby_back_to_setup.connect(load_game_init)    #  Return to lobby: should return player to previous screen
+
+func _on_lobby_start_requested(settings: Dictionary) -> void:
+	print("Lobby start requested with settings: %s, loading Game Board" % settings)
+
 
 # LOAD GAME BOARD
 func load_game_board() -> void:

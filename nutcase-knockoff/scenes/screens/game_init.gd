@@ -25,8 +25,8 @@ signal back_to_home
 var settings = {
 	"players": PlayerManager.players,
 	"player_count": 2,
-	"game_mode": "single",
-	"game_type": "qna",
+	"game_mode": "single",	# mode = "single", "multi", "pass_and_play" 
+	"game_type": "qna",		# type = "qna", "challenge", "timed" etc
 	"game_target": 200,
 	"round_count": 5,
 	"fuzzy_enabled": GameConfig.FUZZY_ENABLED_DEFAULT

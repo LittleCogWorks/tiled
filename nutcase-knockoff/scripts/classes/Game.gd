@@ -6,7 +6,8 @@ var id: String = ""
 # Current round number
 var current_round: int = 0
 # Game mode/type
-var game_type: String = ""
+var game_mode: String = ""		# e.g., "single", "multi", "pass_and_play"
+var game_type: String = ""		# e.g., "classic", "timed", "challenge"
 # Game target score
 var game_target: int = 1000
 # Is the game currently active
