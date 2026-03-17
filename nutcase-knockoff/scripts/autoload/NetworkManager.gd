@@ -46,6 +46,7 @@ signal player_ready_received(device_id: String, is_ready: bool)
 signal slider_click_received(device_id: String, index: int)
 signal guess_received(device_id: String, answer: String)
 signal vote_cast_received(device_id: String, accepted: bool)
+signal overlay_continue_received(device_id: String)
 
 # ---------------------------------------------------------------------------
 # State
@@ -149,6 +150,9 @@ func broadcast_scores(players: Array) -> void:
 		payload.append({"id": p.id, "name": p.name, "score": p.score})
 	broadcast({"type": "scores", "players": payload})
 
+func broadcast_overlay_prompt(active: bool, message: String) -> void:
+	broadcast({"type": "overlay_prompt", "active": active, "message": message})
+
 func broadcast_vote_request(guesser_id: String, submitted_answer: String) -> void:
 	broadcast({"type": "vote_request", "guesser_id": guesser_id, "answer": submitted_answer})
 
@@ -233,6 +237,9 @@ func _handle_packet(peer_id: int, raw: String) -> void:
 		"vote":
 			var accepted: bool = bool(msg.get("accepted", false))
 			vote_cast_received.emit(device_id, accepted)
+
+		"overlay_continue":
+			overlay_continue_received.emit(device_id)
 
 		_:
 			push_warning("NetworkManager: unknown message type '%s' from %s" % [msg_type, device_id])

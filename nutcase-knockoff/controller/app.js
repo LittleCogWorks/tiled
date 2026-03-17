@@ -6,8 +6,10 @@ const state = {
 	joined: false,
 	inGame: false,
 	ready: false,
+	playerId: "",
 	isYourTurn: false,
 	turnStateKnown: false,
+	overlayActive: false,
 	clientId: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
 };
 
@@ -21,6 +23,7 @@ const el = {
 	disconnectBtn: document.getElementById("disconnectBtn"),
 	joinBtn: document.getElementById("joinBtn"),
 	readyBtn: document.getElementById("readyBtn"),
+	continueBtn: document.getElementById("continueBtn"),
 	guessBtn: document.getElementById("guessBtn"),
 	statusText: document.getElementById("statusText"),
 	turnText: document.getElementById("turnText"),
@@ -68,6 +71,7 @@ function bindEvents() {
 	el.disconnectBtn.addEventListener("click", disconnect);
 	el.joinBtn.addEventListener("click", joinLobby);
 	el.readyBtn.addEventListener("click", sendReady);
+	el.continueBtn.addEventListener("click", sendOverlayContinue);
 	el.sliderButtons.forEach((button) => {
 		button.addEventListener("click", () => {
 			const idx = Number(button.dataset.index || -1);
@@ -109,8 +113,10 @@ function connect() {
 		state.joined = false;
 		state.inGame = false;
 		state.ready = false;
+		state.playerId = "";
 		state.isYourTurn = false;
 		state.turnStateKnown = false;
+		state.overlayActive = false;
 		resetSliderButtons();
 		render();
 		log("Disconnected");
@@ -133,17 +139,22 @@ async function handleServerMessage(rawData) {
 		const msg = JSON.parse(text);
 		if (msg.type === "room_joined") {
 			state.joined = true;
+			state.playerId = String(msg.player_id || "");
 			render();
 			log("Joined lobby");
 		}
 		if (msg.type === "game_started") {
 			state.inGame = true;
+			state.overlayActive = false;
 			render();
 			log("Game started");
 		}
 		if (msg.type === "new_round") {
 			resetSliderButtons();
+			state.overlayActive = false;
+			state.turnStateKnown = false;
 			log(`New round ${msg.round_num ?? "?"}`);
+			render();
 		}
 		if (msg.type === "your_turn") {
 			state.turnStateKnown = true;
@@ -153,7 +164,11 @@ async function handleServerMessage(rawData) {
 		}
 		if (msg.type === "turn_changed") {
 			state.turnStateKnown = true;
-			state.isYourTurn = false;
+			state.isYourTurn = String(msg.player_id || "") === state.playerId;
+			render();
+		}
+		if (msg.type === "overlay_prompt") {
+			state.overlayActive = Boolean(msg.active);
 			render();
 		}
 		if (msg.type === "slider_revealed") {
@@ -189,8 +204,10 @@ function disconnect() {
 	state.joined = false;
 	state.inGame = false;
 	state.ready = false;
+	state.playerId = "";
 	state.isYourTurn = false;
 	state.turnStateKnown = false;
+	state.overlayActive = false;
 	resetSliderButtons();
 	render();
 }
@@ -226,6 +243,13 @@ function sendReady() {
 	state.ready = !state.ready;
 	render();
 	send("ready", { ready: state.ready, client_id: state.clientId });
+}
+
+function sendOverlayContinue() {
+	if (!state.overlayActive) {
+		return;
+	}
+	send("overlay_continue", { client_id: state.clientId });
 }
 
 function sendSliderClick(index) {
@@ -271,12 +295,14 @@ function render() {
 	el.joinBtn.disabled = !state.connected || state.inGame;
 	el.readyBtn.disabled = !state.connected || state.inGame;
 
-	const controlsEnabled = state.connected && state.joined && state.turnStateKnown && state.isYourTurn;
+	const controlsEnabled = state.connected && state.joined && state.turnStateKnown && state.isYourTurn && !state.overlayActive;
 	el.sliderButtons.forEach((button) => {
 		const isRevealed = button.classList.contains("revealed");
 		button.disabled = !controlsEnabled || isRevealed;
 	});
 	el.guessBtn.disabled = !controlsEnabled;
+	const canContinueOverlay = state.connected && state.joined && state.overlayActive && state.turnStateKnown && state.isYourTurn;
+	el.continueBtn.disabled = !canContinueOverlay;
 
 	el.joinBtn.textContent = state.joined ? "Update Profile" : "Join Lobby";
 	el.readyBtn.textContent = state.ready ? "Unready" : "Ready";

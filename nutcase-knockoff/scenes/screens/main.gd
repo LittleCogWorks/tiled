@@ -40,9 +40,11 @@ func _on_exit_game() -> void:
 
 func _on_return_to_home() -> void:
 	print("Returning to home screen")
-	if GameManager.current_state == GameManager.GameState.LOBBY:
-		PlayerManager.clear_all_players()
+	# Always clean multiplayer session state when returning home.
+	PlayerManager.clear_all_players()
+	if not NetworkManager.is_local:
 		NetworkManager.stop_server()
+	NetworkManager.is_local = true
 	cleanup_current_scene()
 	load_game_home()
 
@@ -69,6 +71,7 @@ func _on_game_init_complete(settings: Dictionary) -> void:
 	else:
 		# single player selected, start game directly
 		print("Single-player mode selected, starting game directly")
+		NetworkManager.is_local = true
 		# setup new game in game manger
 		GameManager.start_game(settings)
 		load_game_board()
@@ -104,6 +107,8 @@ func _on_lobby_start_requested(settings: Dictionary) -> void:
 	if not GameManager.start_game(settings):
 		print("Failed to start game.")
 		return
+	if not NetworkManager.is_local:
+		NetworkManager.broadcast_game_started()
 	cleanup_current_scene()
 	load_game_board()
 

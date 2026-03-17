@@ -45,6 +45,7 @@ const ROUND_SCENES = {
 
 var round_instance = null
 var _stored_focus_modes: Dictionary = {}  # node path -> focus mode, used by _recursive_set_focus
+var _overlay_accepting_remote: bool = false
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -72,6 +73,7 @@ func _ready() -> void:
 	if not NetworkManager.is_local:
 		NetworkManager.slider_click_received.connect(_on_network_slider_click)
 		NetworkManager.guess_received.connect(_on_network_guess)
+		NetworkManager.overlay_continue_received.connect(_on_network_overlay_continue)
 		_broadcast_scores_to_controllers()
 		_broadcast_turn_to_controllers()
 
@@ -82,9 +84,14 @@ func _ready() -> void:
 func _update_overlay(msg: String) -> void:
 	res_label.text = msg
 	res_overlay.visible = true
+	_overlay_accepting_remote = true
+	_broadcast_turn_to_controllers()
+	_broadcast_overlay_prompt(true, msg)
 	res_next_btn.grab_focus()  # Auto-focus for controller
 	await res_next_btn.pressed
+	_overlay_accepting_remote = false
 	res_overlay.visible = false
+	_broadcast_overlay_prompt(false, "")
 
 func _input(event):
 	# Allow A button / Enter to dismiss overlay
@@ -234,6 +241,7 @@ func _start_next_round() -> void:
 		GameManager.game.current_round += 1
 		round_instance.start_new_question(next_question)
 		_broadcast_new_round_to_controllers()
+		_broadcast_turn_to_controllers()
 		
 		# Re-enable focus after round loads (sliders will auto-focus)
 		await get_tree().process_frame
@@ -280,6 +288,18 @@ func _on_network_guess(device_id: String, guess_text: String) -> void:
 	if round_instance:
 		round_instance.guess_submitted.emit(guess_text)
 
+func _on_network_overlay_continue(device_id: String) -> void:
+	if not _overlay_accepting_remote or not res_overlay.visible:
+		return
+
+	var sender = PlayerManager.get_player_by_device_id(device_id)
+	var current = PlayerManager.get_current_player()
+	if sender == null or sender != current:
+		print("Received overlay continue from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
+		return
+
+	res_next_btn.emit_signal("pressed")
+
 func _broadcast_scores_to_controllers() -> void:
 	if NetworkManager.is_local:
 		return
@@ -310,6 +330,11 @@ func _broadcast_new_round_to_controllers() -> void:
 
 	NetworkManager.broadcast_new_round(GameManager.game.current_round, slider_count)
 
+func _broadcast_overlay_prompt(active: bool, message: String) -> void:
+	if NetworkManager.is_local:
+		return
+	NetworkManager.broadcast_overlay_prompt(active, message)
+
 
 # Signal handlers for buttons
 func _on_options_btn_pressed() -> void:
@@ -322,6 +347,8 @@ func _on_exit_btn_pressed() -> void:
 
 func _on_exit_confirmed() -> void:
 	print("Exit confirmed, returning to main menu")
+	if not NetworkManager.is_local:
+		NetworkManager.stop_server()
 	# Reset game state
 	GameManager.game = null
 	GameManager.current_state = GameManager.GameState.NONE
