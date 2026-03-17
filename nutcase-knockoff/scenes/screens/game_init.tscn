@@ -240,7 +240,6 @@ text = "Off"
 metadata/value = false
 
 [node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 312.0
@@ -258,6 +257,7 @@ grow_vertical = 2
 color = Color(0.16394848, 0.21695486, 0.38877624, 1)
 
 [node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=1483279617]
+visible = false
 layout_mode = 0
 offset_left = 320.0
 offset_top = 144.0
@@ -279,6 +279,7 @@ text = "99"
 vertical_alignment = 1
 
 [node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1226365121]
+visible = false
 layout_mode = 0
 offset_left = 320.0
 offset_top = 240.0
@@ -298,6 +299,7 @@ text = "99"
 vertical_alignment = 1
 
 [node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=1603969943]
+visible = false
 layout_mode = 0
 offset_left = 328.0
 offset_top = 328.0
@@ -347,3 +349,11 @@ offset_right = 171.0
 offset_bottom = 493.0
 theme_override_font_sizes/font_size = 50
 text = "Back"
+
+[node name="Values" type="RichTextLabel" parent="ConfirmModal" unique_id=972641215]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 90.0
+offset_right = 1054.0
+offset_bottom = 460.0
+bbcode_enabled = true

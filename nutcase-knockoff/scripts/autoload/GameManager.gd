@@ -46,25 +46,43 @@ func _ready() -> void:
 	game_ended.connect(_on_game_ended)
 
 # Start a new game with given settings
-func start_game(settings: Dictionary) -> void:
+func start_game(settings: Dictionary) -> bool:
 	print("Starting new game with settings: %s" % settings)
 	game = Game.new()
 	game.id = GameIdGenerator.get_random_id()
 	game.game_type = settings.get("game_type", "qna")
+	game.game_mode = settings.get("game_mode", "single")
 	game.game_target = settings.get("game_target", 1000)
 	game.fuzzy_enabled = settings.get("fuzzy_enabled", GameConfig.FUZZY_ENABLED_DEFAULT)
 	game.current_round = 1
 	game.is_active = true
 	
-	# Clear any existing players
-	if PlayerManager.players:
-		PlayerManager.clear_all_players()
+	# TODO: Refactor start_game to only set up game state, not players. 
+	# For multiplayer, players are created in lobby and should already be in PlayerManager.
 
-	# Load players
-	for i in range(settings.get("player_count", 2)):
-		var player_name = "Player %d" % (i + 1)
-		PlayerManager.add_player(player_name)
-
+	
+	# single or multi
+	if settings.get("game_mode", "multi") == "single":
+		print("Single-player mode: creating player instances")
+		# Clear any existing players
+		if not PlayerManager.players.is_empty():
+			PlayerManager.clear_all_players()
+			print("Cleared existing players from PlayerManager")
+		var player_name = "Player 1"
+		if not PlayerManager.add_player(player_name):
+			push_error("Failed to create player instance for single-player mode!")
+			return false
+		else:
+			print("Created player: %s (Device ID: %s)" % [player_name, "single_player"])
+	else:
+		print("Multiplayer mode: using existing players from PlayerManager")
+		if PlayerManager.players.is_empty():
+			push_warning("Warning: No players found in PlayerManager for multiplayer mode!")
+			return false
+		elif PlayerManager.players.size() < 2 and settings.get("game_mode", "multi") == "multi":
+			push_warning("Warning: Less than 2 players in PlayerManager for multiplayer mode!")
+			return false
+		
 	# Load questions
 	const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
 	available_questions = QuestionLoaderResource.load_questions_from_file("res://data/questions.json")
@@ -73,6 +91,7 @@ func start_game(settings: Dictionary) -> void:
 	change_state(GameState.IN_PROGRESS)
 	print("Game started with %d players" % PlayerManager.players.size())
 	game_started.emit()
+	return true
 
 # Get next unused question
 func get_next_question() -> Question:

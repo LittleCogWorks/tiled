@@ -21,10 +21,11 @@ signal back_to_home
 @onready var confirm_players = $ConfirmModal/Players/PlayersValue
 @onready var confirm_mode = $ConfirmModal/Mode/ModeValue
 @onready var confirm_target = $ConfirmModal/Target/TargetValue
+@onready var confirm_values = $ConfirmModal/Values
 
 var settings = {
 	"players": PlayerManager.players,
-	"player_count": 2,
+	"player_count": 1,
 	"game_mode": "single",	# mode = "single", "multi", "pass_and_play" 
 	"game_type": "qna",		# type = "qna", "challenge", "timed" etc
 	"game_target": 200,
@@ -79,9 +80,15 @@ func _highlight_selected_button(selected: Button, container: Control) -> void:
 func _on_start_button_pressed() -> void:
 	# Show confirmation modal with selected settings
 	confirm_modal.visible = true
-	confirm_players.text = str(settings["player_count"])
-	confirm_mode.text = settings["game_type"]
-	confirm_target.text = str(settings["game_target"])
+	# confirm_players.text = str(settings["player_count"])
+	# confirm_mode.text = settings["game_type"]
+	# confirm_target.text = str(settings["game_target"])
+	confirm_values.text = "Game Type: %s\nGame Mode: %s player\nTarget Score: %d\nFuzzy Matching: %s" % [
+		settings["game_type"],
+		settings["game_mode"],
+		settings["game_target"],
+		"Enabled" if settings["fuzzy_enabled"] else "Disabled"
+	]
 	
 	# Disable background controls and focus modal
 	_set_background_focus(false)

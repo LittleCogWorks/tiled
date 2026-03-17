@@ -22,9 +22,10 @@ func _ready() -> void:
 	print("PlayerManager initialized")
 
 # Add a new player to the game
-func add_player(player_name: String, device_id: String = "") -> Player:
+func add_player(player_name: String, device_id: String = "", avatar_index: int = 0) -> Player:
 	var player = Player.new("player_%d" % (players.size() + 1), player_name)
 	player.device_id = device_id
+	player.avatar_index = avatar_index
 	players.append(player)
 	player_added.emit(player)
 	print("Added player: %s (ID: %s)" % [player.name, player.id])

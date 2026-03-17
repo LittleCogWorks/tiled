@@ -2,31 +2,33 @@ extends Control
 
 @onready var player_name = $Name
 @onready var player_score = $Score
+@onready var avatar = $Avatar
 @onready var icon = $Icon
 @onready var current_leader = $Icon/CurrentLeader
 @onready var current_player = $Icon/CurrentPlayer
 
 
 func _ready() -> void:
-    pass  # Initialization if needed
+	pass  # Initialization if needed
 
 # setup badge with player name an init score (0). 
 # Current player should be player 1 on first load
 func setup(player: Player) -> void:
-    player_name.text = player.name
-    player_score.text = str(player.score)
-    # icon.modulate = player.color
-    
-    # Initially hide current leader/player indicators
-    current_player.visible = false
-    current_leader.visible = false
+	player_name.text = player.name
+	player_score.text = str(player.score)
+	var avatar_texture = GameConfig.PLR_BADGE_ICONS[player.avatar_index]
+	avatar.texture = ResourceLoader.load(avatar_texture)
+	
+	# Initially hide current leader/player indicators
+	current_player.visible = false
+	current_leader.visible = false
 
 func update_score(new_score: int) -> void:
-    player_score.text = str(new_score)
+	player_score.text = str(new_score)
 
 func set_current_player(is_current: bool) -> void:
-    current_player.visible = is_current
+	current_player.visible = is_current
 
 func set_current_leader(is_leader: bool) -> void:
-    current_leader.visible = is_leader
+	current_leader.visible = is_leader
 

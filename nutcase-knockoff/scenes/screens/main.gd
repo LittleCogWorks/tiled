@@ -60,6 +60,7 @@ func _on_game_init_complete(settings: Dictionary) -> void:
 	if settings["game_mode"] == "multi":
 		# Load lobby here, pass settings. Emit signal when ready
 		print("Multiplayer mode selected, loading lobby")
+		NetworkManager.is_local = false
 		load_lobby(settings)
 
 	else:
@@ -78,6 +79,7 @@ func load_lobby(settings: Dictionary) -> void:
 	GameManager.change_state(GameManager.GameState.LOBBY)
 	var lobby_scene = preload("res://scenes/screens/lobby.tscn")
 	var lobby_instance = lobby_scene.instantiate()
+	lobby_instance.configure(settings)
 	scene_container.add_child(lobby_instance)
 	lobby_instance.lobby_start_requested.connect(_on_lobby_start_requested)
 	lobby_instance.lobby_back_to_home.connect(_on_return_to_home)
@@ -85,7 +87,12 @@ func load_lobby(settings: Dictionary) -> void:
 
 func _on_lobby_start_requested(settings: Dictionary) -> void:
 	print("Lobby start requested with settings: %s, loading Game Board" % settings)
-
+	if not GameManager.start_game(settings):
+		print("Failed to start game.")
+		return
+	cleanup_current_scene()
+	NetworkManager.stop_server()  # Stop accepting new connections once game starts
+	load_game_board()
 
 # LOAD GAME BOARD
 func load_game_board() -> void:
