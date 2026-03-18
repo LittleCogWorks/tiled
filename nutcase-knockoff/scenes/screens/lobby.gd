@@ -4,6 +4,7 @@ extends Node2D
 @onready var players_list= $PlayersContainer/Players
 @onready var game_code_label = $RoomInfoContainer/Code
 @onready var instructions_label = $JoinContainer/instructions
+@onready var qr_code_rect = $JoinContainer/QrCode
 @onready var start_button = $StartBtn
 @onready var home_button = $HomeBtn
 
@@ -12,6 +13,7 @@ signal lobby_back_to_home
 signal lobby_back_to_setup
 
 const p_badge = preload("res://scenes/components/player_badge.tscn") 
+const SimpleQrCode = preload("res://scripts/utils/simple_qr_code.gd")
 var _setup_settings: Dictionary = {}
 var ready_by_device: Dictionary = {}
 
@@ -26,6 +28,16 @@ func _ready() -> void:
 		start_button.pressed.connect(_on_start_button_pressed)
 	if not home_button.pressed.is_connected(_on_home_button_pressed):
 		home_button.pressed.connect(_on_home_button_pressed)
+
+	# Display controller URL for players to join
+	var controller_url = ControllerServer.get_controller_url()
+	instructions_label.text = "Open on your phone:\n[b]%s[/b]\n\nEnter the code above to join" % controller_url
+	var qr_texture = SimpleQrCode.make_texture(controller_url)
+	if qr_texture:
+		qr_code_rect.texture = qr_texture
+	else:
+		qr_code_rect.visible = false
+		instructions_label.text += "\n\nQR unavailable for this URL"
 
 	if NetworkManager.is_local == false:
 		NetworkManager.start_server()

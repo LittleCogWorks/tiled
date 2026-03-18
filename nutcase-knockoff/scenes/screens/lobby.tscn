@@ -115,3 +115,8 @@ blah [b]blah[/b] blah
 
 "
 fit_content = true
+
+[node name="QrCode" type="TextureRect" parent="JoinContainer" unique_id=2060616051]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 220)
+stretch_mode = 5

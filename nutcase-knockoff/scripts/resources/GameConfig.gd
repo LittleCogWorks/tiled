@@ -1,6 +1,7 @@
 extends Node
 
 const WEBSOCKET_PORT: int = 9080
+const CONTROLLER_HTTP_PORT: int = 8000
 
 # Scoring
 const BASE_POT: float = 100.0
