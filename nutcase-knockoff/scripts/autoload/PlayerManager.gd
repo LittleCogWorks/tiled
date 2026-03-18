@@ -17,13 +17,15 @@ signal player_scored(player: Player, points: int)
 
 var players: Array[Player] = []
 var current_turn_index: int = 0
+var _next_player_sequence: int = 1
 
 func _ready() -> void:
 	print("PlayerManager initialized")
 
 # Add a new player to the game
 func add_player(player_name: String, device_id: String = "", avatar_index: int = 0) -> Player:
-	var player = Player.new("player_%d" % (players.size() + 1), player_name)
+	var player = Player.new("player_%d" % _next_player_sequence, player_name)
+	_next_player_sequence += 1
 	player.device_id = device_id
 	player.avatar_index = avatar_index
 	players.append(player)
@@ -152,4 +154,5 @@ func reset_game() -> void:
 func clear_all_players() -> void:
 	players.clear()
 	current_turn_index = 0
+	_next_player_sequence = 1
 	print("All players cleared")

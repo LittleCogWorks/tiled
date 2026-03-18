@@ -40,6 +40,8 @@ var current_state: GameState = GameState.NONE
 var game: Game = null
 var available_questions: Array[Question] = []
 var used_question_ids: Array[int] = []
+const RoundResolutionHelperResource = preload("res://scripts/logic/RoundResolutionHelper.gd")
+var _round_resolution = RoundResolutionHelperResource.new()
 
 func _ready() -> void:
 	print("GameManager initialized")
@@ -48,17 +50,18 @@ func _ready() -> void:
 # Start a new game with given settings
 func start_game(settings: Dictionary) -> bool:
 	print("Starting new game with settings: %s" % settings)
+	var game_mode: String = settings.get("game_mode", "single")
 	game = Game.new()
 	game.id = GameIdGenerator.get_random_id()
 	game.game_type = settings.get("game_type", "qna")
-	game.game_mode = settings.get("game_mode", "single")
+	game.game_mode = game_mode
 	game.game_target = settings.get("game_target", 1000)
 	game.fuzzy_enabled = settings.get("fuzzy_enabled", GameConfig.FUZZY_ENABLED_DEFAULT)
 	game.current_round = 1
 	game.is_active = true
 	
 	# single or multi
-	if settings.get("game_mode", "multi") == "single":
+	if game_mode == "single":
 		print("Single-player mode: creating player instances")
 		# Clear any existing players
 		if not PlayerManager.players.is_empty():
@@ -75,7 +78,7 @@ func start_game(settings: Dictionary) -> bool:
 		if PlayerManager.players.is_empty():
 			push_warning("Warning: No players found in PlayerManager for multiplayer mode!")
 			return false
-		elif PlayerManager.players.size() < 2 and settings.get("game_mode", "multi") == "multi":
+		elif PlayerManager.players.size() < 2 and game_mode == "multi":
 			push_warning("Warning: Less than 2 players in PlayerManager for multiplayer mode!")
 			return false
 		
@@ -83,7 +86,16 @@ func start_game(settings: Dictionary) -> bool:
 	const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
 	available_questions = QuestionLoaderResource.load_questions_from_file("res://data/questions.json")
 	used_question_ids.clear()
-	
+
+	# Enforce explicit state progression; start_game should not jump NONE -> IN_PROGRESS.
+	if current_state == GameState.NONE:
+		change_state(GameState.MENU)
+	if current_state == GameState.MENU:
+		change_state(GameState.SETUP)
+	if current_state != GameState.SETUP and current_state != GameState.LOBBY:
+		push_error("GameManager: start_game() expected SETUP or LOBBY state, got %s" % GameState.keys()[current_state])
+		return false
+
 	change_state(GameState.IN_PROGRESS)
 	print("Game started with %d players" % PlayerManager.players.size())
 	game_started.emit()
@@ -107,96 +119,26 @@ func get_next_question() -> Question:
 
 # Check for winner by score
 func check_for_winner() -> Array[Player]:
-	var winners: Array[Player] = []
-	for player in PlayerManager.get_active_players():
-		if player.score >= game.game_target:
-			winners.append(player)
-	return winners
+	if game == null:
+		return []
+	return _round_resolution.check_for_winner(game.game_target)
 
 # Handle wrong answer with frozen player logic
 func handle_wrong_answer(player: Player, base_prize: int) -> Dictionary:
-	var result = {
-		"player": player,
-		"penalty": 0,
-		"is_frozen": false,
-		"is_last_standing": false,
-		"is_lps_wrong": false,  # NEW: Last player standing guessed wrong
-		"last_standing_player": null,
-		"correct_answer": "",
-		"message": ""
-	}
-	
-	var active_players = PlayerManager.get_active_players()
-	
-	# If multiple players active, apply penalty and freeze
-	if active_players.size() > 1:
-		var penalty = int(base_prize * GameConfig.PENALTY_MULTIPLIER)
-		PlayerManager.award_points(player, -penalty)
-		PlayerManager.freeze_player(player)
-		result["penalty"] = penalty
-		result["is_frozen"] = true
-		result["message"] = "Incorrect %s!\nYou lose %d points!" % [player.name, penalty]
-		print("Player %s is now frozen for this question." % player.name)
-		# PlayerManager.next_turn()
-		
-		# Check if now last player standing
-		active_players = PlayerManager.get_active_players()
-		if active_players.size() == 1:
-			result["is_last_standing"] = true
-			result["last_standing_player"] = active_players[0]
-			result["message"] = "Last player standing!\n%s gets a free guess!" % active_players[0].name
-			print("Free guess for %s - no penalty applied" % active_players[0].name)
-			# PlayerManager.next_turn()  # Advance to last player
-	
-	# If only 1 player active (LPS got it wrong), end the round
-	elif active_players.size() == 1:
-		result["is_lps_wrong"] = true
-		result["correct_answer"] = game.current_question.answer if game.current_question else ""
-		result["message"] = "Wrong!\nThe answer was: %s" % result["correct_answer"]
-		print("Last player standing got it wrong. Round ends.")
-	return result
+	var current_question: Resource = game.current_question if game else null
+	return _round_resolution.handle_wrong_answer(player, base_prize, current_question)
 
 # Handle correct answer with winner checking
 func handle_correct_answer(player: Player, prize: int, type: SubmissionResult) -> Dictionary:
-	var result = {
-		"player": player,
-		"prize": prize,
-		"was_frozen": player.is_frozen,
-		"has_winner": false,
-		"winner": null,
-		"message": ""
-	}
-	
-	print("Player %s answered correctly!" % player.name)
-	PlayerManager.award_points(player, prize)
-	player.is_frozen = false  # Unfreeze if they were frozen
-	
-	if type == SubmissionResult.AUTO_ACCEPT:
-		result["message"] = "Close enough, %s!\nYou get %d points!" % [player.name, prize]
-	else:
-		result["message"] = "Correct %s!\nYou get %d points!" % [player.name, prize]
-	
-	# Check for winners
-	var winners = check_for_winner()
-	if not winners.is_empty():
-		result["has_winner"] = true
-		result["winner"] = winners[0]
-		print("We have a winner: %s!" % winners[0].name)
-	else:
-		print("No winner yet, continuing to next round.")
-	
-	return result
+	var is_auto_accept := type == SubmissionResult.AUTO_ACCEPT
+	var target := game.game_target if game else 0
+	return _round_resolution.handle_correct_answer(player, prize, is_auto_accept, target)
 
 
 # Handle vote rejection: no-voters split half the prize.
 # On a tie no_voters is empty and nobody is awarded anything.
 func handle_vote_rejection(prize: int, no_voters: Array[Player]) -> void:
-	if no_voters.is_empty():
-		return
-	var each_share = int((prize / 2.0) / no_voters.size())
-	for voter in no_voters:
-		PlayerManager.award_points(voter, each_share)
-		print("Vote rejection: %s awarded %d points" % [voter.name, each_share])
+	_round_resolution.handle_vote_rejection(prize, no_voters)
 
 func _on_game_ended(winner: Player) -> void:
 	print("Game ended! Winner: %s" % winner.name)

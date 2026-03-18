@@ -57,6 +57,8 @@ var room_code: String = ""
 var _server: WebSocketMultiplayerPeer = null
 # Map: peer_id (int) → device_id (String)  — device_id is the string form of peer_id
 var _peer_ids: Dictionary = {}
+const NetworkProtocolHandlerResource = preload("res://scripts/logic/NetworkProtocolHandler.gd")
+var _protocol_handler = NetworkProtocolHandlerResource.new()
 
 # ---------------------------------------------------------------------------
 # Lifecycle
@@ -206,54 +208,36 @@ func _process_events() -> void:
 ## - Sends error responses for malformed or invalid packets.
 ## Called internally by _process_events().
 func _handle_packet(peer_id: int, raw: String) -> void:
-	var parsed = JSON.parse_string(raw)
-	if not parsed is Dictionary:
-		push_warning("NetworkManager: malformed packet from peer %d: %s" % [peer_id, raw])
-		return
-
-	var msg: Dictionary = parsed
-	var msg_type: String = msg.get("type", "")
 	var device_id: String = _peer_ids.get(peer_id, str(peer_id))
+	var effects: Dictionary = _protocol_handler.process_packet(peer_id, raw, device_id, room_code)
+	_apply_packet_effects(effects)
 
-	match msg_type:
-		"join":
-			var player_name: String = msg.get("name", "").strip_edges()
-			var avatar_index: int = int(msg.get("avatar_index", 0))
-			if player_name.is_empty():
-				send_to_player(device_id, {"type": "error", "message": "Name cannot be empty"})
-				return
-			send_to_player(device_id, {
-				"type": "room_joined",
-				"player_id": device_id,
-				"room_code": room_code
-			})
-			player_join_received.emit(device_id, player_name, avatar_index)
+func _apply_packet_effects(effects: Dictionary) -> void:
+	for warning in effects.get("warnings", []):
+		push_warning(warning)
 
-		"ready":
-			var is_ready: bool = bool(msg.get("ready", true))
-			player_ready_received.emit(device_id, is_ready)
+	for outgoing in effects.get("outgoing", []):
+		send_to_player(outgoing.get("device_id", ""), outgoing.get("message", {}))
 
-		"slider_click":
-			var index: int = int(msg.get("index", -1))
-			if index < 0:
-				return
-			slider_click_received.emit(device_id, index)
+	for event_data in effects.get("events", []):
+		_emit_protocol_event(event_data.get("name", ""), event_data.get("args", []))
 
-		"guess":
-			var answer: String = msg.get("answer", "").strip_edges()
-			if answer.is_empty():
-				return
-			guess_received.emit(device_id, answer)
-
-		"vote":
-			var accepted: bool = bool(msg.get("accepted", false))
-			vote_cast_received.emit(device_id, accepted)
-
-		"overlay_continue":
-			overlay_continue_received.emit(device_id)
-
+func _emit_protocol_event(event_name: String, args: Array) -> void:
+	match event_name:
+		"player_join_received":
+			player_join_received.emit(args[0], args[1], args[2])
+		"player_ready_received":
+			player_ready_received.emit(args[0], args[1])
+		"slider_click_received":
+			slider_click_received.emit(args[0], args[1])
+		"guess_received":
+			guess_received.emit(args[0], args[1])
+		"vote_cast_received":
+			vote_cast_received.emit(args[0], args[1])
+		"overlay_continue_received":
+			overlay_continue_received.emit(args[0])
 		_:
-			push_warning("NetworkManager: unknown message type '%s' from %s" % [msg_type, device_id])
+			push_warning("NetworkManager: unhandled protocol event '%s'" % event_name)
 
 # ---------------------------------------------------------------------------
 # Internal — helpers
