@@ -31,25 +31,20 @@ var settings = {
 
 func _ready() -> void:
 	confirm_modal.visible = false
-	
 	# Setup all option button groups
 	_setup_buttons(game_type_buttons, "game_type")
 	_setup_buttons(length_buttons, "game_target")
 	_setup_buttons(mode_buttons, "game_mode")
 	_setup_buttons(fuzzy_buttons, "fuzzy_enabled")
-	
 	# Connect action buttons
 	start_button.pressed.connect(_on_start_button_pressed)
 	home_button.pressed.connect(_on_home_button_pressed)
 	confirm_button.pressed.connect(_on_confirm_button_pressed)
 	back_button.pressed.connect(_on_back_button_pressed)
-	
 	# Setup modal button navigation
 	_setup_modal_focus()
-	
 	# Set initial focus for controller navigation
 	game_type_buttons.get_child(0).grab_focus()
-
 
 func _setup_buttons(container: Control, key: String) -> void:
 	for button in container.get_children():
@@ -75,16 +70,12 @@ func _highlight_selected_button(selected: Button, container: Control) -> void:
 func _on_start_button_pressed() -> void:
 	# Show confirmation modal with selected settings
 	confirm_modal.visible = true
-	# confirm_players.text = str(settings["player_count"])
-	# confirm_mode.text = settings["game_type"]
-	# confirm_target.text = str(settings["game_target"])
 	confirm_values.text = "Game Type: %s\nGame Mode: %s player\nTarget Score: %d\nFuzzy Matching: %s" % [
 		settings["game_type"],
 		settings["game_mode"],
 		settings["game_target"],
 		"Enabled" if settings["fuzzy_enabled"] else "Disabled"
 	]
-	
 	# Disable background controls and focus modal
 	_set_background_focus(false)
 	await get_tree().process_frame
@@ -94,7 +85,6 @@ func _setup_modal_focus() -> void:
 	# Create focus loop between modal buttons
 	back_button.focus_neighbor_right = confirm_button.get_path()
 	confirm_button.focus_neighbor_left = back_button.get_path()
-	
 	# Loop vertically too
 	back_button.focus_neighbor_bottom = confirm_button.get_path()
 	confirm_button.focus_neighbor_top = back_button.get_path()
