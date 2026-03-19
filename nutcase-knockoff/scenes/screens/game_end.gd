@@ -3,6 +3,8 @@ extends Control
 signal play_again_requested
 signal return_to_home
 
+const SCORE_LABEL_FONT_SIZE = 32
+
 @onready var title = $Content/Title
 @onready var winner_label = $Content/WinnerLabel
 @onready var scores_container = $Content/Scores
@@ -63,7 +65,7 @@ func _populate_scoreboard(players: Array[Player]) -> void:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		
 		# Optional: Style the label
-		label.add_theme_font_size_override("font_size", 32)
+		label.add_theme_font_size_override("font_size", SCORE_LABEL_FONT_SIZE)
 		
 		scores_container.add_child(label)
 

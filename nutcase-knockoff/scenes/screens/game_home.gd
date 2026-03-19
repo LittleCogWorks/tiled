@@ -19,7 +19,8 @@ func _ready() -> void:
 
 	start_game_btn.grab_focus()
 	start_game_btn.focus_mode = Control.FOCUS_ALL
-	options_btn.focus_mode = Control.FOCUS_ALL
+	options_btn.focus_mode = Control.FOCUS_NONE
+	options_btn.disabled = true
 	exit_btn.focus_mode = Control.FOCUS_ALL
 
 
@@ -28,13 +29,19 @@ func _on_start_game_btn_pressed() -> void:
 	start_game.emit()
 
 func _on_options_btn_pressed() -> void:
+	# TODO: Implement settings screen
 	print("Options button pressed - no options implemented yet")
 
 func _on_exit_btn_pressed() -> void:
-	$AcceptDialog.popup_centered()
+	accept_dialog.popup_centered()
 	await get_tree().process_frame  # Wait one frame
-	$AcceptDialog.get_ok_button().grab_focus()  # Focus the OK button
+	if is_instance_valid(accept_dialog):
+		var ok_button = accept_dialog.get_ok_button()
+		if is_instance_valid(ok_button):
+			ok_button.grab_focus()  # Focus the OK button
 
 func _on_AcceptDialog_confirmed() -> void:
+	if not NetworkManager.is_local:
+		NetworkManager.stop_server()
 	print("Exit button pressed, quitting application")
 	exit_game.emit()

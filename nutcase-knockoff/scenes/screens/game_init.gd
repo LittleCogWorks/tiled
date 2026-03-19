@@ -3,6 +3,10 @@ extends Node2D
 signal game_init_complete(settings: Dictionary)
 signal back_to_home
 
+const DEFAULT_GAME_TARGET = 200
+const SELECTED_BUTTON_COLOR: Color = Color(0.9843137, 0.9294118, 0.1686275, 1.0)
+const REQUIRED_SETTING_KEYS = ["game_mode", "game_type", "game_target", "fuzzy_enabled"]
+
 # Button containers
 @onready var game_type_buttons = $GameType/Buttons
 @onready var length_buttons = $LengthSelect/Buttons
@@ -24,7 +28,7 @@ var settings = {
 	"player_count": 1,
 	"game_mode": "single",	# mode = "single", "multi", "pass_and_play" 
 	"game_type": "qna",		# type = "qna", "challenge", "timed" etc
-	"game_target": 200,
+	"game_target": DEFAULT_GAME_TARGET,
 	"round_count": 5,
 	"fuzzy_enabled": GameConfig.FUZZY_ENABLED_DEFAULT
 }
@@ -47,12 +51,23 @@ func _ready() -> void:
 	game_type_buttons.get_child(0).grab_focus()
 
 func _setup_buttons(container: Control, key: String) -> void:
-	for button in container.get_children():
-		if button is Button:
-			button.pressed.connect(_on_option_selected.bind(button, key, container))
+	for button in _get_buttons(container):
+		button.pressed.connect(_on_option_selected.bind(button, key, container))
+
+func _get_buttons(container: Control) -> Array[Button]:
+	var buttons: Array[Button] = []
+	for child in container.get_children():
+		if child is Button:
+			buttons.append(child)
+	return buttons
 
 func _on_option_selected(button: Button, key: String, container: Control) -> void:
 	var value = button.get_meta("value") if button.has_meta("value") else button.text
+	if key == "game_target":
+		value = int(value)
+		if value <= 0:
+			push_warning("Invalid target score selected; falling back to default")
+			value = DEFAULT_GAME_TARGET
 	settings[key] = value
 	print("Selected %s: %s" % [key, str(value)])
 	
@@ -61,11 +76,10 @@ func _on_option_selected(button: Button, key: String, container: Control) -> voi
 
 func _highlight_selected_button(selected: Button, container: Control) -> void:
 	# Reset all buttons in this container
-	for button in container.get_children():
-		if button is Button:
-			button.modulate = Color.WHITE
+	for button in _get_buttons(container):
+		button.modulate = Color.WHITE
 	# Highlight the selected one
-	selected.modulate = Color.from_rgba8(251, 237, 43, 255)
+	selected.modulate = SELECTED_BUTTON_COLOR
 
 func _on_start_button_pressed() -> void:
 	# Show confirmation modal with selected settings
@@ -94,12 +108,14 @@ func _setup_modal_focus() -> void:
 func _set_background_focus(enabled: bool) -> void:
 	# Prevent controller from navigating to background buttons
 	var mode = Control.FOCUS_NONE if not enabled else Control.FOCUS_ALL
-	for button in game_type_buttons.get_children():
-		if button is Button:
-			button.focus_mode = mode
-	for button in length_buttons.get_children():
-		if button is Button:
-			button.focus_mode = mode
+	for button in _get_buttons(game_type_buttons):
+		button.focus_mode = mode
+	for button in _get_buttons(length_buttons):
+		button.focus_mode = mode
+	for button in _get_buttons(mode_buttons):
+		button.focus_mode = mode
+	for button in _get_buttons(fuzzy_buttons):
+		button.focus_mode = mode
 	start_button.focus_mode = mode
 	home_button.focus_mode = mode
 
@@ -111,9 +127,32 @@ func _on_back_button_pressed() -> void:
 func _on_confirm_button_pressed() -> void:
 	# TODO: if 1p - load game, if multi - load lobby and pass settings
 	# Emit signal to start game with selected settings
+	if not _validate_settings(settings):
+		push_error("Invalid game settings; cannot start")
+		return
 	_set_background_focus(true)
 	game_init_complete.emit(settings)
 	confirm_modal.visible = false
+
+func _validate_settings(settings_to_validate: Dictionary) -> bool:
+	for key in REQUIRED_SETTING_KEYS:
+		if not settings_to_validate.has(key):
+			push_warning("Missing required setting: %s" % key)
+			return false
+
+	if not (settings_to_validate["game_target"] is int):
+		push_warning("game_target must be an integer")
+		return false
+
+	if settings_to_validate["game_target"] <= 0:
+		push_warning("game_target must be greater than zero")
+		return false
+
+	if not (settings_to_validate["fuzzy_enabled"] is bool):
+		push_warning("fuzzy_enabled must be a boolean")
+		return false
+
+	return true
 
 func _on_home_button_pressed() -> void:
 	confirm_modal.visible = false

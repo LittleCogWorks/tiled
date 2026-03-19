@@ -12,6 +12,9 @@ var _port: int = GameConfig.CONTROLLER_HTTP_PORT
 var _is_listening: bool = false
 var _pending_clients: Array[Dictionary] = []
 
+const HOST_IP_ENV_KEY = "NUTCASE_HOST_IP"
+const HOST_IP_SETTING_KEY = "nutcase/network/preferred_host_ip"
+
 func _ready() -> void:
 	_host_ip = _get_local_ip()
 	start_server()
@@ -173,14 +176,57 @@ func _get_mime_type(path: String) -> String:
 	return "application/octet-stream"
 
 func _get_local_ip() -> String:
+	var explicit_ip = _get_explicit_host_ip_override()
+	if explicit_ip != "":
+		return explicit_ip
+
 	var addresses = IP.get_local_addresses()
-	
-	# Look for the first non-loopback IPv4 address
+	var ipv4_candidates: Array[String] = []
+
+	# Keep only non-loopback IPv4 candidates.
 	for addr in addresses:
-		# Skip loopback and IPv6
-		if addr.begins_with("127.") or ":" in addr:
-			continue
-		# Found a local network address
-		return addr
-	
+		if _is_valid_ipv4_candidate(addr):
+			ipv4_candidates.append(addr)
+
+	if ipv4_candidates.is_empty():
+		return ""
+
+	# Prefer common Wi-Fi/home LAN ranges first, then fall back.
+	for addr in ipv4_candidates:
+		if addr.begins_with("192.168."):
+			return addr
+	for addr in ipv4_candidates:
+		if addr.begins_with("10."):
+			return addr
+	for addr in ipv4_candidates:
+		if addr.begins_with("172."):
+			return addr
+
+	return ipv4_candidates[0]
+
+func _get_explicit_host_ip_override() -> String:
+	# Priority 1: environment variable for quick local dev override.
+	var env_ip = OS.get_environment(HOST_IP_ENV_KEY).strip_edges()
+	if _is_valid_ipv4_candidate(env_ip):
+		print("ControllerServer: using host IP from env %s: %s" % [HOST_IP_ENV_KEY, env_ip])
+		return env_ip
+
+	# Priority 2: optional project setting for stable team/dev-machine config.
+	if ProjectSettings.has_setting(HOST_IP_SETTING_KEY):
+		var setting_ip = str(ProjectSettings.get_setting(HOST_IP_SETTING_KEY, "")).strip_edges()
+		if _is_valid_ipv4_candidate(setting_ip):
+			print("ControllerServer: using host IP from project setting %s: %s" % [HOST_IP_SETTING_KEY, setting_ip])
+			return setting_ip
+
 	return ""
+
+func _is_valid_ipv4_candidate(addr: String) -> bool:
+	if addr == "":
+		return false
+	if ":" in addr:
+		return false
+	if addr.begins_with("127."):
+		return false
+	if addr == "0.0.0.0":
+		return false
+	return true

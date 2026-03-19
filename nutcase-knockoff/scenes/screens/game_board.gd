@@ -39,7 +39,7 @@ const player_badge_sm = preload("res://scenes/components/player_badge_small.tscn
 @onready var exit_confirm = $AcceptDialog
 
 const ROUND_SCENES = {
-	"qna": "res://scenes/components/rounds/qna.tscn"
+	"qna": preload("res://scenes/components/rounds/qna.tscn")
 	# Add other round types here as needed
 }
 
@@ -101,14 +101,6 @@ func _input(event):
 
 ## Sets up HUD: instantiates player badges (small) and displays them.
 func  _setup_players_hud() -> void:
-	# if players_container.get_child_count() > 0:
-	# 	for child in players_container.get_children():
-	# 		child.queue_free()
-	# for player in PlayerManager.players:
-	# 	var badge_instance = player_badge.instantiate()
-	# 	players_container.add_child(badge_instance)
-	# 	badge_instance.setup(player)
-
 	if player_badges.get_child_count() > 0:
 		for child in player_badges.get_children():
 			child.queue_free()
@@ -120,18 +112,13 @@ func  _setup_players_hud() -> void:
 ## Loads round scene based on game type and wires up round_result signal.
 func _setup_round_area() -> void:
 	var game_type = GameManager.game.game_type.to_lower()
-	var round_scene_path = ROUND_SCENES.get(game_type, "")
-	if round_scene_path == "":
+	var round_scene: PackedScene = ROUND_SCENES.get(game_type, null)
+	if round_scene == null:
 		push_error("No round scene found for game type: %s" % game_type)
 		return
-	var round_scene = load(round_scene_path)
-	if round_scene:
-		round_instance = round_scene.instantiate()
-		round_area.add_child(round_instance)
-		round_instance.connect("round_result", Callable(self, "_on_round_result"))
-	else:
-		push_error("Failed to load round scene at path: %s" % round_scene_path)
-
+	round_instance = round_scene.instantiate()
+	round_area.add_child(round_instance)
+	round_instance.connect("round_result", Callable(self, "_on_round_result"))
 ## Round result handler — dispatches to specific submission type handlers.
 ## Coordinates flow: wrong answer → freeze cascade, fuzzy → voting, exact → winner check
 func _on_round_result(player: Player, is_correct: int, prize: int, submitted_answer: String) -> void:

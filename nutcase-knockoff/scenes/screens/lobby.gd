@@ -1,8 +1,7 @@
 extends Node2D
 
 @onready var room_code_label = $RoomInfoContainer/Code
-@onready var players_list= $PlayersContainer/Players
-@onready var game_code_label = $RoomInfoContainer/Code
+@onready var players_list = $PlayersContainer/Players
 @onready var instructions_label = $JoinContainer/instructions
 @onready var qr_code_rect = $JoinContainer/QrCode
 @onready var start_button = $StartBtn
@@ -104,7 +103,7 @@ func _on_player_disconnected(device_id: String) -> void:
 func _update_players_list() -> void:
 	if players_list.get_child_count() > 0:
 		for child in players_list.get_children():
-			child.free()
+			child.queue_free()
 	for player in PlayerManager.players:
 		var badge_instance = p_badge.instantiate()
 		players_list.add_child(badge_instance)
