@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cj1sp0u6xorms"]
+[gd_scene format=3 uid="uid://cj1sp0u6xorms"]
 
 [ext_resource type="Script" uid="uid://drkfq3su42qao" path="res://scenes/components/rounds/qna.gd" id="1_h7n03"]
 [ext_resource type="Theme" uid="uid://b1vdv74xd0icc" path="res://resources/guess_button.tres" id="1_ll357"]
 [ext_resource type="FontFile" uid="uid://bex25m5snoet2" path="res://assets/fonts/Pencil Child.ttf" id="3_ybcsd"]
+[ext_resource type="FontFile" uid="uid://dsjw1g8q8n42w" path="res://assets/fonts/Cute Dino.otf" id="4_w8bgg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_w8bgg"]
 font = ExtResource("3_ybcsd")
@@ -10,7 +11,7 @@ font_size = 51
 
 [sub_resource type="Theme" id="Theme_ybcsd"]
 
-[node name="QnA" type="Control"]
+[node name="QnA" type="Control" unique_id=1722812673]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,12 +22,12 @@ script = ExtResource("1_h7n03")
 metadata/_edit_vertical_guides_ = [395.0, 958.0, 1788.0]
 metadata/_edit_horizontal_guides_ = [712.0, 199.0, 891.0]
 
-[node name="CenterContainer2" type="CenterContainer" parent="."]
+[node name="CenterContainer2" type="CenterContainer" parent="." unique_id=621560735]
 layout_mode = 0
 offset_right = 1931.0
 offset_bottom = 1080.0
 
-[node name="Background" type="PanelContainer" parent="."]
+[node name="Background" type="PanelContainer" parent="." unique_id=1525442176]
 visible = false
 layout_mode = 0
 anchor_right = 1.0
@@ -36,28 +37,29 @@ offset_bottom = 1060.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="Background"]
+[node name="ColorRect" type="ColorRect" parent="Background" unique_id=673218866]
 layout_mode = 2
 color = Color(0.23137255, 0.050980393, 0.64705884, 0.81960785)
 
-[node name="GuessBtn" type="Button" parent="."]
+[node name="GuessBtn" type="Button" parent="." unique_id=541022875]
 layout_mode = 0
-offset_left = 822.0
-offset_top = 733.0
-offset_right = 1097.8718
-offset_bottom = 849.0
+offset_left = 1751.0
+offset_top = 354.0
+offset_right = 2026.8718
+offset_bottom = 470.0
+scale = Vector2(0.5, 0.5)
 theme = ExtResource("1_ll357")
 theme_override_font_sizes/font_size = 64
 text = "Guess"
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=1848662594]
 layout_mode = 0
 offset_left = 873.0
 offset_top = 440.0
 offset_right = 874.0
 offset_bottom = 463.0
 
-[node name="CurrentPlayer" type="Label" parent="."]
+[node name="CurrentPlayer" type="Label" parent="." unique_id=1422998282]
 layout_mode = 0
 offset_left = 630.0
 offset_top = 37.0
@@ -66,25 +68,30 @@ offset_bottom = 93.0
 text = " - - Current Player - - "
 label_settings = SubResource("LabelSettings_w8bgg")
 
-[node name="Prize" type="Label" parent="."]
+[node name="Prize" type="Label" parent="." unique_id=957552302]
 layout_mode = 0
 offset_left = 1668.0
 offset_top = 25.0
 offset_right = 1778.0
 offset_bottom = 113.0
+theme_override_fonts/font = ExtResource("4_w8bgg")
 theme_override_font_sizes/font_size = 64
 text = "999"
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="GridContainer" type="GridContainer" parent="." unique_id=2039667510]
+custom_minimum_size = Vector2(1300, 500)
 layout_mode = 0
-offset_left = 386.0
-offset_top = 197.0
-offset_right = 1790.0
-offset_bottom = 714.0
-
-[node name="GridContainer" type="GridContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(1120, 500)
-layout_mode = 2
+offset_left = 247.0
+offset_top = 205.0
+offset_right = 1547.0
+offset_bottom = 705.0
 theme = SubResource("Theme_ybcsd")
 theme_override_constants/h_separation = 8
 columns = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1155071422]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 197.0
+offset_right = 1710.0
+offset_bottom = 714.0
