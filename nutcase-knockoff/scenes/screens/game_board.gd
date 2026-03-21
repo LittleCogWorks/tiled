@@ -27,8 +27,8 @@ signal network_vote_resolved(result: Dictionary)
 const player_badge_sm = preload("res://scenes/components/player_badge_small.tscn")
 
 @onready var controls = $HUD/Controls
-@onready var options_btn = $HUD/Controls/OptionsBtn
-@onready var exit_btn = $HUD/Controls/ExitBtn
+@onready var options_btn = $HUD/OptionsBtn
+@onready var exit_btn = $HUD/ExitBtn
 @onready var players_container = $HUD/PlayersContainer
 @onready var player_badges = $HUD/PlayerBadges
 

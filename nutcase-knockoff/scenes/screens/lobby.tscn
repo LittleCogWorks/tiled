@@ -2,8 +2,10 @@
 
 [ext_resource type="Script" uid="uid://bp2ad1l8s4pxm" path="res://scenes/screens/lobby.gd" id="1_rxbpr"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_5gglr"]
+[ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="3_jdbly"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="3_pdtbn"]
-[ext_resource type="Texture2D" uid="uid://csbyuyjrgshiw" path="res://assets/images/buttons/start/start-up.svg" id="6_gdom8"]
+[ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="4_5gglr"]
+[ext_resource type="Texture2D" uid="uid://vvvbgch27fvq" path="res://assets/images/buttons/home/home-normal.svg" id="5_pdtbn"]
 [ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="7_56qed"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_nhm8p"]
@@ -21,8 +23,8 @@ default_font_size = 54
 
 [node name="Lobby" type="Node2D" unique_id=392050463]
 script = ExtResource("1_rxbpr")
-metadata/_edit_vertical_guides_ = [960.0]
-metadata/_edit_horizontal_guides_ = [536.0]
+metadata/_edit_vertical_guides_ = [960.0, 1920.0]
+metadata/_edit_horizontal_guides_ = [536.0, 1080.0]
 
 [node name="Background" type="TextureRect" parent="." unique_id=1968711665]
 offset_left = -91.0
@@ -32,20 +34,19 @@ offset_bottom = 1426.0
 texture = ExtResource("2_5gglr")
 
 [node name="StartBtn" type="TextureButton" parent="." unique_id=1698733788]
-offset_left = 829.0
-offset_top = 807.00006
-offset_right = 1243.0
-offset_bottom = 1021.00006
-scale = Vector2(0.60267645, 0.522713)
-texture_normal = ExtResource("6_gdom8")
+offset_left = 808.0
+offset_top = 784.0
+offset_right = 1108.0
+offset_bottom = 934.0
+texture_normal = ExtResource("3_jdbly")
+texture_hover = ExtResource("4_5gglr")
 
-[node name="HomeBtn" type="Button" parent="." unique_id=261725871]
-offset_left = 861.0
-offset_top = 950.0
-offset_right = 1054.0
-offset_bottom = 1046.0
-theme_override_font_sizes/font_size = 64
-text = "Home"
+[node name="HomeBtn" type="TextureButton" parent="." unique_id=2094923599]
+offset_left = 1801.0
+offset_top = 23.0
+offset_right = 1901.0
+offset_bottom = 123.0
+texture_normal = ExtResource("5_pdtbn")
 
 [node name="Title" type="Label" parent="." unique_id=581773540]
 offset_left = 552.0
@@ -117,6 +118,6 @@ blah [b]blah[/b] blah
 fit_content = true
 
 [node name="QrCode" type="TextureRect" parent="JoinContainer" unique_id=2060616051]
-layout_mode = 2
 custom_minimum_size = Vector2(220, 220)
+layout_mode = 2
 stretch_mode = 5
