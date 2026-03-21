@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bgauep5mf2b7n"]
+[gd_scene format=3 uid="uid://bgauep5mf2b7n"]
 
 [ext_resource type="Script" uid="uid://cjhiy8brgmk72" path="res://scenes/screens/game_home.gd" id="1_dobo1"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_4s0rd"]
@@ -23,25 +23,25 @@ default_font_size = 36
 Label/colors/font_color = Color(1, 1, 1, 1)
 Label/styles/normal = null
 
-[node name="GameHome" type="Node2D"]
+[node name="GameHome" type="Node2D" unique_id=1535613956]
 script = ExtResource("1_dobo1")
 metadata/_edit_vertical_guides_ = [960.0, -354.0, 1920.0]
 metadata/_edit_horizontal_guides_ = [536.0, 1080.0]
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1714284062]
 visible = false
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = SubResource("GradientTexture2D_2brdo")
 
-[node name="Background2" type="TextureRect" parent="."]
+[node name="Background2" type="TextureRect" parent="." unique_id=1917874966]
 offset_left = -216.0
 offset_top = -160.0
 offset_right = 2172.0
 offset_bottom = 1508.0
 texture = ExtResource("2_4s0rd")
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=730235545]
 offset_left = 97.0
 offset_top = 91.0
 offset_right = 1825.0
@@ -52,7 +52,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
-[node name="StartGame" type="TextureButton" parent="."]
+[node name="StartGame" type="TextureButton" parent="." unique_id=1222801282]
 offset_left = 776.0
 offset_top = 568.0
 offset_right = 1190.0
@@ -64,22 +64,30 @@ texture_hover = ExtResource("4_7ggut")
 texture_focused = ExtResource("4_7ggut")
 stretch_mode = 0
 
-[node name="Options" type="TextureButton" parent="."]
-offset_left = 824.0
+[node name="Options" type="TextureButton" parent="." unique_id=17533870]
+offset_left = 664.0
 offset_top = 792.0
-offset_right = 1103.0
+offset_right = 943.0
 offset_bottom = 911.0
 texture_normal = ExtResource("5_7ggut")
 stretch_mode = 0
 
-[node name="Exit" type="TextureButton" parent="."]
+[node name="Credits" type="TextureButton" parent="." unique_id=1411087166]
+offset_left = 976.0
+offset_top = 792.0
+offset_right = 1255.0
+offset_bottom = 911.0
+texture_normal = ExtResource("5_7ggut")
+stretch_mode = 0
+
+[node name="Exit" type="TextureButton" parent="." unique_id=1014416984]
 offset_left = 824.0
 offset_top = 944.0
 offset_right = 1103.0
 offset_bottom = 1063.0
 texture_normal = ExtResource("6_kp88g")
 
-[node name="AcceptDialog" type="AcceptDialog" parent="."]
+[node name="AcceptDialog" type="AcceptDialog" parent="." unique_id=1822986078]
 oversampling_override = 1.0
 initial_position = 2
 size = Vector2i(480, 192)
