@@ -293,5 +293,60 @@
     "difficulty": "hard",
     "category": "History",
     "tags": ["exploration", "dates"]
+  },
+  {
+    "id": 30,
+    "question": "Which Dutch artist famously painted 'The Starry Night'?",
+    "answer": "Vincent van Gogh",
+    "alt_answers": ["Van Gogh"],
+    "fun_fact": "Van Gogh painted 'The Starry Night' while staying at an asylum in Saint-Rémy-de-Provence.",
+    "joke": "He had a great ear for music, but a terrible one for staying in one piece!",
+    "difficulty": "hard",
+    "category": "Art",
+    "tags": ["painting", "artists"]
+  },
+  {
+    "id": 31,
+    "question": "What is the largest species of shark alive today?",
+    "answer": "Whale Shark",
+    "alt_answers": ["Rhincodon typus"],
+    "fun_fact": "Whale sharks are filter feeders and can grow to over 12 metres in length.",
+    "joke": "It's a whale! It's a shark! It's... actually quite a friendly giant.",
+    "difficulty": "hard",
+    "category": "Science",
+    "tags": ["ocean", "animals"]
+  },
+  {
+    "id": 32,
+    "question": "Which city is known as the 'Eternal City'?",
+    "answer": "Rome",
+    "alt_answers": ["Roma"],
+    "fun_fact": "Rome has been continuously inhabited for over 2,700 years.",
+    "joke": "They say Rome wasn't built in a day, but they probably had better tea breaks than us!",
+    "difficulty": "hard",
+    "category": "Geography",
+    "tags": ["cities", "history"]
+  },
+  {
+    "id": 33,
+    "question": "Who discovered the mathematical constant Pi?",
+    "answer": "Archimedes",
+    "alt_answers": ["Archimedes of Syracuse"],
+    "fun_fact": "While ancient Babylonians knew of Pi, Archimedes created the first theoretical calculation for it.",
+    "joke": "What do you get when you take the sun and divide its circumference by its diameter? Pi in the sky!",
+    "difficulty": "hard",
+    "category": "Mathematics",
+    "tags": ["math", "history"]
+  },
+  {
+    "id": 34,
+    "question": "What is the capital city of Australia?",
+    "answer": "Canberra",
+    "alt_answers": ["ACT"],
+    "fun_fact": "Canberra was selected as the capital in 1908 as a compromise between rivals Sydney and Melbourne.",
+    "joke": "It's the only place where politicians and kangaroos are equally likely to stop traffic!",
+    "difficulty": "hard",
+    "category": "Geography",
+    "tags": ["australia", "cities"]
   }
 ]
