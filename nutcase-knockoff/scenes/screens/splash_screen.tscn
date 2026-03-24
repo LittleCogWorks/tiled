@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://basgb8qmd7tuh"]
 
 [ext_resource type="Script" uid="uid://diseisyc2bdd5" path="res://scenes/screens/splash_screen.gd" id="1_jg1i1"]
+[ext_resource type="Texture2D" uid="uid://dnor24awq3xwf" path="res://assets/images/itch_banner.png" id="2_8hwfj"]
 
 [sub_resource type="Gradient" id="Gradient_5vyjk"]
 
@@ -17,12 +18,14 @@ grow_vertical = 2
 script = ExtResource("1_jg1i1")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=334059015]
+visible = false
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = SubResource("GradientTexture2D_8hwfj")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1848726870]
+visible = false
 layout_mode = 0
 offset_left = 368.0
 offset_top = 112.0
@@ -31,13 +34,18 @@ offset_bottom = 912.0
 color = Color(0.705887, 0.705887, 0.705887, 1)
 
 [node name="Label" type="Label" parent="." unique_id=1089978127]
+visible = false
 layout_mode = 0
-offset_left = 600.0
-offset_top = 416.0
-offset_right = 1408.0
-offset_bottom = 515.0
+offset_left = 433.0
+offset_top = 161.0
+offset_right = 1241.0
+offset_bottom = 260.0
 theme_override_font_sizes/font_size = 72
 text = "This is a splash screen"
 
 [node name="Timer" type="Timer" parent="." unique_id=897079043]
 wait_time = 3.0
+
+[node name="ItchBanner" type="Sprite2D" parent="." unique_id=683416840]
+position = Vector2(970, 482)
+texture = ExtResource("2_8hwfj")
