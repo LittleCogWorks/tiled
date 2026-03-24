@@ -46,10 +46,10 @@ texture = ExtResource("2_4s0rd")
 
 [node name="Title" type="Label" parent="." unique_id=730235545]
 offset_left = 96.0
-offset_top = 320.0
+offset_top = 152.0
 offset_right = 1824.0
-offset_bottom = 651.0
-text = "In a Nutshell Knockoff!"
+offset_bottom = 483.0
+text = "Tiled"
 label_settings = ExtResource("2_rcr06")
 horizontal_alignment = 1
 vertical_alignment = 1

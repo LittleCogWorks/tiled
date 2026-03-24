@@ -1,6 +1,6 @@
 param(
 	[string]$GodotExe = $env:GODOT_EXE,
-	[string]$ProjectPath = ".\nutcase-knockoff"
+	[string]$ProjectPath = ".\tiled"
 )
 
 $tests = @(
