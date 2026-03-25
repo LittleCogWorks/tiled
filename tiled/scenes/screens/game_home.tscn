@@ -12,6 +12,8 @@
 [ext_resource type="Texture2D" uid="uid://d3js7wmo8uwym" path="res://assets/images/buttons/credits/creadit-normal.svg" id="9_45uvd"]
 [ext_resource type="Texture2D" uid="uid://pmcdoofamp3h" path="res://assets/images/buttons/exit/exit-normal.svg" id="10_qknor"]
 [ext_resource type="Texture2D" uid="uid://dck2jl2wolbhr" path="res://assets/images/buttons/exit/exit-over.svg" id="11_e1u3m"]
+[ext_resource type="SpriteFrames" uid="uid://bdg25x2d1v0ke" path="res://assets/images/buttons/base/base_btn.tres" id="13_45uvd"]
+[ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="14_qknor"]
 
 [sub_resource type="Gradient" id="Gradient_4s0rd"]
 colors = PackedColorArray(0.564706, 0.733333, 1, 1, 0.785641, 0.785641, 0.785641, 1)
@@ -102,3 +104,24 @@ theme = SubResource("Theme_4s0rd")
 theme_override_constants/buttons_separation = 2
 dialog_text = "Are you sure you want to quit? (ESC to close)"
 dialog_autowrap = true
+
+[node name="Button" type="Area2D" parent="." unique_id=911355542]
+position = Vector2(64.00003, 712)
+scale = Vector2(0.49964017, 0.4528816)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Button" unique_id=1552122364]
+polygon = PackedVector2Array(280, 424, 328, 432, 440, 424, 544, 440, 672, 440, 784, 440, 816, 416, 840, 384, 832, 240, 816, 160, 696, 152, 592, 160, 448, 160, 344, 168, 272, 168, 248, 216, 240, 304, 248, 360)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Button" unique_id=1971536097]
+position = Vector2(536, 296)
+sprite_frames = ExtResource("13_45uvd")
+autoplay = "default"
+
+[node name="Label" type="Label" parent="Button" unique_id=1725505721]
+offset_left = 312.0
+offset_top = 208.0
+offset_right = 633.0
+offset_bottom = 337.0
+scale = Vector2(1.4114437, 1.5911595)
+text = "Start"
+label_settings = ExtResource("14_qknor")

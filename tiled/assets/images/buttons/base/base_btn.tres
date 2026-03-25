@@ -1,3 +1,39 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://bdg25x2d1v0ke"]
 
+[ext_resource type="Texture2D" uid="uid://dia6pfjrxwcgy" path="res://assets/images/buttons/base/Button-base - 0.png" id="1_yp26h"]
+[ext_resource type="Texture2D" uid="uid://cp2mh2kyjefu0" path="res://assets/images/buttons/base/Button-base - 1.png" id="2_ovvtv"]
+[ext_resource type="Texture2D" uid="uid://cym030o0a2rb0" path="res://assets/images/buttons/base/Button-base - 2.png" id="3_mmbb7"]
+[ext_resource type="Texture2D" uid="uid://jx833qp5hbhc" path="res://assets/images/buttons/base/Button-base-green - 0.png" id="4_muwee"]
+[ext_resource type="Texture2D" uid="uid://dsqy5vw5r5itx" path="res://assets/images/buttons/base/Button-base-green - 1.png" id="5_tq5nn"]
+[ext_resource type="Texture2D" uid="uid://badornwr71wvk" path="res://assets/images/buttons/base/Button-base-green - 2.png" id="6_084t3"]
+
 [resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_yp26h")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_ovvtv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_mmbb7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_muwee")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_tq5nn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_084t3")
+}],
+"loop": true,
+"name": &"over",
+"speed": 4.0
+}]
