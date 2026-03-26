@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://b5n0wr2v8ls38"]
 
+[ext_resource type="Script" path="res://scenes/screens/question_transition_overlay.gd" id="1_8q2m7"]
 [ext_resource type="FontFile" uid="uid://dsjw1g8q8n42w" path="res://assets/fonts/Cute Dino.otf" id="1_70pmm"]
 [ext_resource type="FontFile" uid="uid://c0aku4hxc3oms" path="res://assets/fonts/Coffee Fills.ttf" id="2_q334g"]
 
@@ -7,20 +8,21 @@
 font = ExtResource("1_70pmm")
 font_size = 100
 
-[node name="ResultOverlay" type="Control" unique_id=1801187747]
+[node name="QuestionTransition" type="Control" unique_id=1801187747]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_8q2m7")
 
 [node name="ColorRect2" type="ColorRect" parent="." unique_id=1237582090]
 layout_mode = 0
 offset_left = 8.0
 offset_right = 1912.0
 offset_bottom = 1064.0
-color = Color(0.49, 0.49, 0.49, 0.2)
+color = Color(0.21, 0.21, 0.21, 0.5803922)
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1888182645]
 layout_mode = 0

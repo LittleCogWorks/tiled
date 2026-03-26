@@ -7,7 +7,7 @@ extends Control
 # Responsibilities:
 #   - Load and swap round scenes based on game type
 #   - Process round results (correct/wrong answer) via _on_round_result
-#   - Show result overlay messages between rounds
+#   - Show transition overlay messages between rounds
 #   - Update player badges (score, current player, leader)
 #
 # MULTIPLAYER TODO:
@@ -32,12 +32,11 @@ const player_badge_sm = preload("res://scenes/components/player_badge_small.tscn
 @onready var players_container = $HUD/PlayersContainer
 @onready var player_badges = $HUD/PlayerBadges
 
-@onready var res_overlay = $ResultOverlay
-@onready var res_label = $ResultOverlay/ResultLabel
-@onready var res_next_btn = $ResultOverlay/NextBtn
-
 @onready var round_area = $RoundArea
 @onready var exit_confirm = $AcceptDialog
+
+const QUESTION_TRANSITION_SCENE: PackedScene = preload("res://scenes/screens/question_transition_overlay.tscn")
+const OVERLAY_AUTO_DISMISS_SECONDS: float = 3.0
 
 const ROUND_SCENES = {
 	"qna": preload("res://scenes/components/rounds/qna.tscn")
@@ -49,6 +48,7 @@ const NETWORK_VOTE_TIMEOUT_SECONDS = 20.0
 var round_instance = null
 var _stored_focus_modes: Dictionary = {} # node path -> focus mode, used by _recursive_set_focus
 var _overlay_accepting_remote: bool = false
+var question_transition: Control = null
 var _vote_session_active: bool = false
 var _vote_session_guesser: Player = null
 var _vote_session_correct_answer: String = ""
@@ -66,7 +66,7 @@ func _ready() -> void:
 		push_error("Game Board loaded but no game exists!")
 		return
 	print("Game Board scene ready")
-	res_overlay.visible = false
+	_setup_question_transition_overlay()
 	exit_btn.pressed.connect(Callable(self , "_on_exit_btn_pressed"))
 	options_btn.pressed.connect(Callable(self , "_on_options_btn_pressed"))
 	exit_confirm.confirmed.connect(_on_exit_confirmed)
@@ -90,36 +90,38 @@ func _ready() -> void:
 	# Enable input handling for overlay
 	set_process_input(true)
 
+func _setup_question_transition_overlay() -> void:
+	# Use dedicated transition scene instead of inline board nodes.
+	question_transition = QUESTION_TRANSITION_SCENE.instantiate() as Control
+	if question_transition == null:
+		push_error("Failed to instantiate question_transition_overlay.tscn")
+		return
+
+	question_transition.name = "QuestionTransition"
+	question_transition.visible = false
+	question_transition.z_index = 100
+	add_child(question_transition)
+
+	if not question_transition.has_method("show_message") or not question_transition.has_method("dismiss") or not question_transition.has_method("is_showing"):
+		push_error("QuestionTransition scene script must implement show_message, dismiss, and is_showing")
+
 func _update_overlay(msg: String) -> void:
-	res_label.text = msg
-	res_overlay.visible = true
+	if question_transition == null:
+		push_error("QuestionTransition overlay is not configured correctly")
+		return
+
 	_overlay_accepting_remote = true
 	_broadcast_turn_to_controllers()
 	_broadcast_overlay_prompt(true, msg)
-	res_next_btn.grab_focus() # Auto-focus for controller
-
-	var timer = get_tree().create_timer(5.0)
-	var dismissed := false
-	var mark_dismissed := func() -> void:
-		dismissed = true
-
-	res_next_btn.pressed.connect(mark_dismissed, CONNECT_ONE_SHOT)
-
-	while not dismissed and timer.time_left > 0.0:
-		await get_tree().process_frame
-
-	if res_next_btn.pressed.is_connected(mark_dismissed):
-		res_next_btn.pressed.disconnect(mark_dismissed)
+	await question_transition.show_message(msg, OVERLAY_AUTO_DISMISS_SECONDS)
 
 	_overlay_accepting_remote = false
-	res_overlay.visible = false
-	_broadcast_overlay_prompt(false, "")
 	_broadcast_overlay_prompt(false, "")
 
 func _input(event):
 	# Allow A button / Enter to dismiss overlay
-	if res_overlay.visible and event.is_action_pressed("ui_accept"):
-		res_next_btn.emit_signal("pressed")
+	if question_transition != null and question_transition.is_showing() and event.is_action_pressed("ui_accept"):
+		question_transition.dismiss()
 		get_viewport().set_input_as_handled()
 
 ## Sets up HUD: instantiates player badges (small) and displays them.
@@ -398,7 +400,7 @@ func _on_network_guess(device_id: String, guess_text: String) -> void:
 
 ## Network handler: validates sender is current player and overlay is active, then dismisses overlay.
 func _on_network_overlay_continue(device_id: String) -> void:
-	if not _overlay_accepting_remote or not res_overlay.visible:
+	if not _overlay_accepting_remote or question_transition == null or not question_transition.is_showing():
 		return
 
 	var sender = PlayerManager.get_player_by_device_id(device_id)
@@ -407,7 +409,7 @@ func _on_network_overlay_continue(device_id: String) -> void:
 		print("Received overlay continue from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
 		return
 
-	res_next_btn.emit_signal("pressed")
+	question_transition.dismiss()
 
 ## If multiplayer, send all player scores to connected controllers.
 func _broadcast_scores_to_controllers() -> void:

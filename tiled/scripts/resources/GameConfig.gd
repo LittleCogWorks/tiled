@@ -33,10 +33,10 @@ const RESULT_DISPLAY_DURATION: float = 2.0
 
 const PLR_BADGE_ICONS: Array[String] = [
     "res://assets/images/player_badges/mine/duck.png",
-    "res://assets/images/player_badges/mine/mr-box.png",
+    "res://assets/images/player_badges/mine/mr_box.png",
     "res://assets/images/player_badges/mine/purps.png",
     "res://assets/images/player_badges/mine/square-head-zombie.png",
-    "res://assets/images/player_badges/mine/flower.png",
+    # "res://assets/images/player_badges/mine/flower.png",
     "res://assets/images/player_badges/mine/flower_c.png"
     # "res://assets/images/player_badges/person_1.svg",
     # "res://assets/images/player_badges/person_2.svg",

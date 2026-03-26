@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bhhdxi6xtk1qp" path="res://scenes/screens/game_board.gd" id="1_0h872"]
 [ext_resource type="Texture2D" uid="uid://my76xfh8a2pf" path="res://assets/images/backgrounds/Untitled_Artwork5.png" id="2_a4shw"]
-[ext_resource type="FontFile" uid="uid://dsjw1g8q8n42w" path="res://assets/fonts/Cute Dino.otf" id="2_rwufl"]
 [ext_resource type="FontFile" uid="uid://c0aku4hxc3oms" path="res://assets/fonts/Coffee Fills.ttf" id="3_6xqkr"]
 [ext_resource type="Texture2D" uid="uid://pmcdoofamp3h" path="res://assets/images/buttons/exit/exit-normal.svg" id="3_d7w16"]
 [ext_resource type="Texture2D" uid="uid://b2vducltvynky" path="res://assets/images/buttons/options/options-normal.svg" id="4_6n5tc"]
@@ -15,10 +14,6 @@ colors = PackedColorArray(0.564706, 0.733333, 1, 1, 0.785641, 0.785641, 0.785641
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ms0ej"]
 gradient = SubResource("Gradient_i3a2a")
 width = 65
-
-[sub_resource type="LabelSettings" id="LabelSettings_6xqkr"]
-font = ExtResource("2_rwufl")
-font_size = 100
 
 [node name="GameBoard" type="Control" unique_id=1095715867]
 layout_mode = 3
@@ -182,41 +177,5 @@ offset_bottom = 40.0
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-
-[node name="ResultOverlay" type="Control" parent="." unique_id=499248429]
-visible = false
-z_index = 100
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ColorRect" type="ColorRect" parent="ResultOverlay" unique_id=1409387561]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 208.0
-offset_right = 1912.0
-offset_bottom = 848.0
-color = Color(0.26713118, 0.75498736, 0.5687575, 1)
-
-[node name="ResultLabel" type="Label" parent="ResultOverlay" unique_id=1213683764]
-layout_mode = 0
-offset_left = 120.0
-offset_top = 280.0
-offset_right = 1848.0
-offset_bottom = 696.0
-text = "No winner yet, continuing to next round."
-label_settings = SubResource("LabelSettings_6xqkr")
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="NextBtn" type="Button" parent="ResultOverlay" unique_id=741127232]
-layout_mode = 0
-offset_left = 832.0
-offset_top = 688.0
-offset_right = 1088.0
-offset_bottom = 816.0
-theme_override_fonts/font = ExtResource("3_6xqkr")
-theme_override_font_sizes/font_size = 64
-text = "Next >>"
 
 [node name="AcceptDialog" type="AcceptDialog" parent="." unique_id=1497174300]
