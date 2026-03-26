@@ -98,7 +98,7 @@ func _update_overlay(msg: String) -> void:
 	_broadcast_overlay_prompt(true, msg)
 	res_next_btn.grab_focus() # Auto-focus for controller
 
-	var timer = get_tree().create_timer(3.0)
+	var timer = get_tree().create_timer(5.0)
 	var dismissed := false
 	var mark_dismissed := func() -> void:
 		dismissed = true
