@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://brn7maecyahh4"]
 
-[ext_resource type="Script" path="res://scenes/screens/options.gd" id="1_y7uop"]
+[ext_resource type="Script" uid="uid://0dn7fysucfor" path="res://scenes/screens/options.gd" id="1_y7uop"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_dkq70"]
 [ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="2_t4xj1"]
 [ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="3_sp4sj"]
@@ -104,12 +104,24 @@ layout_mode = 2
 
 [node name="toggle" type="Button" parent="Sound/Buttons" unique_id=1163498365]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_tdua0")
 theme_override_font_sizes/font_size = 28
 toggle_mode = true
 text = "On/Off"
 metadata/value = false
+
+[node name="Volume" type="HSlider" parent="Sound/Buttons" unique_id=1462100110]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Value" type="Label" parent="Sound/Buttons" unique_id=1864820369]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_tdua0")
+theme_override_font_sizes/font_size = 24
+text = "100%"
 
 [node name="Music" type="VBoxContainer" parent="." unique_id=1452947385]
 offset_left = 64.0
@@ -130,12 +142,24 @@ theme_override_constants/separation = 16
 
 [node name="toggle" type="Button" parent="Music/Buttons" unique_id=448148660]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_tdua0")
 theme_override_font_sizes/font_size = 28
 toggle_mode = true
 text = "On/Off"
 metadata/value = false
+
+[node name="Volume" type="HSlider" parent="Music/Buttons" unique_id=714183786]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Value" type="Label" parent="Music/Buttons" unique_id=931444701]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_tdua0")
+theme_override_font_sizes/font_size = 24
+text = "100%"
 
 [node name="Network" type="VBoxContainer" parent="." unique_id=1148475699]
 offset_left = 64.0
@@ -146,7 +170,7 @@ theme = SubResource("Theme_t11tv")
 
 [node name="Label" type="Label" parent="Network" unique_id=454009934]
 layout_mode = 2
-text = "Network"
+text = "Internet"
 label_settings = SubResource("LabelSettings_nhm8p")
 
 [node name="Buttons" type="HBoxContainer" parent="Network" unique_id=744490233]

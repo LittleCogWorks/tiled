@@ -28,7 +28,6 @@ func _ready() -> void:
 	print("Main scene ready, loading SplashScreen")
 	scene_loader = MainSceneLoader.new(scene_container)
 	session_coordinator = MainSessionCoordinatorScript.new()
-	MusicManager.play_menu_music()
 	# Initialize game state
 	GameManager.current_state = GameManager.GameState.NONE
 	# var a = GameIdGenerator.get_random_id()
@@ -46,6 +45,7 @@ func _on_splash_complete() -> void:
 ## Load the home/menu screen.
 func load_game_home() -> void:
 	GameManager.change_state(GameManager.GameState.MENU)
+	MusicManager.play_menu_music()
 	scene_loader.show_game_home(_on_start_game, _on_open_options, _on_exit_game)
 
 func _on_start_game() -> void:
@@ -65,6 +65,7 @@ func _on_open_options() -> void:
 
 
 func load_options() -> void:
+	MusicManager.play_menu_music()
 	scene_loader.show_options(_on_return_to_home)
 
 func _on_return_to_home() -> void:
@@ -77,6 +78,7 @@ func _on_return_to_home() -> void:
 ## Load the game setup/init screen (config: type, target, mode, etc).
 func load_game_init() -> void:
 	GameManager.change_state(GameManager.GameState.SETUP)
+	MusicManager.play_menu_music()
 	scene_loader.show_game_init(_on_game_init_complete, _on_return_to_home)
 
 func _on_game_init_complete(settings: Dictionary) -> void:
@@ -115,6 +117,7 @@ func load_lobby(settings: Dictionary) -> void:
 	#  start is only active if at least 2 players connected
 	session_coordinator.prepare_lobby_session()
 	GameManager.change_state(GameManager.GameState.LOBBY)
+	MusicManager.play_menu_music()
 	scene_loader.show_lobby(settings, _on_lobby_start_requested, _on_return_to_home, _on_return_to_setup_from_lobby)
 
 func _on_return_to_setup_from_lobby() -> void:
@@ -134,6 +137,7 @@ func _on_lobby_start_requested(settings: Dictionary) -> void:
 
 ## Load the active game board screen (gameplay).
 func load_game_board() -> void:
+	MusicManager.play_game_music()
 	scene_loader.show_game_board(_on_return_to_home, _on_game_ended)
 
 # LOAD GAME END
@@ -149,6 +153,7 @@ func load_game_end(winner: Player) -> void:
 		return
 	
 	print("Loading game end screen, winner: %s" % winner.name)
+	MusicManager.play_menu_music()
 
 	var game_data = {
 		"game_type": GameManager.game.game_type,

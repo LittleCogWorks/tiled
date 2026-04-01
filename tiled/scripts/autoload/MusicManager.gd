@@ -2,6 +2,7 @@ extends Node
 
 const MENU_MUSIC_STREAM := preload("res://assets/sound/music/8bit Bossa.mp3")
 const GAME_MUSIC_STREAM := preload("res://assets/sound/music/8bit Bossa.mp3")
+const MUSIC_BUS_NAME := "Music"
 
 var _player: AudioStreamPlayer
 var _active_track: String = ""
@@ -10,8 +11,9 @@ var _active_track: String = ""
 func _ready() -> void:
 	_player = AudioStreamPlayer.new()
 	_player.name = "MusicPlayer"
-	_player.bus = "Master"
+	_player.bus = MUSIC_BUS_NAME
 	_player.stream_paused = false
+	_player.volume_db = 0.0
 	add_child(_player)
 	_apply_settings()
 	if not UserSettings.settings_changed.is_connected(_on_settings_changed):
@@ -55,5 +57,16 @@ func _on_settings_changed() -> void:
 func _apply_settings() -> void:
 	if not is_instance_valid(_player):
 		return
-	_player.volume_db = UserSettings.music_volume_db
+	_apply_bus_settings(MUSIC_BUS_NAME, UserSettings.music_volume_db, UserSettings.music_enabled)
 	_player.stream_paused = not UserSettings.music_enabled
+
+
+func _apply_bus_settings(bus_name: String, volume_db: float, enabled: bool) -> void:
+	var bus_index = AudioServer.get_bus_index(bus_name)
+	if bus_index == -1:
+		push_warning("Audio bus '%s' not found; falling back to Master" % bus_name)
+		bus_index = AudioServer.get_bus_index("Master")
+	if bus_index == -1:
+		return
+	AudioServer.set_bus_volume_db(bus_index, volume_db)
+	AudioServer.set_bus_mute(bus_index, not enabled)
