@@ -11,7 +11,6 @@ const REQUIRED_SETTING_KEYS = ["game_mode", "game_type", "game_target", "fuzzy_e
 @onready var game_type_buttons = $GameType/Buttons
 @onready var length_buttons = $LengthSelect/Buttons
 @onready var mode_buttons = $ModeSelect/Buttons
-@onready var fuzzy_buttons = $FuzzySelect/Buttons
 
 # Action buttons
 @onready var start_button = $StartBtn
@@ -39,7 +38,7 @@ func _ready() -> void:
 	_setup_buttons(game_type_buttons, "game_type")
 	_setup_buttons(length_buttons, "game_target")
 	_setup_buttons(mode_buttons, "game_mode")
-	_setup_buttons(fuzzy_buttons, "fuzzy_enabled")
+	
 	# Connect action buttons
 	start_button.pressed.connect(_on_start_button_pressed)
 	home_button.pressed.connect(_on_home_button_pressed)
@@ -84,11 +83,10 @@ func _highlight_selected_button(selected: Button, container: Control) -> void:
 func _on_start_button_pressed() -> void:
 	# Show confirmation modal with selected settings
 	confirm_modal.visible = true
-	confirm_values.text = "Game Type: %s\nGame Mode: %s player\nTarget Score: %d\nFuzzy Matching: %s" % [
+	confirm_values.text = "Game Type: %s\nGame Mode: %s player\nTarget Score: %d\n" % [
 		settings["game_type"],
 		settings["game_mode"],
 		settings["game_target"],
-		"Enabled" if settings["fuzzy_enabled"] else "Disabled"
 	]
 	# Disable background controls and focus modal
 	_set_background_focus(false)
@@ -113,8 +111,6 @@ func _set_background_focus(enabled: bool) -> void:
 	for button in _get_buttons(length_buttons):
 		button.focus_mode = mode
 	for button in _get_buttons(mode_buttons):
-		button.focus_mode = mode
-	for button in _get_buttons(fuzzy_buttons):
 		button.focus_mode = mode
 	start_button.focus_mode = mode
 	home_button.focus_mode = mode

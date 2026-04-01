@@ -43,13 +43,13 @@ color = Color(0.23137255, 0.050980393, 0.64705884, 0.81960785)
 
 [node name="GuessBtn" type="Button" parent="." unique_id=541022875]
 layout_mode = 0
-offset_left = 1751.0
-offset_top = 354.0
-offset_right = 2026.8718
-offset_bottom = 470.0
+offset_left = 888.0
+offset_top = 832.0
+offset_right = 1288.0
+offset_bottom = 1044.0
 scale = Vector2(0.5, 0.5)
 theme = ExtResource("1_ll357")
-theme_override_font_sizes/font_size = 64
+theme_override_font_sizes/font_size = 73
 text = "Guess"
 
 [node name="Title" type="Label" parent="." unique_id=1848662594]
@@ -61,19 +61,19 @@ offset_bottom = 463.0
 
 [node name="CurrentPlayer" type="Label" parent="." unique_id=1422998282]
 layout_mode = 0
-offset_left = 630.0
-offset_top = 37.0
-offset_right = 1146.0
-offset_bottom = 93.0
+offset_left = 712.0
+offset_top = 72.0
+offset_right = 1228.0
+offset_bottom = 128.0
 text = " - - Current Player - - "
 label_settings = SubResource("LabelSettings_w8bgg")
 
 [node name="Prize" type="Label" parent="." unique_id=957552302]
 layout_mode = 0
-offset_left = 1668.0
-offset_top = 25.0
-offset_right = 1778.0
-offset_bottom = 113.0
+offset_left = 1568.0
+offset_top = 48.0
+offset_right = 1693.0
+offset_bottom = 136.0
 theme_override_fonts/font = ExtResource("4_w8bgg")
 theme_override_font_sizes/font_size = 64
 text = "999"

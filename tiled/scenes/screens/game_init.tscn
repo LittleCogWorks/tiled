@@ -19,12 +19,6 @@ default_font_size = 54
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
 
-[sub_resource type="Theme" id="Theme_d4pih"]
-default_font = ExtResource("2_h1k66")
-default_font_size = 54
-
-[sub_resource type="ButtonGroup" id="ButtonGroup_xjbsa"]
-
 [node name="GameInit" type="Node2D" unique_id=111432682]
 script = ExtResource("1_nhm8p")
 metadata/_edit_vertical_guides_ = [960.0, 1919.0, 73.0, 1128.0]
@@ -179,40 +173,6 @@ layout_mode = 2
 theme = ExtResource("10_0ivg7")
 text = "Long"
 metadata/value = 3000
-
-[node name="FuzzySelect" type="VBoxContainer" parent="." unique_id=8345504]
-offset_left = 1127.0
-offset_top = 536.0
-offset_right = 1665.0
-offset_bottom = 701.0
-
-[node name="Label" type="Label" parent="FuzzySelect" unique_id=1935418705]
-layout_mode = 2
-text = "Fuzzy Matches"
-label_settings = ExtResource("9_64jy4")
-
-[node name="Buttons" type="HBoxContainer" parent="FuzzySelect" unique_id=587196841]
-layout_mode = 2
-size_flags_horizontal = 0
-theme = SubResource("Theme_d4pih")
-theme_override_constants/separation = 16
-alignment = 1
-
-[node name="On" type="Button" parent="FuzzySelect/Buttons" unique_id=1451595840]
-layout_mode = 2
-theme = ExtResource("10_0ivg7")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_xjbsa")
-text = "On"
-metadata/value = true
-
-[node name="Off" type="Button" parent="FuzzySelect/Buttons" unique_id=1924264276]
-layout_mode = 2
-theme = ExtResource("10_0ivg7")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_xjbsa")
-text = "Off"
-metadata/value = false
 
 [node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
 visible = false

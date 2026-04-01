@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bhhdxi6xtk1qp" path="res://scenes/screens/game_board.gd" id="1_0h872"]
 [ext_resource type="Texture2D" uid="uid://my76xfh8a2pf" path="res://assets/images/backgrounds/Untitled_Artwork5.png" id="2_a4shw"]
-[ext_resource type="FontFile" uid="uid://c0aku4hxc3oms" path="res://assets/fonts/Coffee Fills.ttf" id="3_6xqkr"]
 [ext_resource type="Texture2D" uid="uid://pmcdoofamp3h" path="res://assets/images/buttons/exit/exit-normal.svg" id="3_d7w16"]
 [ext_resource type="Texture2D" uid="uid://b2vducltvynky" path="res://assets/images/buttons/options/options-normal.svg" id="4_6n5tc"]
 [ext_resource type="Texture2D" uid="uid://dck2jl2wolbhr" path="res://assets/images/buttons/exit/exit-over.svg" id="4_lswpd"]
@@ -80,23 +79,15 @@ offset_right = -0.6000061
 offset_bottom = 0.47999573
 alignment = 1
 
-[node name="PlayersContainer" type="VBoxContainer" parent="HUD" unique_id=633231575]
-visible = false
-offset_left = 17.0
-offset_top = 314.0
-offset_right = 361.0
-offset_bottom = 832.0
-theme_override_constants/separation = 64
-
 [node name="PlayerBadges" type="HBoxContainer" parent="HUD" unique_id=1040462812]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 120.0
-offset_top = -232.0
+offset_top = -218.0
 offset_right = 1512.0
-offset_bottom = 168.0
+offset_bottom = 182.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(0.5, 0.5)
@@ -113,9 +104,9 @@ anchor_top = 0.097
 anchor_right = 0.95600003
 anchor_bottom = 0.86300004
 offset_left = -2.5600052
-offset_top = 0.23999786
+offset_top = -35.760002
 offset_right = 76.47998
-offset_bottom = 147.95996
+offset_bottom = 3.959961
 pivot_offset = Vector2(922, 495)
 use_top_left = true
 
