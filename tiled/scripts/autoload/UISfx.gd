@@ -9,6 +9,7 @@ func _ready() -> void:
 	_ui_player = AudioStreamPlayer.new()
 	_ui_player.name = "UIClickPlayer"
 	_ui_player.stream = CLICK_STREAM
+	_ui_player.bus = "SFX"
 	add_child(_ui_player)
 	_apply_settings()
 	if not UserSettings.settings_changed.is_connected(_on_settings_changed):
@@ -37,6 +38,7 @@ func _play(stream: AudioStream) -> void:
 	# Restart if already playing so rapid taps still feel responsive.
 	if _ui_player.playing:
 		_ui_player.stop()
+	_ui_player.pitch_scale = randf_range(0.95, 1.05) # Add slight random pitch variation for less repetitiveness.
 	_ui_player.play()
 
 
