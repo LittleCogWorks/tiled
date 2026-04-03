@@ -120,6 +120,16 @@ button:disabled {
 	background: #f8fbff;
 }
 
+.forced-guess-banner {
+	margin: 0 0 10px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	border: 1px solid #fecaca;
+	background: #fef2f2;
+	color: #991b1b;
+	font-weight: 700;
+}
+
 .vote-prompt {
 	margin: 0 0 10px;
 	font-weight: 700;

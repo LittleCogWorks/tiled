@@ -31,6 +31,7 @@ const state = {
 	controllerState: ControllerState.DISCONNECTED,
 	debugMode: false,
 	guessMode: false,
+	forcedGuess: false,
 	shouldAutoReconnect: false,
 	reconnectTimer: null,
 	reconnectAttempt: 0,
@@ -45,6 +46,7 @@ const el = {
 	sliderButtons: Array.from(document.querySelectorAll(".slider-tile")),
 	guessInput: document.getElementById("guessInput"),
 	guessModal: document.getElementById("guessModal"),
+	forcedGuessBanner: document.getElementById("forcedGuessBanner"),
 	startGuessBtn: document.getElementById("startGuessBtn"),
 	guessSubmitBtn: document.getElementById("guessSubmitBtn"),
 	guessCancelBtn: document.getElementById("guessCancelBtn"),
@@ -188,6 +190,7 @@ function connect() {
 		state.turnStateKnown = false;
 		state.overlayActive = false;
 		state.guessMode = false;
+		state.forcedGuess = false;
 		resetVoteState();
 		resetSliderButtons();
 		updateControllerState();
@@ -224,6 +227,7 @@ async function handleServerMessage(rawData) {
 			state.inGame = true;
 			state.overlayActive = false;
 			state.guessMode = false;
+			state.forcedGuess = false;
 			updateControllerState();
 			render();
 			log("Game started");
@@ -233,6 +237,7 @@ async function handleServerMessage(rawData) {
 			state.overlayActive = false;
 			state.turnStateKnown = false;
 			state.guessMode = false;
+			state.forcedGuess = false;
 			resetVoteState();
 			log(`New round ${msg.round_num ?? "?"}`);
 			updateControllerState();
@@ -250,9 +255,20 @@ async function handleServerMessage(rawData) {
 			state.isYourTurn = String(msg.player_id || "") === state.playerId;
 			if (!state.isYourTurn) {
 				state.guessMode = false;
+				state.forcedGuess = false;
 			}
 			updateControllerState();
 			render();
+		}
+		if (msg.type === "force_guess") {
+			state.turnStateKnown = true;
+			state.isYourTurn = true;
+			state.forcedGuess = true;
+			state.guessMode = true;
+			updateControllerState();
+			render();
+			el.guessInput.focus();
+			log("Forced guess: submit an answer now");
 		}
 		if (msg.type === "overlay_prompt") {
 			state.overlayActive = Boolean(msg.active);
@@ -297,6 +313,7 @@ async function handleServerMessage(rawData) {
 			state.turnStateKnown = false;
 			state.isYourTurn = false;
 			state.guessMode = false;
+			state.forcedGuess = false;
 			state.controllerState = ControllerState.GAME_OVER;
 			render();
 			log("Game over");
@@ -343,6 +360,7 @@ function disconnect(manual = true, clearReconnectIntent = true) {
 	state.turnStateKnown = false;
 	state.overlayActive = false;
 	state.guessMode = false;
+	state.forcedGuess = false;
 	resetVoteState();
 	resetSliderButtons();
 	updateControllerState();
@@ -395,6 +413,10 @@ function sendSliderClick(index) {
 		log(`Invalid slider index ${index}`);
 		return;
 	}
+	if (state.forcedGuess) {
+		log("You must submit a guess now");
+		return;
+	}
 
 	const button = el.sliderButtons.find((b) => Number(b.dataset.index) === index);
 	if (button && button.classList.contains("revealed")) {
@@ -430,6 +452,9 @@ function submitGuess() {
 }
 
 function cancelGuessFlow() {
+	if (state.forcedGuess) {
+		return;
+	}
 	state.guessMode = false;
 	el.guessInput.value = "";
 	render();
@@ -482,9 +507,14 @@ function render() {
 	el.readyBtn.disabled = !state.connected || state.inGame;
 
 	const controlsEnabled = state.connected && state.joined && state.turnStateKnown && state.isYourTurn && !state.overlayActive;
+	const canRevealSliders = controlsEnabled && !state.forcedGuess;
+	el.forcedGuessBanner.classList.toggle("hidden", !state.forcedGuess);
+	if (state.forcedGuess) {
+		el.forcedGuessBanner.textContent = "Forced guess mode: submit your answer now. Tile reveals are locked.";
+	}
 	el.sliderButtons.forEach((button) => {
 		const isRevealed = button.classList.contains("revealed");
-		button.disabled = !controlsEnabled || isRevealed;
+		button.disabled = !canRevealSliders || isRevealed;
 	});
 	el.startGuessBtn.disabled = !controlsEnabled || state.guessMode;
 	el.guessSubmitBtn.disabled = !state.guessMode;

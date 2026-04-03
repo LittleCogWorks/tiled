@@ -60,6 +60,7 @@ var _vote_session_eligible_by_device: Dictionary = {} # device_id -> Player
 var _vote_session_votes_by_device: Dictionary = {} # device_id -> bool
 var _disconnect_grace_timers_by_player_id: Dictionary = {} # player_id -> SceneTreeTimer
 var _disconnect_resolution_in_progress: bool = false
+var _forced_guess_player_id: String = ""
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -346,6 +347,7 @@ func _on_turn_changed(_player: Player) -> void:
 ## Loads next question, unfreezes players, re-enables input focus, and broadcasts state.
 func _start_next_round() -> void:
 	_reset_vote_session()
+	_forced_guess_player_id = ""
 	if GameManager.game and GameManager.game.current_question:
 		GameManager.game.record_round_result(GameManager.game.current_round, GameManager.game.current_question, {})
 	
@@ -396,6 +398,9 @@ func _on_network_slider_click(device_id: String, slider_index: int) -> void:
 	if sender == null or sender != current:
 		print("Received slider click from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
 		return
+	if not _forced_guess_player_id.is_empty() and sender.id == _forced_guess_player_id:
+		print("Blocked slider click from %s due to forced-guess state" % sender.name)
+		return
 	if round_instance:
 		round_instance.slider_reveal_requested.emit(slider_index)
 
@@ -416,6 +421,8 @@ func _on_network_guess(device_id: String, guess_text: String) -> void:
 	if sender == null or sender != current:
 		print("Received guess from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
 		return
+	if sender.id == _forced_guess_player_id:
+		_forced_guess_player_id = ""
 	if round_instance:
 		round_instance.guess_submitted.emit(guess_text)
 
@@ -443,6 +450,8 @@ func _on_network_client_disconnected(device_id: String) -> void:
 		return
 
 	player.device_id = ""
+	if player.id == _forced_guess_player_id:
+		_forced_guess_player_id = ""
 	_arm_disconnect_grace_timer(player)
 	_broadcast_turn_to_controllers()
 
@@ -509,6 +518,7 @@ func _handle_disconnect_lps_edge(connected_players: Array[Player]) -> void:
 		return
 
 	var survivor = connected_active[0]
+	_forced_guess_player_id = survivor.id
 	var current = PlayerManager.get_current_player()
 	if current == null or current.id != survivor.id:
 		for i in range(PlayerManager.players.size()):
@@ -516,6 +526,9 @@ func _handle_disconnect_lps_edge(connected_players: Array[Player]) -> void:
 				PlayerManager.current_turn_index = i
 				PlayerManager.turn_changed.emit(survivor)
 				break
+
+	if not survivor.device_id.is_empty() and not NetworkManager.is_local:
+		NetworkManager.send_to_player(survivor.device_id, {"type": "force_guess"})
 
 	if _disconnect_resolution_in_progress:
 		return
@@ -548,6 +561,7 @@ func _resolve_disconnect_match_end(winner_player_id: String) -> void:
 
 	var lobby_settings = _build_lobby_settings_from_current_game()
 	_reset_vote_session()
+	_forced_guess_player_id = ""
 	_disconnect_grace_timers_by_player_id.clear()
 
 	if not NetworkManager.is_local:
@@ -607,6 +621,8 @@ func _sync_rejoined_controller_state(device_id: String) -> void:
 		NetworkManager.send_to_player(device_id, {"type": "turn_changed", "player_id": current.id})
 		if current.device_id == device_id:
 			NetworkManager.send_to_player(device_id, {"type": "your_turn"})
+			if current.id == _forced_guess_player_id:
+				NetworkManager.send_to_player(device_id, {"type": "force_guess"})
 
 	var score_payload: Array = []
 	for p in PlayerManager.players:
