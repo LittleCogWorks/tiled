@@ -45,6 +45,7 @@ const ROUND_SCENES = {
 }
 
 const NETWORK_VOTE_TIMEOUT_SECONDS = 20.0
+const DISCONNECT_GRACE_SECONDS = 20.0
 
 var round_instance = null
 var _stored_focus_modes: Dictionary = {} # node path -> focus mode, used by _recursive_set_focus
@@ -55,6 +56,7 @@ var _vote_session_guesser: Player = null
 var _vote_session_correct_answer: String = ""
 var _vote_session_eligible_by_device: Dictionary = {} # device_id -> Player
 var _vote_session_votes_by_device: Dictionary = {} # device_id -> bool
+var _disconnect_grace_timers_by_player_id: Dictionary = {} # player_id -> SceneTreeTimer
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -80,7 +82,10 @@ func _ready() -> void:
 	_broadcast_new_round_to_controllers()
 
 	if not NetworkManager.is_local:
+		NetworkManager.player_join_received.connect(_on_network_player_join_during_game)
+		NetworkManager.client_disconnected.connect(_on_network_client_disconnected)
 		NetworkManager.slider_click_received.connect(_on_network_slider_click)
+		NetworkManager.guess_started_received.connect(_on_network_guess_started)
 		NetworkManager.guess_received.connect(_on_network_guess)
 		NetworkManager.overlay_continue_received.connect(_on_network_overlay_continue)
 		NetworkManager.vote_cast_received.connect(_on_network_vote_cast)
@@ -170,8 +175,10 @@ func _handle_incorrect_answer(player: Player, prize: int, submitted_answer: Stri
 	# Last standing: only player left gets free guess
 	if result["is_last_standing"]:
 		await _update_overlay(result["message"])
-		if round_instance:
+		# In local play, show modal automatically. In network mode, controller handles guess input.
+		if NetworkManager.is_local and round_instance:
 			round_instance.show_answer_modal_for_free_guess()
+
 	
 	# LPS (Last Person Standing) wrong answer: all answers revealed, move to next round
 	if result["is_lps_wrong"]:
@@ -389,6 +396,16 @@ func _on_network_slider_click(device_id: String, slider_index: int) -> void:
 	if round_instance:
 		round_instance.slider_reveal_requested.emit(slider_index)
 
+## Network handler: validates sender is current player, then updates round UI to show guess is being typed.
+func _on_network_guess_started(device_id: String) -> void:
+	var sender = PlayerManager.get_player_by_device_id(device_id)
+	var current = PlayerManager.get_current_player()
+	if sender == null or sender != current:
+		print("Received guess_start from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
+		return
+	if round_instance and round_instance.has_method("begin_guessing"):
+		round_instance.begin_guessing(sender.name)
+
 ## Network handler: validates sender is current player, then emits guess event to round.
 func _on_network_guess(device_id: String, guess_text: String) -> void:
 	var sender = PlayerManager.get_player_by_device_id(device_id)
@@ -398,6 +415,90 @@ func _on_network_guess(device_id: String, guess_text: String) -> void:
 		return
 	if round_instance:
 		round_instance.guess_submitted.emit(guess_text)
+
+## Network handler: allow disconnected players to reclaim control by rejoining with same name.
+func _on_network_player_join_during_game(device_id: String, player_name: String, _avatar_index: int) -> void:
+	if GameManager.current_state != GameManager.GameState.IN_PROGRESS:
+		return
+
+	for player in PlayerManager.players:
+		if player.name.to_lower() == player_name.to_lower():
+			_clear_disconnect_grace_timer(player.id)
+			player.device_id = device_id
+			print("Reconnected player %s to device %s during game" % [player.name, device_id])
+			_sync_rejoined_controller_state(device_id)
+			_broadcast_turn_to_controllers()
+			return
+
+
+func _on_network_client_disconnected(device_id: String) -> void:
+	if GameManager.current_state != GameManager.GameState.IN_PROGRESS:
+		return
+
+	var player = PlayerManager.get_player_by_device_id(device_id)
+	if player == null:
+		return
+
+	player.device_id = ""
+	_arm_disconnect_grace_timer(player)
+	_broadcast_turn_to_controllers()
+
+
+func _arm_disconnect_grace_timer(player: Player) -> void:
+	_clear_disconnect_grace_timer(player.id)
+	print("Player %s disconnected. Waiting %.1fs for reconnect." % [player.name, DISCONNECT_GRACE_SECONDS])
+	var timer = get_tree().create_timer(DISCONNECT_GRACE_SECONDS)
+	_disconnect_grace_timers_by_player_id[player.id] = timer
+	timer.timeout.connect(_on_disconnect_grace_timeout.bind(player.id))
+
+
+func _on_disconnect_grace_timeout(player_id: String) -> void:
+	_disconnect_grace_timers_by_player_id.erase(player_id)
+	var player = PlayerManager.get_player_by_id(player_id)
+	if player == null:
+		return
+	if not player.device_id.is_empty():
+		return
+
+	print("Player %s did not reconnect within grace window." % player.name)
+	var current = PlayerManager.get_current_player()
+	if current != null and current.id == player_id:
+		print("Disconnected player was current turn; advancing turn.")
+		PlayerManager.next_turn()
+		_broadcast_turn_to_controllers()
+
+
+func _clear_disconnect_grace_timer(player_id: String) -> void:
+	if _disconnect_grace_timers_by_player_id.has(player_id):
+		_disconnect_grace_timers_by_player_id.erase(player_id)
+
+
+func _sync_rejoined_controller_state(device_id: String) -> void:
+	if NetworkManager.is_local or device_id.is_empty():
+		return
+
+	# Ensure controller exits lobby/profile UI and enters active game controller flow.
+	NetworkManager.send_to_player(device_id, {"type": "game_started"})
+
+	var slider_count := 9
+	if round_instance and round_instance.get("current_question") != null:
+		slider_count = round_instance.current_question.question_text.split(" ").size()
+	NetworkManager.send_to_player(device_id, {
+		"type": "new_round",
+		"round_num": GameManager.game.current_round,
+		"slider_count": slider_count
+	})
+
+	var current = PlayerManager.get_current_player()
+	if current != null:
+		NetworkManager.send_to_player(device_id, {"type": "turn_changed", "player_id": current.id})
+		if current.device_id == device_id:
+			NetworkManager.send_to_player(device_id, {"type": "your_turn"})
+
+	var score_payload: Array = []
+	for p in PlayerManager.players:
+		score_payload.append({"id": p.id, "name": p.name, "score": p.score})
+	NetworkManager.send_to_player(device_id, {"type": "scores", "players": score_payload})
 
 ## Network handler: validates sender is current player and overlay is active, then dismisses overlay.
 func _on_network_overlay_continue(device_id: String) -> void:

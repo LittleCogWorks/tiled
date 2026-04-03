@@ -16,7 +16,6 @@
 - Decide on max player count for this version (recommend 4–6)
 - Document future ideas for potential fork
 - Keep a running changelog or dev diary
-- Consider a simple Kanban board or TODO list for tasks
 - Regularly review and update documentation
 
 ## In Progress

@@ -2,7 +2,9 @@ extends Node
 
 const MENU_MUSIC_STREAM := preload("res://assets/sound/music/8bit Bossa.mp3")
 const GAME_MUSIC_STREAM := preload("res://assets/sound/music/8bit Bossa.mp3")
+const MASTER_BUS_NAME := "Master"
 const MUSIC_BUS_NAME := "Music"
+const SILENT_DB := -80.0
 
 var _player: AudioStreamPlayer
 var _active_track: String = ""
@@ -57,8 +59,17 @@ func _on_settings_changed() -> void:
 func _apply_settings() -> void:
 	if not is_instance_valid(_player):
 		return
+	_apply_master_bus(UserSettings.master_volume_db)
 	_apply_bus_settings(MUSIC_BUS_NAME, UserSettings.music_volume_db, UserSettings.music_enabled)
 	_player.stream_paused = not UserSettings.music_enabled
+
+
+func _apply_master_bus(volume_db: float) -> void:
+	var bus_index = AudioServer.get_bus_index(MASTER_BUS_NAME)
+	if bus_index == -1:
+		return
+	AudioServer.set_bus_volume_db(bus_index, volume_db)
+	AudioServer.set_bus_mute(bus_index, volume_db <= SILENT_DB)
 
 
 func _apply_bus_settings(bus_name: String, volume_db: float, enabled: bool) -> void:

@@ -8,6 +8,7 @@ const KEY_UI_SFX_ENABLED := "ui_sfx_enabled"
 const KEY_UI_SFX_VOLUME_DB := "ui_sfx_volume_db"
 const KEY_MUSIC_ENABLED := "music_enabled"
 const KEY_MUSIC_VOLUME_DB := "music_volume_db"
+const KEY_MASTER_VOLUME_DB := "master_volume_db"
 const KEY_INTERNET_ENABLED := "internet_enabled"
 const LEGACY_KEY_NETWORK_ENABLED := "network_enabled"
 
@@ -15,6 +16,7 @@ var ui_sfx_enabled: bool = true
 var ui_sfx_volume_db: float = 0.0
 var music_enabled: bool = true
 var music_volume_db: float = 0.0
+var master_volume_db: float = 0.0
 var internet_enabled: bool = true
 
 
@@ -34,6 +36,7 @@ func load_settings() -> void:
 	ui_sfx_volume_db = float(cfg.get_value("audio", KEY_UI_SFX_VOLUME_DB, ui_sfx_volume_db))
 	music_enabled = bool(cfg.get_value("audio", KEY_MUSIC_ENABLED, music_enabled))
 	music_volume_db = float(cfg.get_value("audio", KEY_MUSIC_VOLUME_DB, music_volume_db))
+	master_volume_db = float(cfg.get_value("audio", KEY_MASTER_VOLUME_DB, master_volume_db))
 	internet_enabled = _load_internet_enabled(cfg)
 	emit_settings_changed()
 
@@ -44,6 +47,7 @@ func save_settings() -> void:
 	cfg.set_value("audio", KEY_UI_SFX_VOLUME_DB, ui_sfx_volume_db)
 	cfg.set_value("audio", KEY_MUSIC_ENABLED, music_enabled)
 	cfg.set_value("audio", KEY_MUSIC_VOLUME_DB, music_volume_db)
+	cfg.set_value("audio", KEY_MASTER_VOLUME_DB, master_volume_db)
 	cfg.set_value("internet", KEY_INTERNET_ENABLED, internet_enabled)
 	var err = cfg.save(SAVE_PATH)
 	if err != OK:
@@ -86,6 +90,14 @@ func set_music_volume_db(volume_db: float) -> void:
 	if is_equal_approx(music_volume_db, volume_db):
 		return
 	music_volume_db = volume_db
+	save_settings()
+	emit_settings_changed()
+
+
+func set_master_volume_db(volume_db: float) -> void:
+	if is_equal_approx(master_volume_db, volume_db):
+		return
+	master_volume_db = volume_db
 	save_settings()
 	emit_settings_changed()
 

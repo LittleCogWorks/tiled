@@ -92,6 +92,11 @@ button:disabled {
 	margin-top: 10px;
 }
 
+.row-tight {
+	grid-template-columns: 1fr;
+	margin-top: 6px;
+}
+
 .slider-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -101,6 +106,14 @@ button:disabled {
 
 .vote-panel {
 	margin: 12px 0;
+	padding: 10px;
+	border: 1px dashed var(--border);
+	border-radius: 10px;
+	background: #f8fbff;
+}
+
+.guess-modal {
+	margin-top: 12px;
 	padding: 10px;
 	border: 1px dashed var(--border);
 	border-radius: 10px;
@@ -130,6 +143,10 @@ button:disabled {
 
 .status.ok {
 	color: var(--accent);
+}
+
+.hidden {
+	display: none;
 }
 
 .log {

@@ -26,6 +26,7 @@ signal client_disconnected(device_id: String)
 signal player_join_received(device_id: String, player_name: String, avatar_index: int)
 signal player_ready_received(device_id: String, is_ready: bool)
 signal slider_click_received(device_id: String, index: int)
+signal guess_started_received(device_id: String)
 signal guess_received(device_id: String, answer: String)
 signal vote_cast_received(device_id: String, accepted: bool)
 signal overlay_continue_received(device_id: String)
@@ -216,6 +217,8 @@ func _emit_protocol_event(event_name: String, args: Array) -> void:
 			player_ready_received.emit(args[0], args[1])
 		"slider_click_received":
 			slider_click_received.emit(args[0], args[1])
+		"guess_started_received":
+			guess_started_received.emit(args[0])
 		"guess_received":
 			guess_received.emit(args[0], args[1])
 		"vote_cast_received":

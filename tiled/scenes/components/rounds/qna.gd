@@ -80,6 +80,10 @@ func update_pot_display() -> void:
 func _on_turn_changed(player: Player) -> void:
 	current_player_label.text = "It's %s's turn" % player.name
 
+
+func begin_guessing(player_name: String) -> void:
+	current_player_label.text = "%s is guessing..." % player_name
+
 func _get_uniform_slider_size() -> Vector2:
 	# Keep all 9 tiles identical regardless of word length.
 	var h_sep = float(grid.get_theme_constant("h_separation"))

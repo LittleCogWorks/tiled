@@ -69,6 +69,12 @@ func process_packet(peer_id: int, raw: String, device_id: String, room_code: Str
 				"args": [device_id, index]
 			})
 
+		"guess_start":
+			effects["events"].append({
+				"name": "guess_started_received",
+				"args": [device_id]
+			})
+
 		"guess":
 			var answer: String = msg.get("answer", "").strip_edges()
 			if answer.is_empty():
