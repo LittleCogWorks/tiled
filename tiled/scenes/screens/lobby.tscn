@@ -8,11 +8,8 @@
 [ext_resource type="SpriteFrames" uid="uid://bdg25x2d1v0ke" path="res://assets/images/buttons/base/base_btn.tres" id="5_5gglr"]
 [ext_resource type="Texture2D" uid="uid://vvvbgch27fvq" path="res://assets/images/buttons/home/home-normal.svg" id="5_pdtbn"]
 [ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="7_56qed"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_nhm8p"]
-font = ExtResource("3_pdtbn")
-font_size = 54
-font_color = Color(0, 0.0313726, 1, 1)
+[ext_resource type="LabelSettings" uid="uid://e6f41uqtekh1" path="res://resources/settings_label_settings.tres" id="8_u547o"]
+[ext_resource type="FontFile" uid="uid://bex25m5snoet2" path="res://assets/fonts/Pencil Child.ttf" id="10_3ssfu"]
 
 [sub_resource type="Theme" id="Theme_d4pih"]
 default_font = ExtResource("3_pdtbn")
@@ -96,7 +93,7 @@ offset_bottom = 1053.0
 [node name="Label" type="Label" parent="PlayersContainer" unique_id=1025832794]
 layout_mode = 2
 text = "Players:"
-label_settings = SubResource("LabelSettings_nhm8p")
+label_settings = ExtResource("8_u547o")
 
 [node name="Players" type="VBoxContainer" parent="PlayersContainer" unique_id=511667378]
 layout_mode = 2
@@ -114,12 +111,13 @@ theme = SubResource("Theme_t11tv")
 [node name="Label" type="Label" parent="RoomInfoContainer" unique_id=754499889]
 layout_mode = 2
 text = "Game Code:"
-label_settings = SubResource("LabelSettings_nhm8p")
+label_settings = ExtResource("8_u547o")
 
 [node name="Code" type="Label" parent="RoomInfoContainer" unique_id=1792281413]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("10_3ssfu")
+theme_override_font_sizes/font_size = 62
 text = "random code"
-label_settings = SubResource("LabelSettings_nhm8p")
 horizontal_alignment = 1
 
 [node name="JoinContainer" type="VBoxContainer" parent="." unique_id=1818037960]
@@ -131,7 +129,7 @@ offset_bottom = 783.0
 [node name="Label2" type="Label" parent="JoinContainer" unique_id=654853190]
 layout_mode = 2
 text = "How to Join"
-label_settings = SubResource("LabelSettings_nhm8p")
+label_settings = ExtResource("8_u547o")
 
 [node name="instructions" type="RichTextLabel" parent="JoinContainer" unique_id=176562224]
 layout_mode = 2

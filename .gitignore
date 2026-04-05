@@ -4,6 +4,8 @@
 # Windows
 Thumbs.db
 
+_builds/
+
 # Editor/IDE files
 .idea/
 # .vscode/

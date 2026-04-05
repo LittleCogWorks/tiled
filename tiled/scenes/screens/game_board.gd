@@ -153,6 +153,7 @@ func _setup_round_area() -> void:
 	round_instance = round_scene.instantiate()
 	round_area.add_child(round_instance)
 	round_instance.connect("round_result", Callable(self , "_on_round_result"))
+
 ## Round result handler — dispatches to specific submission type handlers.
 ## Coordinates flow: wrong answer → freeze cascade, fuzzy → voting, exact → winner check
 func _on_round_result(player: Player, is_correct: int, prize: int, submitted_answer: String) -> void:
@@ -174,22 +175,18 @@ func _handle_incorrect_answer(player: Player, prize: int, submitted_answer: Stri
 	# Simple freeze: player locked until next round
 	if result["is_frozen"]:
 		await _update_overlay(result["message"])
-	
 	# Last standing: only player left gets free guess
 	if result["is_last_standing"]:
 		await _update_overlay(result["message"])
 		# In local play, show modal automatically. In network mode, controller handles guess input.
 		if NetworkManager.is_local and round_instance:
 			round_instance.show_answer_modal_for_free_guess()
-
-	
 	# LPS (Last Person Standing) wrong answer: all answers revealed, move to next round
 	if result["is_lps_wrong"]:
 		await _update_overlay(result["message"])
 		await get_tree().create_timer(1.0).timeout
 		_start_next_round()
 		return
-	
 	# Edge case: no active players remain after wrong answer
 	var has_no_special_end = not result["is_last_standing"] and not result["is_lps_wrong"]
 	if has_no_special_end and PlayerManager.get_active_players().is_empty():
