@@ -3,16 +3,11 @@
 [ext_resource type="Script" uid="uid://bhhdxi6xtk1qp" path="res://scenes/screens/game_board.gd" id="1_0h872"]
 [ext_resource type="Texture2D" uid="uid://my76xfh8a2pf" path="res://assets/images/backgrounds/Untitled_Artwork5.png" id="2_a4shw"]
 [ext_resource type="Texture2D" uid="uid://pmcdoofamp3h" path="res://assets/images/buttons/exit/exit-normal.svg" id="3_d7w16"]
+[ext_resource type="Texture2D" uid="uid://pj4vs4xnaet6" path="res://assets/images/backgrounds/Untitled_Artwork4.png" id="3_lswpd"]
 [ext_resource type="Texture2D" uid="uid://b2vducltvynky" path="res://assets/images/buttons/options/options-normal.svg" id="4_6n5tc"]
 [ext_resource type="Texture2D" uid="uid://dck2jl2wolbhr" path="res://assets/images/buttons/exit/exit-over.svg" id="4_lswpd"]
+[ext_resource type="Texture2D" uid="uid://bw2s8u0lmsdgb" path="res://assets/images/backgrounds/bg_large_tiles-white.svg" id="4_y7675"]
 [ext_resource type="Texture2D" uid="uid://ckaxbscp3tave" path="res://assets/images/buttons/options/options-over.svg" id="5_lswpd"]
-
-[sub_resource type="Gradient" id="Gradient_i3a2a"]
-colors = PackedColorArray(0.564706, 0.733333, 1, 1, 0.785641, 0.785641, 0.785641, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_ms0ej"]
-gradient = SubResource("Gradient_i3a2a")
-width = 65
 
 [node name="GameBoard" type="Control" unique_id=1095715867]
 layout_mode = 3
@@ -25,19 +20,35 @@ script = ExtResource("1_0h872")
 metadata/_edit_vertical_guides_ = [960.0, 520.0, 384.0, 1920.0]
 metadata/_edit_horizontal_guides_ = [540.0, 288.0, 256.0, 143.0, 933.0]
 
-[node name="Background" type="TextureRect" parent="." unique_id=1635405761]
+[node name="Background" type="TextureRect" parent="." unique_id=1180403471]
+self_modulate = Color(0.3121712, 0.9999996, 0.24758688, 1)
 layout_mode = 0
+offset_top = -7.0
 offset_right = 1920.0
-offset_bottom = 1080.0
-texture = SubResource("GradientTexture2D_ms0ej")
-
-[node name="Background2" type="TextureRect" parent="." unique_id=1180403471]
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 1073.0
 texture = ExtResource("2_a4shw")
 expand_mode = 2
 stretch_mode = 3
+
+[node name="Background2" type="TextureRect" parent="." unique_id=659325128]
+visible = false
+layout_mode = 0
+offset_top = -7.0
+offset_right = 1920.0
+offset_bottom = 1073.0
+texture = ExtResource("3_lswpd")
+expand_mode = 2
+stretch_mode = 3
+
+[node name="Background-tiles" type="TextureRect" parent="." unique_id=1635405761]
+layout_mode = 0
+offset_left = -448.0
+offset_top = -352.0
+offset_right = 3392.0
+offset_bottom = 2208.0
+rotation = -0.055748053
+scale = Vector2(0.7453582, 0.6921792)
+texture = ExtResource("4_y7675")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=561407958]
 

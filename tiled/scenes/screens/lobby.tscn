@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bp2ad1l8s4pxm" path="res://scenes/screens/lobby.gd" id="1_rxbpr"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_5gglr"]
+[ext_resource type="Texture2D" uid="uid://d24i345p25ku8" path="res://assets/images/backgrounds/bg_large_tiles_lines.svg" id="3_3ssfu"]
 [ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="3_jdbly"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="3_pdtbn"]
 [ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="4_5gglr"]
@@ -30,6 +31,31 @@ offset_top = -242.0
 offset_right = 2297.0
 offset_bottom = 1426.0
 texture = ExtResource("2_5gglr")
+
+[node name="Container" type="GridContainer" parent="." unique_id=941868242]
+offset_left = -968.0
+offset_top = -451.0
+offset_right = 6716.0
+offset_bottom = 4673.0
+rotation = -0.025878716
+scale = Vector2(0.5489637, 0.5827412)
+columns = 2
+
+[node name="Background-tiles" type="TextureRect" parent="Container" unique_id=1723637441]
+layout_mode = 2
+texture = ExtResource("3_3ssfu")
+
+[node name="Background-tiles2" type="TextureRect" parent="Container" unique_id=1017283325]
+layout_mode = 2
+texture = ExtResource("3_3ssfu")
+
+[node name="Background-tiles3" type="TextureRect" parent="Container" unique_id=714645806]
+layout_mode = 2
+texture = ExtResource("3_3ssfu")
+
+[node name="Background-tiles4" type="TextureRect" parent="Container" unique_id=1478057593]
+layout_mode = 2
+texture = ExtResource("3_3ssfu")
 
 [node name="StartBtn-old" type="TextureButton" parent="." unique_id=1698733788]
 visible = false

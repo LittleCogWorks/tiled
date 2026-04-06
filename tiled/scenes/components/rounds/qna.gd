@@ -26,8 +26,12 @@ const QuestionLoaderResource = preload("res://scripts/logic/QuestionLoader.gd")
 @onready var current_player_label = $CurrentPlayer
 @onready var prize_label = $Prize
 
-const BASE_POT = 100.0
-const MINIMUM_POT_PERCENT = 0.1 # Always reserve 10% as minimum pot
+const FIXED_BASE_POINTS = 50.0
+const USE_DIFFICULTY_MULTIPLIER = true
+const BONUS_EARLY_MAX_REVEAL_RATIO = 0.4
+const BONUS_MID_MAX_REVEAL_RATIO = 0.7
+const BONUS_EARLY_POINTS = 6
+const BONUS_MID_POINTS = 3
 const GRID_COLUMNS = 3
 const GRID_ROWS = 3
 const DIFFICULTY_MULTIPLIERS = {
@@ -36,9 +40,10 @@ const DIFFICULTY_MULTIPLIERS = {
 	"hard": 2.0
 }
 
-var current_prize = 100.0
-var minimum_prize = 10.0
-var prize_per_word = 0.0
+var current_prize = 0.0
+var _question_word_count: int = 0
+var _revealed_word_count: int = 0
+var _revealed_word_indices: Dictionary = {}
 var all_questions: Array[Question] = []
 var current_question: Question = null
 var _sliders: Array = [] # slider instances by position, for programmatic reveal in multiplayer
@@ -84,6 +89,28 @@ func _on_turn_changed(player: Player) -> void:
 func begin_guessing(player_name: String) -> void:
 	current_player_label.text = "%s is guessing..." % player_name
 
+func _get_question_base_points() -> float:
+	if current_question == null:
+		return FIXED_BASE_POINTS
+	var difficulty_mult = 1.0
+	if USE_DIFFICULTY_MULTIPLIER:
+		difficulty_mult = DIFFICULTY_MULTIPLIERS.get(current_question.difficulty, 1.0)
+	return FIXED_BASE_POINTS * difficulty_mult
+
+func _calculate_bonus_points(total_word_count: int, revealed_word_count: int) -> int:
+	if total_word_count <= 0:
+		return 0
+	var early_threshold = int(floor(float(total_word_count) * BONUS_EARLY_MAX_REVEAL_RATIO))
+	var mid_threshold = int(floor(float(total_word_count) * BONUS_MID_MAX_REVEAL_RATIO))
+	if revealed_word_count <= early_threshold:
+		return BONUS_EARLY_POINTS
+	if revealed_word_count <= mid_threshold:
+		return BONUS_MID_POINTS
+	return 0
+
+func _calculate_points_for_state(base_points: float, total_word_count: int, revealed_word_count: int) -> float:
+	return base_points + float(_calculate_bonus_points(total_word_count, revealed_word_count))
+
 func _get_uniform_slider_size() -> Vector2:
 	# Keep all 9 tiles identical regardless of word length.
 	var h_sep = float(grid.get_theme_constant("h_separation"))
@@ -108,19 +135,19 @@ func start_new_question(question: Question) -> void:
 	print("Starting new question: %s" % question.question_text)
 	print("Answer is: %s" % question.answer)
 	
-	# Recalculate pot - only actual words reduce prize
+	# Reset scoring state for this question.
 	var words = question.question_text.split(" ")
-	var difficulty_mult = DIFFICULTY_MULTIPLIERS.get(question.difficulty, 1.0)
-	current_prize = BASE_POT * difficulty_mult
-	minimum_prize = current_prize * MINIMUM_POT_PERCENT
-	var reducible_prize = current_prize - minimum_prize
-	prize_per_word = reducible_prize / words.size() # Only count real words
+	_question_word_count = min(words.size(), GRID_COLUMNS * GRID_ROWS)
+	_revealed_word_count = 0
+	_revealed_word_indices.clear()
+	var base_points = _get_question_base_points()
+	current_prize = _calculate_points_for_state(base_points, _question_word_count, _revealed_word_count)
 	update_pot_display()
 	
 	var current_player = PlayerManager.get_current_player()
 	if current_player:
 		current_player_label.text = "It's %s's turn" % current_player.name
-	print("Difficulty: %s | Starting pot: %d | Minimum guaranteed: %d" % [question.difficulty, int(current_prize), int(minimum_prize)])
+	print("Difficulty: %s | Base points: %d | Starting award with bonus: %d" % [question.difficulty, int(base_points), int(current_prize)])
 	
 	var tile_size = _get_uniform_slider_size()
 	var sliders = []
@@ -215,8 +242,11 @@ func _handle_slider_reveal(index: int) -> void:
 	
 	# Only apply mechanics for non-blank (word-containing) tiles
 	if not is_blank:
-		# Pot reduces with each word revealed — core mechanic.
-		current_prize = max(current_prize - prize_per_word, minimum_prize)
+		if not _revealed_word_indices.has(index):
+			_revealed_word_indices[index] = true
+			_revealed_word_count += 1
+		# Score bonus shrinks as more clue words are revealed.
+		current_prize = _calculate_points_for_state(_get_question_base_points(), _question_word_count, _revealed_word_count)
 		update_pot_display()
 		PlayerManager.next_turn()
 	var next_player = PlayerManager.get_current_player()

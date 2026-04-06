@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d10ua6gsw5ta" path="res://scenes/screens/game_init.gd" id="1_nhm8p"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_d4pih"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="2_h1k66"]
+[ext_resource type="Texture2D" uid="uid://d24i345p25ku8" path="res://assets/images/backgrounds/bg_large_tiles_lines.svg" id="3_7p4uc"]
 [ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="3_d4pih"]
 [ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="3_g7jhl"]
 [ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="4_t11tv"]
@@ -57,6 +58,30 @@ offset_top = -201.0
 offset_right = 2297.0
 offset_bottom = 1467.0
 texture = ExtResource("2_d4pih")
+
+[node name="Container" type="GridContainer" parent="." unique_id=1483082068]
+offset_left = -178.0
+offset_top = -262.0
+offset_right = 7506.0
+offset_bottom = 4862.0
+scale = Vector2(0.38355798, 0.3319503)
+columns = 2
+
+[node name="Background-tiles" type="TextureRect" parent="Container" unique_id=502498854]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles2" type="TextureRect" parent="Container" unique_id=710173409]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles3" type="TextureRect" parent="Container" unique_id=143867031]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles4" type="TextureRect" parent="Container" unique_id=966749253]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
 
 [node name="StartBtn2" type="TextureButton" parent="." unique_id=751907660]
 visible = false
