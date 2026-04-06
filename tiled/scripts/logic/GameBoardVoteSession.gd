@@ -15,7 +15,7 @@ func _init(p_board: Node = null) -> void:
 	board = p_board
 
 
-func handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String) -> void:
+func handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String, scoring_breakdown: Dictionary = {}) -> void:
 	if board == null:
 		return
 
@@ -27,7 +27,7 @@ func handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String) -
 
 	# No voters: auto-accept the answer.
 	if eligible_voters.is_empty():
-		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
+		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer, scoring_breakdown)
 		await board._handle_correct_result(result)
 		return
 
@@ -40,19 +40,19 @@ func handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String) -
 				network_voters.append(voter)
 		if network_voters.is_empty():
 			# Safety fallback in case no eligible voter has a mapped device.
-			var no_device_result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
+			var no_device_result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer, scoring_breakdown)
 			await board._handle_correct_result(no_device_result)
 			return
 
 		_start_network_vote_session(player, submitted_answer, network_voters)
 		var network_vote_result: Dictionary = await board.network_vote_resolved
-		await _apply_fuzzy_vote_result(player, prize, submitted_answer, network_vote_result)
+		await _apply_fuzzy_vote_result(player, prize, submitted_answer, network_vote_result, scoring_breakdown)
 	else:
 		var vote_modal = VoteModal.new()
 		vote_modal.setup(player, submitted_answer, board.round_instance.current_question.answer, eligible_voters)
 		board.add_child(vote_modal)
 		var vote_result: Dictionary = await vote_modal.vote_resolved
-		await _apply_fuzzy_vote_result(player, prize, submitted_answer, vote_result)
+		await _apply_fuzzy_vote_result(player, prize, submitted_answer, vote_result, scoring_breakdown)
 
 
 func reset_vote_session() -> void:
@@ -138,9 +138,9 @@ func _finalize_network_vote_session() -> void:
 	board.network_vote_resolved.emit(vote_result)
 
 
-func _apply_fuzzy_vote_result(player: Player, prize: int, submitted_answer: String, vote_result: Dictionary) -> void:
+func _apply_fuzzy_vote_result(player: Player, prize: int, submitted_answer: String, vote_result: Dictionary, scoring_breakdown: Dictionary = {}) -> void:
 	if vote_result.get("accepted", false):
-		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
+		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer, scoring_breakdown)
 		await board._handle_correct_result(result)
 		return
 

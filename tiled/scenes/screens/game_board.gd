@@ -163,7 +163,7 @@ func _on_round_result(player: Player, is_correct: int, prize: int, submitted_ans
 		GameManager.SubmissionResult.FUZZY:
 			await _handle_fuzzy_answer(player, prize, submitted_answer)
 		GameManager.SubmissionResult.EXACT, GameManager.SubmissionResult.AUTO_ACCEPT:
-			var result = GameManager.handle_correct_answer(player, prize, is_correct, submitted_answer)
+			var result = GameManager.handle_correct_answer(player, prize, is_correct, submitted_answer, _get_round_score_breakdown(prize))
 			await _handle_correct_result(result)
 
 ## Handles incorrect submission: freeze cascade, last standing free guess, LPS reveal-all.
@@ -197,7 +197,19 @@ func _handle_incorrect_answer(player: Player, prize: int, submitted_answer: Stri
 ## Handles fuzzy (close-enough) answer: vote on acceptance or move to next round.
 func _handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String) -> void:
 	if _vote_session:
-		await _vote_session.handle_fuzzy_answer(player, prize, submitted_answer)
+		await _vote_session.handle_fuzzy_answer(player, prize, submitted_answer, _get_round_score_breakdown(prize))
+
+func _get_round_score_breakdown(prize: int) -> Dictionary:
+	if round_instance and round_instance.has_method("get_current_score_breakdown"):
+		var breakdown = round_instance.get_current_score_breakdown()
+		if breakdown is Dictionary:
+			breakdown["total_points"] = prize
+			return breakdown
+	return {
+		"base_points": prize,
+		"bonus_points": 0,
+		"total_points": prize
+	}
 
 func _reset_vote_session() -> void:
 	if _vote_session:

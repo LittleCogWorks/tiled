@@ -9,7 +9,7 @@ extends RefCounted
 # Public API:
 # - check_for_winner(game_target)
 # - handle_wrong_answer(player, base_prize, current_question)
-# - handle_correct_answer(player, prize, is_auto_accept, game_target)
+# - handle_correct_answer(player, prize, is_auto_accept, game_target, submitted_answer, scoring_breakdown = {})
 # - handle_vote_rejection(prize, no_voters)
 #
 # Output contract:
@@ -60,6 +60,13 @@ func _message(template_key: String, values: Array = [], style_override: String =
 		return template
 	return template % values
 
+func _format_points_breakdown_suffix(prize: int, scoring_breakdown: Dictionary) -> String:
+	if scoring_breakdown.is_empty():
+		return ""
+	var base_points = int(scoring_breakdown.get("base_points", prize))
+	var bonus_points = int(scoring_breakdown.get("bonus_points", 0))
+	return "\n(%d base + %d bonus)" % [base_points, bonus_points]
+
 func check_for_winner(game_target: int) -> Array[Player]:
 	var winners: Array[Player] = []
 	for player in PlayerManager.get_active_players():
@@ -105,10 +112,11 @@ func handle_wrong_answer(player: Player, base_prize: int, current_question: Reso
 
 	return result
 
-func handle_correct_answer(player: Player, prize: int, is_auto_accept: bool, game_target: int, submitted_answer: String) -> Dictionary:
+func handle_correct_answer(player: Player, prize: int, is_auto_accept: bool, game_target: int, submitted_answer: String, scoring_breakdown: Dictionary = {}) -> Dictionary:
 	var result = {
 		"player": player,
 		"prize": prize,
+		"scoring_breakdown": scoring_breakdown,
 		"was_frozen": player.is_frozen,
 		"has_winner": false,
 		"winner": null,
@@ -124,6 +132,7 @@ func handle_correct_answer(player: Player, prize: int, is_auto_accept: bool, gam
 		result["message"] = _message("correct_fuzzy", [result["submitted_answer"], result["player"].name, prize])
 	else:
 		result["message"] = _message("correct_exact", [result["submitted_answer"].to_upper(), prize])
+	result["message"] += _format_points_breakdown_suffix(prize, scoring_breakdown)
 
 	var winners = check_for_winner(game_target)
 	if not winners.is_empty():

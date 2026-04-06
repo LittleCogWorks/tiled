@@ -111,6 +111,17 @@ func _calculate_bonus_points(total_word_count: int, revealed_word_count: int) ->
 func _calculate_points_for_state(base_points: float, total_word_count: int, revealed_word_count: int) -> float:
 	return base_points + float(_calculate_bonus_points(total_word_count, revealed_word_count))
 
+func get_current_score_breakdown() -> Dictionary:
+	var base_points = int(_get_question_base_points())
+	var bonus_points = _calculate_bonus_points(_question_word_count, _revealed_word_count)
+	return {
+		"base_points": base_points,
+		"bonus_points": bonus_points,
+		"total_points": base_points + bonus_points,
+		"revealed_word_count": _revealed_word_count,
+		"question_word_count": _question_word_count
+	}
+
 func _get_uniform_slider_size() -> Vector2:
 	# Keep all 9 tiles identical regardless of word length.
 	var h_sep = float(grid.get_theme_constant("h_separation"))
