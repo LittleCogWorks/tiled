@@ -58,6 +58,7 @@ func _set_toggle_state(button: Button, enabled: bool) -> void:
 
 func _on_back_pressed() -> void:
 	UISfx.play_ui_back()
+	
 	back_to_home.emit()
 
 

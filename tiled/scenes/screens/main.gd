@@ -44,7 +44,8 @@ func _on_splash_complete() -> void:
 
 ## Load the home/menu screen.
 func load_game_home() -> void:
-	GameManager.change_state(GameManager.GameState.MENU)
+	if GameManager.current_state != GameManager.GameState.MENU:
+		GameManager.change_state(GameManager.GameState.MENU)
 	MusicManager.play_menu_music()
 	scene_loader.show_game_home(_on_start_game, _on_open_options, _on_exit_game)
 

@@ -319,68 +319,6 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.16394848, 0.21695486, 0.38877624, 1)
 
-[node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=1483279617]
-visible = false
-layout_mode = 0
-offset_left = 320.0
-offset_top = 144.0
-offset_right = 845.0
-offset_bottom = 213.0
-theme_override_constants/separation = 32
-alignment = 1
-
-[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players" unique_id=979356926]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Number of players:"
-vertical_alignment = 1
-
-[node name="PlayersValue" type="Label" parent="ConfirmModal/Players" unique_id=2016476965]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1226365121]
-visible = false
-layout_mode = 0
-offset_left = 320.0
-offset_top = 240.0
-offset_right = 699.0
-offset_bottom = 309.0
-
-[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode" unique_id=1471930713]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Mode: "
-vertical_alignment = 1
-
-[node name="ModeValue" type="Label" parent="ConfirmModal/Mode" unique_id=1484441573]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=1603969943]
-visible = false
-layout_mode = 0
-offset_left = 328.0
-offset_top = 328.0
-offset_right = 725.0
-offset_bottom = 397.0
-
-[node name="TargetLabel" type="Label" parent="ConfirmModal/Target" unique_id=1364750707]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Length:"
-vertical_alignment = 1
-
-[node name="TargetValue" type="Label" parent="ConfirmModal/Target" unique_id=575787518]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
 [node name="ConfirmLabel" type="Label" parent="ConfirmModal" unique_id=261706393]
 layout_mode = 1
 anchors_preset = 5
@@ -420,3 +358,4 @@ offset_top = 90.0
 offset_right = 1054.0
 offset_bottom = 460.0
 bbcode_enabled = true
+text = "settings values"

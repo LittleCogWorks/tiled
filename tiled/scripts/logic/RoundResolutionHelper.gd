@@ -1,6 +1,8 @@
 class_name RoundResolutionHelper
 extends RefCounted
 
+const SHOW_SCORING_BREAKDOWN_DETAILS := true
+
 # RoundResolutionHelper — scripts/logic/RoundResolutionHelper.gd
 # Role: Stateless rules helper for round resolution and scoring outcomes.
 # Owns: Winner detection, wrong/correct answer outcome shaping, vote-rejection payout logic.
@@ -61,6 +63,8 @@ func _message(template_key: String, values: Array = [], style_override: String =
 	return template % values
 
 func _format_points_breakdown_suffix(prize: int, scoring_breakdown: Dictionary) -> String:
+	if not SHOW_SCORING_BREAKDOWN_DETAILS:
+		return ""
 	if scoring_breakdown.is_empty():
 		return ""
 	var base_points = int(scoring_breakdown.get("base_points", prize))

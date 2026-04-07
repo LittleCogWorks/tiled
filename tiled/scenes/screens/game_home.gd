@@ -9,6 +9,7 @@ signal exit_game
 @onready var credits_btn = $Credits
 @onready var exit_btn = $Exit
 @onready var accept_dialog = $AcceptDialog
+@onready var credits_dialog = $CreditsPopup
 
 const CLICK_LEAD_IN_SECONDS: float = 0.05
 const TITLE_ANIMATION_STYLE: String = "dramatic" # clean | playful | dramatic
@@ -37,11 +38,13 @@ var _title_idle_tween: Tween
 func _ready() -> void:
 	print("GameHome scene ready")
 	_prepare_intro_visual_state()
-
+	
+	credits_dialog.visible = false
 	start_game_btn.pressed.connect(_on_start_game_btn_pressed)
 	options_btn.pressed.connect(_on_options_btn_pressed)
 	exit_btn.pressed.connect(_on_exit_btn_pressed)
 	accept_dialog.confirmed.connect(_on_AcceptDialog_confirmed)
+	credits_btn.pressed.connect(_on_credits_btn_pressed)
 
 	start_game_btn.focus_mode = Control.FOCUS_ALL
 	options_btn.focus_mode = Control.FOCUS_ALL
@@ -113,3 +116,8 @@ func _on_AcceptDialog_confirmed() -> void:
 		NetworkManager.stop_server()
 	print("Exit button pressed, quitting application")
 	exit_game.emit()
+
+func _on_credits_btn_pressed() -> void:
+	_play_click_sound()
+	print("Credits button pressed, showing credits dialog")
+	credits_dialog.popup_centered()
