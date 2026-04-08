@@ -1,6 +1,7 @@
 extends Node2D
 
 signal start_game
+signal open_options
 signal exit_game
 
 @onready var start_game_btn = $StartGame
@@ -8,8 +9,7 @@ signal exit_game
 @onready var credits_btn = $Credits
 @onready var exit_btn = $Exit
 @onready var accept_dialog = $AcceptDialog
-@onready var click_sound = $ClickSound
-@onready var bg_music = $BGM
+@onready var credits_dialog = $CreditsPopup
 
 const CLICK_LEAD_IN_SECONDS: float = 0.05
 const TITLE_ANIMATION_STYLE: String = "dramatic" # clean | playful | dramatic
@@ -38,22 +38,23 @@ var _title_idle_tween: Tween
 func _ready() -> void:
 	print("GameHome scene ready")
 	_prepare_intro_visual_state()
-
+	
+	credits_dialog.visible = false
 	start_game_btn.pressed.connect(_on_start_game_btn_pressed)
 	options_btn.pressed.connect(_on_options_btn_pressed)
 	exit_btn.pressed.connect(_on_exit_btn_pressed)
 	accept_dialog.confirmed.connect(_on_AcceptDialog_confirmed)
+	credits_btn.pressed.connect(_on_credits_btn_pressed)
 
 	start_game_btn.focus_mode = Control.FOCUS_ALL
-	options_btn.focus_mode = Control.FOCUS_NONE
-	options_btn.disabled = true
+	options_btn.focus_mode = Control.FOCUS_ALL
+	options_btn.disabled = false
 	exit_btn.focus_mode = Control.FOCUS_ALL
-	bg_music.play()
 
 	await _animate_title_in()
 	await _animate_home_controls_in()
 	_title_idle_tween = TitleAnimatorScript.start_idle_motion(
-		self,
+		self ,
 		$Title,
 		TITLE_IDLE_STYLE,
 		TITLE_IDLE_OVERRIDES
@@ -83,10 +84,7 @@ func _exit_tree() -> void:
 	
 
 func _play_click_sound() -> void:
-	# Restart if already playing so rapid presses always produce a click.
-	if click_sound.playing:
-		click_sound.stop()
-	click_sound.play()
+	UISfx.play_ui_click()
 
 func _on_start_game_btn_pressed() -> void:
 	if _start_requested:
@@ -100,8 +98,8 @@ func _on_start_game_btn_pressed() -> void:
 	start_game.emit()
 
 func _on_options_btn_pressed() -> void:
-	# TODO: Implement settings screen
-	print("Options button pressed - no options implemented yet")
+	_play_click_sound()
+	open_options.emit()
 
 func _on_exit_btn_pressed() -> void:
 	_play_click_sound()
@@ -118,3 +116,8 @@ func _on_AcceptDialog_confirmed() -> void:
 		NetworkManager.stop_server()
 	print("Exit button pressed, quitting application")
 	exit_game.emit()
+
+func _on_credits_btn_pressed() -> void:
+	_play_click_sound()
+	print("Credits button pressed, showing credits dialog")
+	credits_dialog.popup_centered()

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://d10ua6gsw5ta" path="res://scenes/screens/game_init.gd" id="1_nhm8p"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_d4pih"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="2_h1k66"]
+[ext_resource type="Texture2D" uid="uid://d24i345p25ku8" path="res://assets/images/backgrounds/bg_large_tiles_lines.svg" id="3_7p4uc"]
 [ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="3_d4pih"]
 [ext_resource type="LabelSettings" uid="uid://ciqemufqkbmrl" path="res://resources/game_init-settings-label.tres" id="3_g7jhl"]
 [ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="4_t11tv"]
@@ -10,9 +11,14 @@
 [ext_resource type="SpriteFrames" uid="uid://bdg25x2d1v0ke" path="res://assets/images/buttons/base/base_btn.tres" id="5_t11tv"]
 [ext_resource type="LabelSettings" uid="uid://e6f41uqtekh1" path="res://resources/settings_label_settings.tres" id="9_64jy4"]
 [ext_resource type="Theme" uid="uid://dyi5djidnodrn" path="res://resources/setting_buttons_.tres" id="10_0ivg7"]
-[ext_resource type="Texture2D" uid="uid://bb1x2uw35o3x" path="res://assets/images/buttons/option_select_1.png" id="11_5f3e1"]
-[ext_resource type="Texture2D" uid="uid://d2a52ohk6h1v4" path="res://assets/images/buttons/option_select_2.png" id="12_w1tbd"]
-[ext_resource type="Texture2D" uid="uid://pqns71nrxa7q" path="res://assets/images/buttons/option_select_3.png" id="13_wys3k"]
+[ext_resource type="Texture2D" uid="uid://cercp65c16hx0" path="res://assets/images/buttons/setup_screen/1p-circle.svg" id="11_36l61"]
+[ext_resource type="Texture2D" uid="uid://bul314deq3mmj" path="res://assets/images/buttons/setup_screen/mp-circle.svg" id="12_ao6sj"]
+[ext_resource type="Texture2D" uid="uid://bmpgosxx41fym" path="res://assets/images/buttons/setup_screen/qna-circle.svg" id="13_nwynh"]
+[ext_resource type="Texture2D" uid="uid://dbslcfxq5q6jl" path="res://assets/images/buttons/setup_screen/short-circle.svg" id="14_7p4uc"]
+[ext_resource type="Texture2D" uid="uid://cxgunxx1vx6ye" path="res://assets/images/buttons/setup_screen/short-circle-2.svg" id="15_nwynh"]
+[ext_resource type="Texture2D" uid="uid://c5g3f74n4xkik" path="res://assets/images/buttons/setup_screen/med-circle.svg" id="15_quw76"]
+[ext_resource type="Texture2D" uid="uid://dsopqpa6wvboc" path="res://assets/images/buttons/setup_screen/short-circle-3.svg" id="16_7p4uc"]
+[ext_resource type="Texture2D" uid="uid://ej5ytb8rbqhl" path="res://assets/images/buttons/setup_screen/long-circle.svg" id="16_okqwt"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_0ivg7"]
 
@@ -23,6 +29,23 @@ default_font_size = 54
 [sub_resource type="Theme" id="Theme_64jy4"]
 default_font = ExtResource("2_h1k66")
 default_font_size = 54
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_quw76"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("14_7p4uc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_nwynh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_7p4uc")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="GameInit" type="Node2D" unique_id=111432682]
 script = ExtResource("1_nhm8p")
@@ -35,6 +58,30 @@ offset_top = -201.0
 offset_right = 2297.0
 offset_bottom = 1467.0
 texture = ExtResource("2_d4pih")
+
+[node name="Container" type="GridContainer" parent="." unique_id=1483082068]
+offset_left = -178.0
+offset_top = -262.0
+offset_right = 7506.0
+offset_bottom = 4862.0
+scale = Vector2(0.38355798, 0.3319503)
+columns = 2
+
+[node name="Background-tiles" type="TextureRect" parent="Container" unique_id=502498854]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles2" type="TextureRect" parent="Container" unique_id=710173409]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles3" type="TextureRect" parent="Container" unique_id=143867031]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
+
+[node name="Background-tiles4" type="TextureRect" parent="Container" unique_id=966749253]
+layout_mode = 2
+texture = ExtResource("3_7p4uc")
 
 [node name="StartBtn2" type="TextureButton" parent="." unique_id=751907660]
 visible = false
@@ -123,7 +170,7 @@ offset_top = -7.0
 offset_right = 270.05524
 offset_bottom = 129.0
 scale = Vector2(0.9427784, 0.5784604)
-texture = ExtResource("11_5f3e1")
+texture = ExtResource("11_36l61")
 
 [node name="Multi" type="Button" parent="ModeSelect/Buttons" unique_id=986804941]
 layout_mode = 2
@@ -143,7 +190,7 @@ offset_top = -17.0
 offset_right = 365.12177
 offset_bottom = 148.9578
 scale = Vector2(0.9427784, 0.5784604)
-texture = ExtResource("12_w1tbd")
+texture = ExtResource("12_ao6sj")
 
 [node name="GameType" type="VBoxContainer" parent="." unique_id=1452947385]
 offset_left = 697.0
@@ -178,7 +225,7 @@ offset_top = -7.0
 offset_right = 270.05524
 offset_bottom = 129.0
 scale = Vector2(0.9427784, 0.5784604)
-texture = ExtResource("11_5f3e1")
+texture = ExtResource("13_nwynh")
 
 [node name="LengthSelect" type="VBoxContainer" parent="." unique_id=1148475699]
 offset_left = 697.0
@@ -214,7 +261,13 @@ offset_top = -7.0
 offset_right = 270.05524
 offset_bottom = 129.0
 scale = Vector2(0.70307446, 0.5784604)
-texture = ExtResource("13_wys3k")
+texture = ExtResource("14_7p4uc")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="LengthSelect/Buttons/Short" unique_id=890579764]
+visible = false
+position = Vector2(67, 30)
+sprite_frames = SubResource("SpriteFrames_quw76")
+frame_progress = 0.046074327
 
 [node name="Medium" type="Button" parent="LengthSelect/Buttons" unique_id=1060266847]
 layout_mode = 2
@@ -230,7 +283,7 @@ offset_top = -7.0
 offset_right = 270.05524
 offset_bottom = 129.0
 scale = Vector2(0.9427784, 0.5784604)
-texture = ExtResource("11_5f3e1")
+texture = ExtResource("15_quw76")
 
 [node name="Long" type="Button" parent="LengthSelect/Buttons" unique_id=1183275851]
 layout_mode = 2
@@ -246,7 +299,7 @@ offset_top = -7.0
 offset_right = 242.0
 offset_bottom = 129.0
 scale = Vector2(0.7503108, 0.596057)
-texture = ExtResource("13_wys3k")
+texture = ExtResource("16_okqwt")
 
 [node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
 visible = false
@@ -265,68 +318,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.16394848, 0.21695486, 0.38877624, 1)
-
-[node name="Players" type="HBoxContainer" parent="ConfirmModal" unique_id=1483279617]
-visible = false
-layout_mode = 0
-offset_left = 320.0
-offset_top = 144.0
-offset_right = 845.0
-offset_bottom = 213.0
-theme_override_constants/separation = 32
-alignment = 1
-
-[node name="PlayersLabel" type="Label" parent="ConfirmModal/Players" unique_id=979356926]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Number of players:"
-vertical_alignment = 1
-
-[node name="PlayersValue" type="Label" parent="ConfirmModal/Players" unique_id=2016476965]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="Mode" type="HBoxContainer" parent="ConfirmModal" unique_id=1226365121]
-visible = false
-layout_mode = 0
-offset_left = 320.0
-offset_top = 240.0
-offset_right = 699.0
-offset_bottom = 309.0
-
-[node name="ModeLabel" type="Label" parent="ConfirmModal/Mode" unique_id=1471930713]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Mode: "
-vertical_alignment = 1
-
-[node name="ModeValue" type="Label" parent="ConfirmModal/Mode" unique_id=1484441573]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
-
-[node name="Target" type="HBoxContainer" parent="ConfirmModal" unique_id=1603969943]
-visible = false
-layout_mode = 0
-offset_left = 328.0
-offset_top = 328.0
-offset_right = 725.0
-offset_bottom = 397.0
-
-[node name="TargetLabel" type="Label" parent="ConfirmModal/Target" unique_id=1364750707]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "Game Length:"
-vertical_alignment = 1
-
-[node name="TargetValue" type="Label" parent="ConfirmModal/Target" unique_id=575787518]
-layout_mode = 2
-theme_override_font_sizes/font_size = 50
-text = "99"
-vertical_alignment = 1
 
 [node name="ConfirmLabel" type="Label" parent="ConfirmModal" unique_id=261706393]
 layout_mode = 1
@@ -367,3 +358,4 @@ offset_top = 90.0
 offset_right = 1054.0
 offset_bottom = 460.0
 bbcode_enabled = true
+text = "settings values"

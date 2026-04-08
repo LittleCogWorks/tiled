@@ -44,8 +44,10 @@ func _on_splash_complete() -> void:
 
 ## Load the home/menu screen.
 func load_game_home() -> void:
-	GameManager.change_state(GameManager.GameState.MENU)
-	scene_loader.show_game_home(_on_start_game, _on_exit_game)
+	if GameManager.current_state != GameManager.GameState.MENU:
+		GameManager.change_state(GameManager.GameState.MENU)
+	MusicManager.play_menu_music()
+	scene_loader.show_game_home(_on_start_game, _on_open_options, _on_exit_game)
 
 func _on_start_game() -> void:
 	print("New game started, loading Game Init (setup)")
@@ -55,6 +57,17 @@ func _on_start_game() -> void:
 func _on_exit_game() -> void:
 	print("Exit game signal received, quitting application")
 	get_tree().quit()
+
+
+func _on_open_options() -> void:
+	print("Opening options screen")
+	cleanup_current_scene()
+	load_options()
+
+
+func load_options() -> void:
+	MusicManager.play_menu_music()
+	scene_loader.show_options(_on_return_to_home)
 
 func _on_return_to_home() -> void:
 	print("Returning to home screen")
@@ -66,6 +79,7 @@ func _on_return_to_home() -> void:
 ## Load the game setup/init screen (config: type, target, mode, etc).
 func load_game_init() -> void:
 	GameManager.change_state(GameManager.GameState.SETUP)
+	MusicManager.play_menu_music()
 	scene_loader.show_game_init(_on_game_init_complete, _on_return_to_home)
 
 func _on_game_init_complete(settings: Dictionary) -> void:
@@ -102,9 +116,9 @@ func load_lobby(settings: Dictionary) -> void:
 	# LOBBY: show room code, instructions, player list, start button (disabled until 2+ players), back to home button
 	#   Waiting for players to connect - as players connect need to update PlayerManager.players + update ui
 	#  start is only active if at least 2 players connected
-
 	session_coordinator.prepare_lobby_session()
 	GameManager.change_state(GameManager.GameState.LOBBY)
+	MusicManager.play_menu_music()
 	scene_loader.show_lobby(settings, _on_lobby_start_requested, _on_return_to_home, _on_return_to_setup_from_lobby)
 
 func _on_return_to_setup_from_lobby() -> void:
@@ -124,7 +138,29 @@ func _on_lobby_start_requested(settings: Dictionary) -> void:
 
 ## Load the active game board screen (gameplay).
 func load_game_board() -> void:
-	scene_loader.show_game_board(_on_return_to_home, _on_game_ended)
+	MusicManager.play_game_music()
+	scene_loader.show_game_board(_on_return_to_home, _on_return_to_lobby_from_game, _on_game_ended)
+
+
+func _on_return_to_lobby_from_game(settings: Dictionary) -> void:
+	print("Returning to lobby from active game with settings: %s" % settings)
+	cleanup_current_scene()
+	NetworkManager.is_local = false
+	_ensure_state_ready_for_lobby()
+	load_lobby(settings)
+
+
+func _ensure_state_ready_for_lobby() -> void:
+	match GameManager.current_state:
+		GameManager.GameState.IN_PROGRESS:
+			GameManager.change_state(GameManager.GameState.MENU)
+		GameManager.GameState.GAME_OVER:
+			GameManager.change_state(GameManager.GameState.MENU)
+		GameManager.GameState.NONE:
+			GameManager.change_state(GameManager.GameState.MENU)
+
+	if GameManager.current_state == GameManager.GameState.MENU:
+		GameManager.change_state(GameManager.GameState.SETUP)
 
 # LOAD GAME END
 func load_game_end(winner: Player) -> void:
@@ -139,6 +175,7 @@ func load_game_end(winner: Player) -> void:
 		return
 	
 	print("Loading game end screen, winner: %s" % winner.name)
+	MusicManager.play_menu_music()
 
 	var game_data = {
 		"game_type": GameManager.game.game_type,

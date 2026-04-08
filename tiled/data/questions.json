@@ -7,7 +7,10 @@
     "joke": "If Earth spun any slower, Mondays would last forever!",
     "difficulty": "easy",
     "category": "General Knowledge",
-    "tags": ["time", "basic"]
+    "tags": [
+      "time",
+      "basic"
+    ]
   },
   {
     "id": 2,
@@ -17,7 +20,10 @@
     "joke": "Most octagons have more sides than squares—unless you ask a confused mathematician!",
     "difficulty": "easy",
     "category": "Mathematics",
-    "tags": ["geometry", "shapes"]
+    "tags": [
+      "geometry",
+      "shapes"
+    ]
   },
   {
     "id": 3,
@@ -27,7 +33,10 @@
     "joke": "It's the only desert where you need a parka, not a parasol!",
     "difficulty": "hard",
     "category": "Geography",
-    "tags": ["nature", "deserts"]
+    "tags": [
+      "nature",
+      "deserts"
+    ]
   },
   {
     "id": 4,
@@ -37,18 +46,27 @@
     "joke": "Imagine if you could taste pizza just by stepping on it!",
     "difficulty": "easy",
     "category": "Biology",
-    "tags": ["insects", "nature"]
+    "tags": [
+      "insects",
+      "nature"
+    ]
   },
   {
     "id": 5,
     "question": "Who wrote the play “Romeo and Juliet”?",
     "answer": "William Shakespeare",
-    "alt_answers": ["Shakespeare", "Bill Shakespeare"],
+    "alt_answers": [
+      "Shakespeare",
+      "Bill Shakespeare"
+    ],
     "fun_fact": "Shakespeare is credited with inventing over 1,700 words in the English language.",
     "joke": "He probably invented the 'selfie' too, but forgot to write it down!",
     "difficulty": "medium",
     "category": "Literature",
-    "tags": ["plays", "authors"]
+    "tags": [
+      "plays",
+      "authors"
+    ]
   },
   {
     "id": 6,
@@ -58,7 +76,10 @@
     "joke": "So guacamole is basically a fruit salad!",
     "difficulty": "easy",
     "category": "Food",
-    "tags": ["ingredients", "fun"]
+    "tags": [
+      "ingredients",
+      "fun"
+    ]
   },
   {
     "id": 7,
@@ -68,7 +89,10 @@
     "joke": "Saturn's moon parties are out of this world!",
     "difficulty": "medium",
     "category": "Science",
-    "tags": ["space", "planets"]
+    "tags": [
+      "space",
+      "planets"
+    ]
   },
   {
     "id": 8,
@@ -78,7 +102,10 @@
     "joke": "If a cheetah asks for a ride, just say no—your car can't keep up!",
     "difficulty": "easy",
     "category": "Biology",
-    "tags": ["animals", "speed"]
+    "tags": [
+      "animals",
+      "speed"
+    ]
   },
   {
     "id": 9,
@@ -88,7 +115,10 @@
     "joke": "Before paper, people just had really long memories!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["inventions", "countries"]
+    "tags": [
+      "inventions",
+      "countries"
+    ]
   },
   {
     "id": 10,
@@ -98,18 +128,26 @@
     "joke": "It's so small, even a mouse would need glasses to see it!",
     "difficulty": "hard",
     "category": "Biology",
-    "tags": ["anatomy", "bones"]
+    "tags": [
+      "anatomy",
+      "bones"
+    ]
   },
   {
     "id": 11,
     "question": "Who was the first person on the Moon?",
     "answer": "Neil Armstrong",
-    "alt_answers": ["Armstrong"],
+    "alt_answers": [
+      "Armstrong"
+    ],
     "fun_fact": "Neil Armstrong's footprint is still on the Moon because there's no wind to erase it.",
     "joke": "He forgot to wipe his boots before coming back!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["space", "explorers"]
+    "tags": [
+      "space",
+      "explorers"
+    ]
   },
   {
     "id": 12,
@@ -119,7 +157,10 @@
     "joke": "Even snakes need a scarf down there!",
     "difficulty": "hard",
     "category": "Geography",
-    "tags": ["continents", "animals"]
+    "tags": [
+      "continents",
+      "animals"
+    ]
   },
   {
     "id": 13,
@@ -129,7 +170,10 @@
     "joke": "Gold's symbol is 'Au'—as in, 'Au, that's expensive!'",
     "difficulty": "medium",
     "category": "Science",
-    "tags": ["chemistry", "elements"]
+    "tags": [
+      "chemistry",
+      "elements"
+    ]
   },
   {
     "id": 14,
@@ -139,7 +183,10 @@
     "joke": "The world finally got a break from history class!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["war", "dates"]
+    "tags": [
+      "war",
+      "dates"
+    ]
   },
   {
     "id": 15,
@@ -149,7 +196,10 @@
     "joke": "101 is so prime, it refuses to be divided—even by peer pressure!",
     "difficulty": "hard",
     "category": "Mathematics",
-    "tags": ["math", "primes"]
+    "tags": [
+      "math",
+      "primes"
+    ]
   },
   {
     "id": 16,
@@ -159,18 +209,26 @@
     "joke": "Mars: the only planet that looks like it's constantly blushing!",
     "difficulty": "easy",
     "category": "Science",
-    "tags": ["space", "planets"]
+    "tags": [
+      "space",
+      "planets"
+    ]
   },
   {
     "id": 17,
     "question": "What is the largest ocean on Earth?",
     "answer": "Pacific",
-    "alt_answers": ["Pacific Ocean"],
+    "alt_answers": [
+      "Pacific Ocean"
+    ],
     "fun_fact": "The Pacific Ocean is so vast it could hold all of Earth's continents with room to spare.",
     "joke": "If you tried to drink the Pacific, you'd need a really big straw!",
     "difficulty": "easy",
     "category": "Geography",
-    "tags": ["nature", "water"]
+    "tags": [
+      "nature",
+      "water"
+    ]
   },
   {
     "id": 18,
@@ -180,7 +238,10 @@
     "joke": "That's a lot of bones to keep track of at playtime!",
     "difficulty": "medium",
     "category": "Science",
-    "tags": ["biology", "human-body"]
+    "tags": [
+      "biology",
+      "human-body"
+    ]
   },
   {
     "id": 19,
@@ -190,7 +251,10 @@
     "joke": "He got a real pain in the neck from that job!",
     "difficulty": "medium",
     "category": "Art",
-    "tags": ["history", "renaissance"]
+    "tags": [
+      "history",
+      "renaissance"
+    ]
   },
   {
     "id": 20,
@@ -200,7 +264,10 @@
     "joke": "Diamonds: proof that even carbon can shine under pressure!",
     "difficulty": "easy",
     "category": "Science",
-    "tags": ["geology", "materials"]
+    "tags": [
+      "geology",
+      "materials"
+    ]
   },
   {
     "id": 21,
@@ -210,7 +277,10 @@
     "joke": "Some assembly required—thanks, France!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["culture", "landmarks"]
+    "tags": [
+      "culture",
+      "landmarks"
+    ]
   },
   {
     "id": 22,
@@ -220,29 +290,43 @@
     "joke": "From sushi to skyscrapers—Tokyo's glow-up is real!",
     "difficulty": "easy",
     "category": "Geography",
-    "tags": ["asia", "cities"]
+    "tags": [
+      "asia",
+      "cities"
+    ]
   },
   {
     "id": 23,
     "question": "Which gas do plants absorb during photosynthesis?",
     "answer": "Carbon Dioxide",
-    "alt_answers": ["CO2"],
+    "alt_answers": [
+      "CO2"
+    ],
     "fun_fact": "Plants absorb carbon dioxide (CO2) during photosynthesis and release oxygen.",
     "joke": "Plants: Earth's original air fresheners!",
     "difficulty": "medium",
     "category": "Science",
-    "tags": ["nature", "biology"]
+    "tags": [
+      "nature",
+      "biology"
+    ]
   },
   {
     "id": 24,
     "question": "Which British battle was fought in 1066?",
     "answer": "Battle of Hastings",
-    "alt_answers": ["Hastings"],
+    "alt_answers": [
+      "Hastings"
+    ],
     "fun_fact": "The Battle of Hastings in 1066 led to the Norman Conquest of England.",
     "joke": "The Normans really put the 'conquer' in 'conquest'!",
     "difficulty": "easy",
     "category": "History",
-    "tags": ["history", "battles", "english-history"]
+    "tags": [
+      "history",
+      "battles",
+      "english-history"
+    ]
   },
   {
     "id": 25,
@@ -252,7 +336,10 @@
     "joke": "Climbing Everest: the ultimate uphill battle!",
     "difficulty": "easy",
     "category": "Geography",
-    "tags": ["nature", "mountains"]
+    "tags": [
+      "nature",
+      "mountains"
+    ]
   },
   {
     "id": 26,
@@ -262,7 +349,10 @@
     "joke": "Even the unsinkable can have a bad day!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["disasters", "dates"]
+    "tags": [
+      "disasters",
+      "dates"
+    ]
   },
   {
     "id": 27,
@@ -272,7 +362,10 @@
     "joke": "One small step for man, one giant leap for moon dust!",
     "difficulty": "easy",
     "category": "History",
-    "tags": ["space", "dates"]
+    "tags": [
+      "space",
+      "dates"
+    ]
   },
   {
     "id": 28,
@@ -282,7 +375,10 @@
     "joke": "The wall came down faster than a bad soufflé!",
     "difficulty": "medium",
     "category": "History",
-    "tags": ["politics", "dates"]
+    "tags": [
+      "politics",
+      "dates"
+    ]
   },
   {
     "id": 29,
@@ -292,61 +388,212 @@
     "joke": "He was looking for India, but found a whole new world instead!",
     "difficulty": "hard",
     "category": "History",
-    "tags": ["exploration", "dates"]
+    "tags": [
+      "exploration",
+      "dates"
+    ]
   },
   {
     "id": 30,
     "question": "Which Dutch artist famously painted 'The Starry Night'?",
     "answer": "Vincent van Gogh",
-    "alt_answers": ["Van Gogh"],
+    "alt_answers": [
+      "Van Gogh"
+    ],
     "fun_fact": "Van Gogh painted 'The Starry Night' while staying at an asylum in Saint-Rémy-de-Provence.",
     "joke": "He had a great ear for music, but a terrible one for staying in one piece!",
     "difficulty": "hard",
     "category": "Art",
-    "tags": ["painting", "artists"]
+    "tags": [
+      "painting",
+      "artists"
+    ]
   },
   {
     "id": 31,
     "question": "What is the largest species of shark alive today?",
     "answer": "Whale Shark",
-    "alt_answers": ["Rhincodon typus"],
+    "alt_answers": [
+      "Rhincodon typus"
+    ],
     "fun_fact": "Whale sharks are filter feeders and can grow to over 12 metres in length.",
     "joke": "It's a whale! It's a shark! It's... actually quite a friendly giant.",
     "difficulty": "hard",
     "category": "Science",
-    "tags": ["ocean", "animals"]
+    "tags": [
+      "ocean",
+      "animals"
+    ]
   },
   {
     "id": 32,
     "question": "Which city is known as the 'Eternal City'?",
     "answer": "Rome",
-    "alt_answers": ["Roma"],
+    "alt_answers": [
+      "Roma"
+    ],
     "fun_fact": "Rome has been continuously inhabited for over 2,700 years.",
     "joke": "They say Rome wasn't built in a day, but they probably had better tea breaks than us!",
     "difficulty": "hard",
     "category": "Geography",
-    "tags": ["cities", "history"]
+    "tags": [
+      "cities",
+      "history"
+    ]
   },
   {
     "id": 33,
     "question": "Who discovered the mathematical constant Pi?",
     "answer": "Archimedes",
-    "alt_answers": ["Archimedes of Syracuse"],
+    "alt_answers": [
+      "Archimedes of Syracuse"
+    ],
     "fun_fact": "While ancient Babylonians knew of Pi, Archimedes created the first theoretical calculation for it.",
     "joke": "What do you get when you take the sun and divide its circumference by its diameter? Pi in the sky!",
     "difficulty": "hard",
     "category": "Mathematics",
-    "tags": ["math", "history"]
+    "tags": [
+      "math",
+      "history"
+    ]
   },
   {
     "id": 34,
     "question": "What is the capital city of Australia?",
     "answer": "Canberra",
-    "alt_answers": ["ACT"],
+    "alt_answers": [
+      "ACT"
+    ],
     "fun_fact": "Canberra was selected as the capital in 1908 as a compromise between rivals Sydney and Melbourne.",
     "joke": "It's the only place where politicians and kangaroos are equally likely to stop traffic!",
     "difficulty": "hard",
     "category": "Geography",
-    "tags": ["australia", "cities"]
+    "tags": [
+      "australia",
+      "cities"
+    ]
+  },
+  {
+    "id": 35,
+    "question": "How many players on a football team?",
+    "answer": "11",
+    "fun_fact": "The number 11 became standard in the late 19th century.",
+    "joke": "USMNT",
+    "difficulty": "easy",
+    "category": "Sport",
+    "tags": [
+      "football",
+      "teams"
+    ]
+  },
+  {
+    "id": 36,
+    "question": "Which sport uses Birdies, Eagles, and Albatrosses?",
+    "answer": "Golf",
+    "fun_fact": "An Albatross is rarer than a Hole-in-One.",
+    "joke": "The only sport where you want to play less!",
+    "difficulty": "medium",
+    "category": "Sport",
+    "tags": [
+      "golf",
+      "birds"
+    ]
+  },
+  {
+    "id": 37,
+    "question": "What is a perfect score in 10-pin bowling?",
+    "answer": "300",
+    "fun_fact": "A perfect game requires 12 strikes in a row.",
+    "joke": "300 is great for bowling, bad for ovens!",
+    "difficulty": "medium",
+    "category": "Sport",
+    "tags": [
+      "bowling",
+      "scores"
+    ]
+  },
+  {
+    "id": 38,
+    "question": "What does WWW stand for in a website?",
+    "answer": "World Wide Web",
+    "fun_fact": "The first web page went live in 1991.",
+    "joke": "More like World Wide Wait on slow Wi-Fi!",
+    "difficulty": "easy",
+    "category": "Technology",
+    "tags": [
+      "internet",
+      "basics"
+    ]
+  },
+  {
+    "id": 39,
+    "question": "Which company created the iPhone and Mac?",
+    "answer": "Apple",
+    "fun_fact": "Their first logo featured Isaac Newton.",
+    "joke": "An Apple a day keeps the storage full!",
+    "difficulty": "easy",
+    "category": "Technology",
+    "tags": [
+      "brands",
+      "computers"
+    ]
+  },
+  {
+    "id": 40,
+    "question": "What is a computer's \"brain\" called?",
+    "answer": "CPU",
+    "alt_answers": [
+      "Central Processing Unit"
+    ],
+    "fun_fact": "Modern CPUs perform billions of calculations every second.",
+    "joke": "My CPU is fast, but I am slow!",
+    "difficulty": "medium",
+    "category": "Technology",
+    "tags": [
+      "hardware",
+      "computers"
+    ]
+  },
+  {
+    "id": 41,
+    "question": "How many strings does a standard guitar have?",
+    "answer": "6",
+    "fun_fact": "A standard guitar typically has six strings.",
+    "joke": "6 strings and I still only know three chords!",
+    "difficulty": "easy",
+    "category": "Music",
+    "tags": [
+      "instruments",
+      "guitar"
+    ]
+  },
+  {
+    "id": 42,
+    "question": "Which \"King of Rock\" lived at Graceland?",
+    "answer": "Elvis Presley",
+    "alt_answers": [
+      "Elvis"
+    ],
+    "fun_fact": "Elvis had a twin brother named Jesse.",
+    "joke": "He left the building, but forgot his shoes!",
+    "difficulty": "medium",
+    "category": "Music",
+    "tags": [
+      "rock",
+      "history"
+    ]
+  },
+  {
+    "id": 43,
+    "question": "Which instrument has exactly 88 keys?",
+    "answer": "Piano",
+    "fun_fact": "A piano is technically a percussion instrument.",
+    "joke": "Why jail? Because it hit the wrong notes!",
+    "difficulty": "medium",
+    "category": "Music",
+    "tags": [
+      "instruments",
+      "piano"
+    ]
   }
 ]

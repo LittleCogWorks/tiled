@@ -18,6 +18,16 @@
 - **Scope**: Game lifecycle and session coordination
 - **Location**: `scripts/autoload/GameManager.gd`
 
+#### NetworkManager
+- **Purpose**: Host authoritative WebSocket transport and controller event bridge
+- **Scope**: Client connection lifecycle, gameplay packet broadcast, validated input signals
+- **Location**: `scripts/autoload/NetworkManager.gd`
+
+#### ControllerServer
+- **Purpose**: Serves controller web app assets over HTTP
+- **Scope**: Device access to controller UI on local network
+- **Location**: `scripts/autoload/ControllerServer.gd`
+
 ### Data Classes
 
 #### Player
@@ -48,6 +58,16 @@
 #### QnA (Round Component)
 - **Purpose**: Round UI and gameplay - handles question display, sliders, answer checking
 - **Location**: `scenes/components/rounds/qna.gd`
+
+### Controller Stack
+
+#### Controller Web App
+- **Purpose**: Mobile player input surface and state-driven UX
+- **Location**: `controller/index.html`, `controller/app.js`, `controller/styles.css`
+
+#### Protocol Parser
+- **Purpose**: Stateless validation and dispatch of client packet semantics
+- **Location**: `scripts/logic/NetworkProtocolHandler.gd`
 
 ## Data Flow
 
@@ -110,3 +130,7 @@ Main (Scene Manager)
 4. **GameBoard as Coordinator**: GameBoard doesn't contain game logic - it coordinates between QnA (UI) and Managers (logic).
 
 5. **Pure Data Classes**: Game, Player, Question are data containers with minimal logic.
+
+6. **Authoritative Host Model**: Controller clients are input UIs only. Host (`GameBoard` + managers) validates and applies all gameplay decisions.
+
+7. **Reconnect Grace Window**: In multiplayer, temporary disconnects are handled with a grace timer before turn-skip fallback to avoid deadlocks.

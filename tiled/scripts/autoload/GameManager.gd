@@ -136,10 +136,10 @@ func handle_wrong_answer(player: Player, base_prize: int, submitted_answer: Stri
 	return _round_resolution.handle_wrong_answer(player, base_prize, current_question, submitted_answer)
 
 # Handle correct answer with winner checking
-func handle_correct_answer(player: Player, prize: int, type: SubmissionResult, submitted_answer: String) -> Dictionary:
+func handle_correct_answer(player: Player, prize: int, type: SubmissionResult, submitted_answer: String, scoring_breakdown: Dictionary = {}) -> Dictionary:
 	var is_auto_accept := type == SubmissionResult.AUTO_ACCEPT
 	var target := game.game_target if game else 0
-	return _round_resolution.handle_correct_answer(player, prize, is_auto_accept, target, submitted_answer)
+	return _round_resolution.handle_correct_answer(player, prize, is_auto_accept, target, submitted_answer, scoring_breakdown)
 
 
 # Handle vote rejection: no-voters split half the prize.

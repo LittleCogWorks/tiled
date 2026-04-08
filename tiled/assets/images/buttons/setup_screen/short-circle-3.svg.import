@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://j3lgo5br1u5"
-path="res://.godot/imported/bg_tiles_large_inline.png-742b81b7107f3e4d83934329a8ba8b31.ctex"
+uid="uid://dsopqpa6wvboc"
+path="res://.godot/imported/short-circle-3.svg-b54bad5b93854e41a4f39e6b3ffb0ada.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/backgrounds/bg_tiles_large_inline.png"
-dest_files=["res://.godot/imported/bg_tiles_large_inline.png-742b81b7107f3e4d83934329a8ba8b31.ctex"]
+source_file="res://assets/images/buttons/setup_screen/short-circle-3.svg"
+dest_files=["res://.godot/imported/short-circle-3.svg-b54bad5b93854e41a4f39e6b3ffb0ada.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

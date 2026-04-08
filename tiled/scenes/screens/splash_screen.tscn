@@ -25,13 +25,12 @@ offset_bottom = 1080.0
 texture = SubResource("GradientTexture2D_8hwfj")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1848726870]
-visible = false
 layout_mode = 0
-offset_left = 368.0
-offset_top = 112.0
-offset_right = 1568.0
-offset_bottom = 912.0
-color = Color(0.705887, 0.705887, 0.705887, 1)
+offset_left = 475.0
+offset_top = 264.0
+offset_right = 1467.0
+offset_bottom = 698.0
+color = Color(0.0024878304, 0.14238882, 0.23969707, 1)
 
 [node name="Label" type="Label" parent="." unique_id=1089978127]
 visible = false

@@ -92,6 +92,11 @@ button:disabled {
 	margin-top: 10px;
 }
 
+.row-tight {
+	grid-template-columns: 1fr;
+	margin-top: 6px;
+}
+
 .slider-grid {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -105,6 +110,24 @@ button:disabled {
 	border: 1px dashed var(--border);
 	border-radius: 10px;
 	background: #f8fbff;
+}
+
+.guess-modal {
+	margin-top: 12px;
+	padding: 10px;
+	border: 1px dashed var(--border);
+	border-radius: 10px;
+	background: #f8fbff;
+}
+
+.forced-guess-banner {
+	margin: 0 0 10px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	border: 1px solid #fecaca;
+	background: #fef2f2;
+	color: #991b1b;
+	font-weight: 700;
 }
 
 .vote-prompt {
@@ -130,6 +153,10 @@ button:disabled {
 
 .status.ok {
 	color: var(--accent);
+}
+
+.hidden {
+	display: none;
 }
 
 .log {

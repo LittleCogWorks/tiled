@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://n3uwcr52ia41"
-path="res://.godot/imported/bg_tiles_large_offset.png-84e4e041fd022bfb4cc903e1b869cc7a.ctex"
+uid="uid://dq84w17to8028"
+path="res://.godot/imported/1p-circle.png-c4687567b846cdb90dc4573d2b2c3911.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/backgrounds/bg_tiles_large_offset.png"
-dest_files=["res://.godot/imported/bg_tiles_large_offset.png-84e4e041fd022bfb4cc903e1b869cc7a.ctex"]
+source_file="res://assets/images/buttons/setup_screen/1p-circle.png"
+dest_files=["res://.godot/imported/1p-circle.png-c4687567b846cdb90dc4573d2b2c3911.ctex"]
 
 [params]
 

@@ -26,6 +26,7 @@ signal client_disconnected(device_id: String)
 signal player_join_received(device_id: String, player_name: String, avatar_index: int)
 signal player_ready_received(device_id: String, is_ready: bool)
 signal slider_click_received(device_id: String, index: int)
+signal guess_started_received(device_id: String)
 signal guess_received(device_id: String, answer: String)
 signal vote_cast_received(device_id: String, accepted: bool)
 signal overlay_continue_received(device_id: String)
@@ -74,6 +75,11 @@ func start_server() -> bool:
 		push_error("NetworkManager: failed to start server on port %d (err %d)" % [GameConfig.WEBSOCKET_PORT, err])
 		_server = null
 		return false
+
+	if not _server.peer_connected.is_connected(_on_peer_connected):
+		_server.peer_connected.connect(_on_peer_connected)
+	if not _server.peer_disconnected.is_connected(_on_peer_disconnected):
+		_server.peer_disconnected.connect(_on_peer_disconnected)
 
 	room_code = GameIdGenerator.get_random_id()
 	print("NetworkManager: server started on port %d — room code: %s" % [GameConfig.WEBSOCKET_PORT, room_code])
@@ -176,17 +182,6 @@ func _process_events() -> void:
 
 		_handle_packet(peer_id, raw)
 
-	# Check for disconnections in an API-compatible way.
-	for peer_id in _peer_ids.keys():
-		var peer_connected := true
-		if _server.has_method("has_peer"):
-			peer_connected = _server.has_peer(peer_id)
-		elif _server.has_method("get_peer"):
-			peer_connected = _server.get_peer(peer_id) != null
-
-		if not peer_connected:
-			_mark_peer_disconnected(peer_id)
-
 ## Handles a single incoming packet from a client.
 ## - Parses the JSON message and validates its structure.
 ## - Dispatches actions based on the message type (join, ready, slider_click, guess, vote, overlay_continue).
@@ -216,6 +211,8 @@ func _emit_protocol_event(event_name: String, args: Array) -> void:
 			player_ready_received.emit(args[0], args[1])
 		"slider_click_received":
 			slider_click_received.emit(args[0], args[1])
+		"guess_started_received":
+			guess_started_received.emit(args[0])
 		"guess_received":
 			guess_received.emit(args[0], args[1])
 		"vote_cast_received":
@@ -239,14 +236,7 @@ func _device_id_to_peer(device_id: String) -> int:
 func _send_json_to_peer(peer_id: int, json: String) -> bool:
 	if _server == null:
 		return false
-
-	var peer_connected := true
-	if _server.has_method("has_peer"):
-		peer_connected = _server.has_peer(peer_id)
-	elif _server.has_method("get_peer"):
-		peer_connected = _server.get_peer(peer_id) != null
-
-	if not peer_connected:
+	if not _peer_ids.has(peer_id):
 		return false
 
 	var peer = _server.get_peer(peer_id)
@@ -255,6 +245,15 @@ func _send_json_to_peer(peer_id: int, json: String) -> bool:
 
 	peer.put_packet(json.to_utf8_buffer())
 	return true
+
+
+func _on_peer_connected(peer_id: int) -> void:
+	# Wait for the first packet to bind peer_id to a device_id.
+	print("NetworkManager: peer connected %d" % peer_id)
+
+
+func _on_peer_disconnected(peer_id: int) -> void:
+	_mark_peer_disconnected(peer_id)
 
 func _mark_peer_disconnected(peer_id: int) -> void:
 	if not _peer_ids.has(peer_id):

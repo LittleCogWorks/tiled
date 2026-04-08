@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ck7fq7cl7ufs5"
-path="res://.godot/imported/bg_tiles_large_square.png-2486a32e1a0518cd514f4e18d469a291.ctex"
+uid="uid://de153c88sj0q0"
+path="res://.godot/imported/med-circle.png-fb77f8d78e5b50f0411f74b1a31e1a5a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/backgrounds/bg_tiles_large_square.png"
-dest_files=["res://.godot/imported/bg_tiles_large_square.png-2486a32e1a0518cd514f4e18d469a291.ctex"]
+source_file="res://assets/images/buttons/setup_screen/med-circle.png"
+dest_files=["res://.godot/imported/med-circle.png-fb77f8d78e5b50f0411f74b1a31e1a5a.ctex"]
 
 [params]
 

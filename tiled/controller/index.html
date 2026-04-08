@@ -1,19 +1,30 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Nutcase Controller</title>
 	<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 	<main class="app">
 		<header class="panel">
 			<h1>Nutcase Controller</h1>
 			<p class="muted">Connect your phone to the host game.</p>
+			<div class="row row-tight">
+				<button id="debugToggleBtn" type="button" class="secondary">Debug: Off</button>
+			</div>
 		</header>
 
-		<section class="panel">
+		<section id="statePanel" class="panel">
+			<h2>Controller State</h2>
+			<p id="controllerStateText" class="status">State: disconnected</p>
+			<p id="controllerHintText" class="muted">Connect to begin.</p>
+		</section>
+
+		<section id="connectPanel" class="panel">
 			<label for="hostInput">Host (ws://ip:port)</label>
 			<input id="hostInput" type="text" placeholder="ws://192.168.1.20:9080">
 
@@ -26,7 +37,7 @@
 			<p id="turnText" class="status">Turn: Waiting for game</p>
 		</section>
 
-		<section class="panel">
+		<section id="profilePanel" class="panel">
 			<label for="nameInput">Name</label>
 			<input id="nameInput" type="text" maxlength="16" placeholder="Player name">
 
@@ -39,9 +50,12 @@
 			</div>
 		</section>
 
-		<section class="panel">
-			<h2>Debug Actions</h2>
-			<p class="muted">Useful while wiring gameplay input.</p>
+		<section id="gameplayPanel" class="panel">
+			<h2>Gameplay</h2>
+			<p class="muted">Main controls used during a round.</p>
+			<p id="forcedGuessBanner" class="forced-guess-banner hidden" aria-live="assertive">
+				Forced guess mode: submit your answer now. Tile reveals are locked.
+			</p>
 
 			<button id="continueBtn" type="button">Continue</button>
 
@@ -68,12 +82,22 @@
 				<button type="button" class="slider-tile secondary" data-index="8">9</button>
 			</div>
 
-			<label for="guessInput">Guess</label>
-			<input id="guessInput" type="text" placeholder="Type a guess">
-			<button id="guessBtn" type="button" class="secondary">Send Guess</button>
+			<div class="row row-tight">
+				<button id="startGuessBtn" type="button" class="secondary">Guess</button>
+			</div>
+
+			<div id="guessModal" class="guess-modal hidden" aria-live="polite">
+				<p class="muted">Type your guess and submit.</p>
+				<label for="guessInput">Guess</label>
+				<input id="guessInput" type="text" placeholder="Type a guess">
+				<div class="row">
+					<button id="guessSubmitBtn" type="button">Submit Guess</button>
+					<button id="guessCancelBtn" type="button" class="secondary">Cancel</button>
+				</div>
+			</div>
 		</section>
 
-		<section class="panel">
+		<section id="logPanel" class="panel">
 			<h2>Log</h2>
 			<pre id="logBox" class="log" aria-live="polite"></pre>
 		</section>
@@ -81,4 +105,5 @@
 
 	<script src="app.js"></script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://brn7maecyahh4"]
 
+[ext_resource type="Script" uid="uid://0dn7fysucfor" path="res://scenes/screens/options.gd" id="1_y7uop"]
 [ext_resource type="Texture2D" uid="uid://5m5hpdlsl61l" path="res://assets/images/backgrounds/Untitled_Artwork3.png" id="2_dkq70"]
 [ext_resource type="Texture2D" uid="uid://mc42nrkmt20r" path="res://assets/images/buttons/start/start-normal.svg" id="2_t4xj1"]
 [ext_resource type="Texture2D" uid="uid://s45wsj5wha81" path="res://assets/images/buttons/start/start-over.svg" id="3_sp4sj"]
@@ -7,21 +8,18 @@
 [ext_resource type="SpriteFrames" uid="uid://bdg25x2d1v0ke" path="res://assets/images/buttons/base/base_btn.tres" id="4_t4xj1"]
 [ext_resource type="Texture2D" uid="uid://vvvbgch27fvq" path="res://assets/images/buttons/home/home-normal.svg" id="4_tdua0"]
 [ext_resource type="FontFile" uid="uid://ojm4aillukff" path="res://assets/fonts/Slow Play.otf" id="5_tdua0"]
+[ext_resource type="LabelSettings" uid="uid://e6f41uqtekh1" path="res://resources/settings_label_settings.tres" id="9_tdua0"]
 
 [sub_resource type="Theme" id="Theme_t11tv"]
 default_font = ExtResource("5_tdua0")
 default_font_size = 54
-
-[sub_resource type="LabelSettings" id="LabelSettings_nhm8p"]
-font = ExtResource("5_tdua0")
-font_size = 54
-font_color = Color(0, 0.0313726, 1, 1)
 
 [sub_resource type="Theme" id="Theme_64jy4"]
 default_font = ExtResource("5_tdua0")
 default_font_size = 54
 
 [node name="GameInit2" type="Node2D" unique_id=111432682]
+script = ExtResource("1_y7uop")
 metadata/_edit_vertical_guides_ = [960.0, 1920.0]
 metadata/_edit_horizontal_guides_ = [536.0]
 
@@ -96,18 +94,31 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("5_tdua0")
 theme_override_font_sizes/font_size = 51
 text = "Sound Effects"
+label_settings = ExtResource("9_tdua0")
 
 [node name="Buttons" type="HBoxContainer" parent="Sound" unique_id=904802376]
 layout_mode = 2
 
 [node name="toggle" type="Button" parent="Sound/Buttons" unique_id=1163498365]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_tdua0")
 theme_override_font_sizes/font_size = 28
 toggle_mode = true
 text = "On/Off"
 metadata/value = false
+
+[node name="Volume" type="HSlider" parent="Sound/Buttons" unique_id=1462100110]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Value" type="Label" parent="Sound/Buttons" unique_id=1864820369]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_tdua0")
+theme_override_font_sizes/font_size = 24
+text = "100%"
 
 [node name="Music" type="VBoxContainer" parent="." unique_id=1452947385]
 offset_left = 64.0
@@ -119,7 +130,7 @@ theme = SubResource("Theme_t11tv")
 [node name="Label" type="Label" parent="Music" unique_id=2098367219]
 layout_mode = 2
 text = "Music"
-label_settings = SubResource("LabelSettings_nhm8p")
+label_settings = ExtResource("9_tdua0")
 
 [node name="Buttons" type="HBoxContainer" parent="Music" unique_id=1614017250]
 layout_mode = 2
@@ -128,24 +139,66 @@ theme_override_constants/separation = 16
 
 [node name="toggle" type="Button" parent="Music/Buttons" unique_id=448148660]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_tdua0")
 theme_override_font_sizes/font_size = 28
 toggle_mode = true
 text = "On/Off"
 metadata/value = false
 
-[node name="Network" type="VBoxContainer" parent="." unique_id=1148475699]
+[node name="Volume" type="HSlider" parent="Music/Buttons" unique_id=714183786]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Value" type="Label" parent="Music/Buttons" unique_id=931444701]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_tdua0")
+theme_override_font_sizes/font_size = 24
+text = "100%"
+
+[node name="Master" type="VBoxContainer" parent="." unique_id=1158993007]
 offset_left = 64.0
 offset_top = 512.0
 offset_right = 448.0
-offset_bottom = 654.0
+offset_bottom = 640.0
+theme = SubResource("Theme_t11tv")
+
+[node name="Label" type="Label" parent="Master" unique_id=535691161]
+layout_mode = 2
+text = "Master"
+label_settings = ExtResource("9_tdua0")
+
+[node name="Buttons" type="HBoxContainer" parent="Master" unique_id=2042614581]
+layout_mode = 2
+theme = SubResource("Theme_64jy4")
+theme_override_constants/separation = 16
+
+[node name="Volume" type="HSlider" parent="Master/Buttons" unique_id=749763039]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="Value" type="Label" parent="Master/Buttons" unique_id=1002848257]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_tdua0")
+theme_override_font_sizes/font_size = 24
+text = "100%"
+
+[node name="Network" type="VBoxContainer" parent="." unique_id=1148475699]
+offset_left = 64.0
+offset_top = 704.0
+offset_right = 448.0
+offset_bottom = 846.0
 theme = SubResource("Theme_t11tv")
 
 [node name="Label" type="Label" parent="Network" unique_id=454009934]
 layout_mode = 2
-text = "Network"
-label_settings = SubResource("LabelSettings_nhm8p")
+text = "Internet"
+label_settings = ExtResource("9_tdua0")
 
 [node name="Buttons" type="HBoxContainer" parent="Network" unique_id=744490233]
 layout_mode = 2

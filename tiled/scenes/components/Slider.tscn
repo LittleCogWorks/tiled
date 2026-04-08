@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b5giku58qyr3j"]
+[gd_scene format=3 uid="uid://b5giku58qyr3j"]
 
 [ext_resource type="Script" uid="uid://d0mifludc5xxr" path="res://scenes/components/slider.gd" id="1_lfa00"]
 [ext_resource type="FontFile" uid="uid://dsjw1g8q8n42w" path="res://assets/fonts/Cute Dino.otf" id="2_p1un5"]
@@ -11,41 +11,43 @@
 [sub_resource type="LabelSettings" id="LabelSettings_tfq63"]
 font = ExtResource("2_p1un5")
 font_size = 72
-font_color = Color(0.16991994, 0.014400008, 0.36, 1)
+font_color = Color(0.292592, 0.046657562, 0.5908938, 1)
 outline_size = 16
 outline_color = Color(0.90025425, 0.923348, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_lfa00"]
 font_size = 48
 
-[node name="Slider" type="PanelContainer"]
+[node name="Slider" type="PanelContainer" unique_id=302610436]
 offset_right = 900.0
 offset_bottom = 240.0
 theme = SubResource("Theme_p1un5")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bha06")
 script = ExtResource("1_lfa00")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="." unique_id=1560031576]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_right = 32
 
-[node name="WordLabel" type="Label" parent="Margin"]
+[node name="WordLabel" type="Label" parent="Margin" unique_id=1768741517]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "Photosynthesis????"
 label_settings = SubResource("LabelSettings_tfq63")
 horizontal_alignment = 1
 vertical_alignment = 2
+clip_text = true
 
-[node name="Cover" type="TextureRect" parent="."]
+[node name="Cover" type="TextureRect" parent="." unique_id=795560682]
 layout_mode = 2
 texture = ExtResource("3_bha06")
 expand_mode = 2
 
-[node name="NumberLabel" type="Label" parent="Cover"]
+[node name="NumberLabel" type="Label" parent="Cover" unique_id=354551545]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0

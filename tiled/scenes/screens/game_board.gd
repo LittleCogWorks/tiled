@@ -20,6 +20,7 @@ extends Control
 #     moves to phones, but keep it for the host's local keyboard fallback.
 
 signal return_to_home
+signal return_to_lobby(settings: Dictionary)
 signal game_ended(winner: Player)
 signal network_vote_resolved(result: Dictionary)
 
@@ -29,7 +30,7 @@ const player_badge_sm = preload("res://scenes/components/player_badge_small.tscn
 @onready var controls = $HUD/Controls
 @onready var options_btn = $HUD/OptionsBtn
 @onready var exit_btn = $HUD/ExitBtn
-@onready var players_container = $HUD/PlayersContainer
+# @onready var players_container = $HUD/PlayersContainer
 @onready var player_badges = $HUD/PlayerBadges
 
 
@@ -45,16 +46,17 @@ const ROUND_SCENES = {
 }
 
 const NETWORK_VOTE_TIMEOUT_SECONDS = 20.0
+const DisconnectPolicyScript = preload("res://scripts/logic/GameBoardDisconnectPolicy.gd")
+const VoteSessionScript = preload("res://scripts/logic/GameBoardVoteSession.gd")
+const ControllerSyncScript = preload("res://scripts/logic/GameBoardControllerSync.gd")
 
 var round_instance = null
 var _stored_focus_modes: Dictionary = {} # node path -> focus mode, used by _recursive_set_focus
 var _overlay_accepting_remote: bool = false
 var question_transition: Control = null
-var _vote_session_active: bool = false
-var _vote_session_guesser: Player = null
-var _vote_session_correct_answer: String = ""
-var _vote_session_eligible_by_device: Dictionary = {} # device_id -> Player
-var _vote_session_votes_by_device: Dictionary = {} # device_id -> bool
+var _disconnect_policy: GameBoardDisconnectPolicy = null
+var _vote_session: GameBoardVoteSession = null
+var _controller_sync: GameBoardControllerSync = null
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -76,11 +78,17 @@ func _ready() -> void:
 	PlayerManager.turn_changed.connect(_on_turn_changed)
 	_setup_players_hud()
 	_setup_round_area()
+	_disconnect_policy = DisconnectPolicyScript.new(self )
+	_vote_session = VoteSessionScript.new(self )
+	_controller_sync = ControllerSyncScript.new(self )
 	await get_tree().process_frame
 	_broadcast_new_round_to_controllers()
 
 	if not NetworkManager.is_local:
+		NetworkManager.player_join_received.connect(_on_network_player_join_during_game)
+		NetworkManager.client_disconnected.connect(_on_network_client_disconnected)
 		NetworkManager.slider_click_received.connect(_on_network_slider_click)
+		NetworkManager.guess_started_received.connect(_on_network_guess_started)
 		NetworkManager.guess_received.connect(_on_network_guess)
 		NetworkManager.overlay_continue_received.connect(_on_network_overlay_continue)
 		NetworkManager.vote_cast_received.connect(_on_network_vote_cast)
@@ -145,6 +153,7 @@ func _setup_round_area() -> void:
 	round_instance = round_scene.instantiate()
 	round_area.add_child(round_instance)
 	round_instance.connect("round_result", Callable(self , "_on_round_result"))
+
 ## Round result handler — dispatches to specific submission type handlers.
 ## Coordinates flow: wrong answer → freeze cascade, fuzzy → voting, exact → winner check
 func _on_round_result(player: Player, is_correct: int, prize: int, submitted_answer: String) -> void:
@@ -154,7 +163,7 @@ func _on_round_result(player: Player, is_correct: int, prize: int, submitted_ans
 		GameManager.SubmissionResult.FUZZY:
 			await _handle_fuzzy_answer(player, prize, submitted_answer)
 		GameManager.SubmissionResult.EXACT, GameManager.SubmissionResult.AUTO_ACCEPT:
-			var result = GameManager.handle_correct_answer(player, prize, is_correct, submitted_answer)
+			var result = GameManager.handle_correct_answer(player, prize, is_correct, submitted_answer, _get_round_score_breakdown(prize))
 			await _handle_correct_result(result)
 
 ## Handles incorrect submission: freeze cascade, last standing free guess, LPS reveal-all.
@@ -166,20 +175,18 @@ func _handle_incorrect_answer(player: Player, prize: int, submitted_answer: Stri
 	# Simple freeze: player locked until next round
 	if result["is_frozen"]:
 		await _update_overlay(result["message"])
-	
 	# Last standing: only player left gets free guess
 	if result["is_last_standing"]:
 		await _update_overlay(result["message"])
-		if round_instance:
+		# In local play, show modal automatically. In network mode, controller handles guess input.
+		if NetworkManager.is_local and round_instance:
 			round_instance.show_answer_modal_for_free_guess()
-	
 	# LPS (Last Person Standing) wrong answer: all answers revealed, move to next round
 	if result["is_lps_wrong"]:
 		await _update_overlay(result["message"])
 		await get_tree().create_timer(1.0).timeout
 		_start_next_round()
 		return
-	
 	# Edge case: no active players remain after wrong answer
 	var has_no_special_end = not result["is_last_standing"] and not result["is_lps_wrong"]
 	if has_no_special_end and PlayerManager.get_active_players().is_empty():
@@ -189,116 +196,24 @@ func _handle_incorrect_answer(player: Player, prize: int, submitted_answer: Stri
 
 ## Handles fuzzy (close-enough) answer: vote on acceptance or move to next round.
 func _handle_fuzzy_answer(player: Player, prize: int, submitted_answer: String) -> void:
-	# Find eligible voters: active (unfrozen) players who are not the guesser
-	var eligible_voters: Array[Player] = []
-	for p in PlayerManager.get_active_players():
-		if p != player:
-			eligible_voters.append(p)
-	
-	# No voters: auto-accept the answer
-	if eligible_voters.is_empty():
-		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
-		await _handle_correct_result(result)
-		return
+	if _vote_session:
+		await _vote_session.handle_fuzzy_answer(player, prize, submitted_answer, _get_round_score_breakdown(prize))
 
-	# If multiplayer call to broadcast vote request
-	#   wait for result
-	# Else Local: keep current path
-	if not NetworkManager.is_local:
-		var network_voters: Array[Player] = []
-		for voter in eligible_voters:
-			if voter.device_id != "":
-				network_voters.append(voter)
-		if network_voters.is_empty():
-			# Safety fallback in case no eligible voter has a mapped device.
-			var no_device_result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
-			await _handle_correct_result(no_device_result)
-			return
-
-		_start_network_vote_session(player, submitted_answer, network_voters)
-		var network_vote_result: Dictionary = await network_vote_resolved
-		await _apply_fuzzy_vote_result(player, prize, submitted_answer, network_vote_result)
-	else:
-		# Show vote modal and wait for result
-		var vote_modal = VoteModal.new()
-		vote_modal.setup(player, submitted_answer, round_instance.current_question.answer, eligible_voters)
-		add_child(vote_modal)
-		var vote_result: Dictionary = await vote_modal.vote_resolved
-		await _apply_fuzzy_vote_result(player, prize, submitted_answer, vote_result)
-
-func _apply_fuzzy_vote_result(player: Player, prize: int, submitted_answer: String, vote_result: Dictionary) -> void:
-	if vote_result.get("accepted", false):
-		var result = GameManager.handle_correct_answer(player, prize, GameManager.SubmissionResult.FUZZY, submitted_answer)
-		await _handle_correct_result(result)
-		return
-
-	# Vote rejected: distribute prize to "no" voters and continue
-	var no_voters: Array[Player] = vote_result.get("no_voters", [])
-	GameManager.handle_vote_rejection(prize, no_voters)
-	_update_all_badges()
-
-	if no_voters.is_empty():
-		await _update_overlay("It's a tie!\nNobody wins the prize.")
-	else:
-		await _update_overlay("Rejected!\nThe prize was shared among those who voted no.")
-	_start_next_round()
-
-func _start_network_vote_session(guesser: Player, submitted_answer: String, eligible_voters: Array[Player]) -> void:
-	_reset_vote_session()
-	_vote_session_active = true
-	_vote_session_guesser = guesser
-	_vote_session_correct_answer = ""
-	if round_instance and round_instance.get("current_question") != null:
-		_vote_session_correct_answer = str(round_instance.current_question.answer)
-
-	for voter in eligible_voters:
-		_vote_session_eligible_by_device[voter.device_id] = voter
-
-	print("Broadcasting vote request to controllers for fuzzy answer: '%s'" % submitted_answer)
-	NetworkManager.broadcast_vote_request(guesser.id, submitted_answer)
-
-	var timeout = get_tree().create_timer(NETWORK_VOTE_TIMEOUT_SECONDS)
-	timeout.timeout.connect(_on_network_vote_timeout)
-
-func _on_network_vote_timeout() -> void:
-	if not _vote_session_active:
-		return
-	print("Network vote timed out after %.1f seconds, finalizing with received votes" % NETWORK_VOTE_TIMEOUT_SECONDS)
-	_finalize_network_vote_session()
-
-func _finalize_network_vote_session() -> void:
-	if not _vote_session_active:
-		return
-
-	var yes_voters: Array[Player] = []
-	var no_voters: Array[Player] = []
-	for device_id in _vote_session_eligible_by_device.keys():
-		var voter: Player = _vote_session_eligible_by_device[device_id]
-		if _vote_session_votes_by_device.get(device_id, true):
-			yes_voters.append(voter)
-		else:
-			no_voters.append(voter)
-
-	var tied = yes_voters.size() == no_voters.size()
-	var accepted = not tied and yes_voters.size() > no_voters.size()
-	var vote_result = {
-		"accepted": accepted,
-		"yes_voters": yes_voters,
-		"no_voters": no_voters
+func _get_round_score_breakdown(prize: int) -> Dictionary:
+	if round_instance and round_instance.has_method("get_current_score_breakdown"):
+		var breakdown = round_instance.get_current_score_breakdown()
+		if breakdown is Dictionary:
+			breakdown["total_points"] = prize
+			return breakdown
+	return {
+		"base_points": prize,
+		"bonus_points": 0,
+		"total_points": prize
 	}
 
-	if not NetworkManager.is_local:
-		NetworkManager.broadcast_vote_result(accepted, _vote_session_correct_answer)
-
-	_reset_vote_session()
-	network_vote_resolved.emit(vote_result)
-
 func _reset_vote_session() -> void:
-	_vote_session_active = false
-	_vote_session_guesser = null
-	_vote_session_correct_answer = ""
-	_vote_session_eligible_by_device.clear()
-	_vote_session_votes_by_device.clear()
+	if _vote_session:
+		_vote_session.reset_vote_session()
 
 ## Checks for game-end condition; if winner exists, ends game; else shows overlay and loads next round.
 func _handle_correct_result(result: Dictionary) -> void:
@@ -322,6 +237,8 @@ func _update_all_badges() -> void:
 	for i in range(badges.size()):
 		if i < PlayerManager.players.size():
 			var player = PlayerManager.players[i]
+			if badges[i].has_method("update_identity"):
+				badges[i].update_identity(player.name, player.avatar_index)
 			badges[i].update_score(player.score)
 			badges[i].set_current_player(player == current_player)
 			badges[i].set_current_leader(leaders.has(player))
@@ -336,6 +253,8 @@ func _on_turn_changed(_player: Player) -> void:
 ## Loads next question, unfreezes players, re-enables input focus, and broadcasts state.
 func _start_next_round() -> void:
 	_reset_vote_session()
+	if _disconnect_policy:
+		_disconnect_policy.on_start_next_round()
 	if GameManager.game and GameManager.game.current_question:
 		GameManager.game.record_round_result(GameManager.game.current_round, GameManager.game.current_question, {})
 	
@@ -389,15 +308,88 @@ func _on_network_slider_click(device_id: String, slider_index: int) -> void:
 	if round_instance:
 		round_instance.slider_reveal_requested.emit(slider_index)
 
-## Network handler: validates sender is current player, then emits guess event to round.
-func _on_network_guess(device_id: String, guess_text: String) -> void:
+## Network handler: validates sender is current player, then updates round UI to show guess is being typed.
+func _on_network_guess_started(device_id: String) -> void:
 	var sender = PlayerManager.get_player_by_device_id(device_id)
 	var current = PlayerManager.get_current_player()
 	if sender == null or sender != current:
-		print("Received guess from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
+		print("Received guess_start from %s but it's %s's turn" % [sender.name if sender else "Unknown", current.name if current else "None"])
 		return
-	if round_instance:
-		round_instance.guess_submitted.emit(guess_text)
+	if round_instance and round_instance.has_method("begin_guessing"):
+		round_instance.begin_guessing(sender.name)
+
+## Network handler: validates sender is current player, then emits guess event to round.
+func _on_network_guess(device_id: String, guess_text: String) -> void:
+	if _disconnect_policy:
+		_disconnect_policy.handle_network_guess(device_id, guess_text)
+
+## Network handler: delegate in-game profile updates and reconnect handling to the disconnect policy helper.
+func _on_network_player_join_during_game(device_id: String, player_name: String, avatar_index: int) -> void:
+	if _disconnect_policy:
+		_disconnect_policy.handle_network_player_join_during_game(device_id, player_name, avatar_index)
+
+
+func _on_network_client_disconnected(device_id: String) -> void:
+	if _disconnect_policy:
+		_disconnect_policy.handle_network_client_disconnected(device_id)
+
+
+func _show_disconnect_lps_prompt(player_id: String) -> void:
+	var survivor = PlayerManager.get_player_by_id(player_id)
+	if survivor == null:
+		if _disconnect_policy:
+			_disconnect_policy.on_disconnect_match_end()
+		return
+
+	await _update_overlay("%s is last standing among connected players!\nFree guess." % survivor.name)
+	if NetworkManager.is_local and round_instance:
+		round_instance.show_answer_modal_for_free_guess()
+
+	if _disconnect_policy:
+		_disconnect_policy.on_disconnect_match_end()
+
+
+func _resolve_disconnect_match_end(winner_player_id: String) -> void:
+	var winner: Player = null
+	if not winner_player_id.is_empty():
+		winner = PlayerManager.get_player_by_id(winner_player_id)
+
+	if winner != null:
+		await _update_overlay("%s wins by default!\nReturning to lobby..." % winner.name)
+	else:
+		await _update_overlay("All players disconnected.\nReturning to lobby...")
+
+	var lobby_settings = _build_lobby_settings_from_current_game()
+	_reset_vote_session()
+
+	if _disconnect_policy:
+		_disconnect_policy.clear_all()
+		_disconnect_policy.on_disconnect_match_end()
+
+	if not NetworkManager.is_local:
+		NetworkManager.stop_server()
+
+	GameManager.game = null
+	PlayerManager.clear_all_players()
+
+	return_to_lobby.emit(lobby_settings)
+
+
+func _build_lobby_settings_from_current_game() -> Dictionary:
+	var settings = {
+		"game_mode": "multi",
+		"game_type": "qna",
+		"game_target": 200,
+		"fuzzy_enabled": GameConfig.FUZZY_ENABLED_DEFAULT,
+	}
+
+	if GameManager.game != null:
+		settings["game_mode"] = GameManager.game.game_mode
+		settings["game_type"] = GameManager.game.game_type
+		settings["game_target"] = GameManager.game.game_target
+		settings["fuzzy_enabled"] = GameManager.game.fuzzy_enabled
+
+	return settings
 
 ## Network handler: validates sender is current player and overlay is active, then dismisses overlay.
 func _on_network_overlay_continue(device_id: String) -> void:
@@ -414,78 +406,45 @@ func _on_network_overlay_continue(device_id: String) -> void:
 
 ## If multiplayer, send all player scores to connected controllers.
 func _broadcast_scores_to_controllers() -> void:
-	if NetworkManager.is_local:
-		return
-	NetworkManager.broadcast_scores(PlayerManager.players)
+	if _controller_sync:
+		_controller_sync.broadcast_scores()
 
 ## If multiplayer, broadcast current player and send "your turn" to their device.
 func _broadcast_turn_to_controllers() -> void:
-	if NetworkManager.is_local:
-		return
-
-	var current = PlayerManager.get_current_player()
-	if current == null:
-		return
-
-	NetworkManager.broadcast_turn_changed(current.id)
-	if current.device_id != "":
-		NetworkManager.broadcast_your_turn(current.device_id)
+	if _controller_sync:
+		_controller_sync.broadcast_turn()
 
 ## If multiplayer, send round number and slider count to controllers.
 func _broadcast_new_round_to_controllers() -> void:
-	if NetworkManager.is_local:
-		return
-	if round_instance == null:
-		return
-
-	var slider_count := 9
-	if round_instance.has_method("get") and round_instance.get("current_question") != null:
-		var words = round_instance.current_question.question_text.split(" ")
-		slider_count = words.size()
-
-	NetworkManager.broadcast_new_round(GameManager.game.current_round, slider_count)
+	if _controller_sync:
+		_controller_sync.broadcast_new_round()
 
 ## If multiplayer, show/hide overlay prompt on controllers with optional message.
 func _broadcast_overlay_prompt(active: bool, message: String) -> void:
-	if NetworkManager.is_local:
-		return
-	NetworkManager.broadcast_overlay_prompt(active, message)
+	if _controller_sync:
+		_controller_sync.broadcast_overlay_prompt(active, message)
 
 func _on_network_vote_cast(device_id: String, accept: bool) -> void:
-	if not _vote_session_active:
-		return
-	if not _vote_session_eligible_by_device.has(device_id):
-		push_warning("Ignoring vote from ineligible device %s" % device_id)
-		return
-	if _vote_session_votes_by_device.has(device_id):
-		push_warning("Ignoring duplicate vote from device %s" % device_id)
-		return
-
-	var sender = PlayerManager.get_player_by_device_id(device_id)
-	if sender == null:
-		print("Received vote from unknown device %s" % device_id)
-		return
-
-	_vote_session_votes_by_device[device_id] = accept
-	print("Vote received from %s: %s (%d/%d)" % [sender.name, "accept" if accept else "reject", _vote_session_votes_by_device.size(), _vote_session_eligible_by_device.size()])
-
-	if _vote_session_votes_by_device.size() >= _vote_session_eligible_by_device.size():
-		_finalize_network_vote_session()
+	if _vote_session:
+		_vote_session.handle_network_vote_cast(device_id, accept)
 
 ## Button handlers
 ## Called when options button is pressed. (Placeholder for future implementation.)
 func _on_options_btn_pressed() -> void:
 	print("Options button pressed")
+	UISfx.play_ui_click()
 
 ## Called when exit button is pressed; shows confirmation dialog.
 func _on_exit_btn_pressed() -> void:
 	print("Exit button pressed")
+	UISfx.play_ui_click()
 	exit_confirm.dialog_text = "Are you sure you want to exit to main menu?"
 	exit_confirm.popup_centered()
 
 ## Confirmed exit: stops network server, resets game state, returns to home.
 func _on_exit_confirmed() -> void:
 	print("Exit confirmed, returning to main menu")
+	UISfx.play_ui_click()
 	_reset_vote_session()
 	if not NetworkManager.is_local:
 		NetworkManager.stop_server()

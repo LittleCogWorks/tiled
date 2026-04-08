@@ -2,6 +2,12 @@ extends PanelContainer
 
 signal clicked(word: String, is_blank: bool)
 
+const BASE_WORD_FONT_SIZE := 72
+const LONG_WORD_FONT_SIZE := 60
+const LONGER_WORD_FONT_SIZE := 50
+const MAX_LENGTH_FOR_BASE_FONT := 10
+const MAX_LENGTH_FOR_LONG_FONT := 14
+
 @onready var cover = $Cover
 @onready var word_label = $Margin/WordLabel
 @onready var number_label = $Cover/NumberLabel
@@ -16,6 +22,9 @@ func _ready() -> void:
 	focus_mode = Control.FOCUS_ALL
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	original_modulate = modulate
+	word_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	word_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	word_label.clip_text = true
 	
 	# Connect focus signals for visual feedback
 	focus_entered.connect(_on_focus_entered)
@@ -77,9 +86,22 @@ func _input(event: InputEvent):
 func set_word(text: String, number: int = 0):
 	word_label.text = text
 	word_number = number
+	_apply_word_font_size(text)
 	# Always show the number on the cover
 	if number_label:
-		number_label.text = str(number)	
+		number_label.text = str(number)
+
+func _apply_word_font_size(text: String) -> void:
+	var font_size = BASE_WORD_FONT_SIZE
+	var text_length = text.strip_edges().length()
+	if text_length > MAX_LENGTH_FOR_LONG_FONT:
+		font_size = LONGER_WORD_FONT_SIZE
+	elif text_length > MAX_LENGTH_FOR_BASE_FONT:
+		font_size = LONG_WORD_FONT_SIZE
+
+	var settings: LabelSettings = word_label.label_settings.duplicate() if word_label.label_settings else LabelSettings.new()
+	settings.font_size = font_size
+	word_label.label_settings = settings
 	
 func reveal():
 	is_revealed = true
@@ -88,5 +110,3 @@ func reveal():
 	tween.tween_property(cover, "position:x", size.x, 0.4).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	# fade out
 	tween.parallel().tween_property(cover, "modulate:a", 0, 0.3)
-
-	
