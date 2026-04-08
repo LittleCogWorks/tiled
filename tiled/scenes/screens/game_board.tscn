@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://pj4vs4xnaet6" path="res://assets/images/backgrounds/Untitled_Artwork4.png" id="3_lswpd"]
 [ext_resource type="Texture2D" uid="uid://b2vducltvynky" path="res://assets/images/buttons/options/options-normal.svg" id="4_6n5tc"]
 [ext_resource type="Texture2D" uid="uid://dck2jl2wolbhr" path="res://assets/images/buttons/exit/exit-over.svg" id="4_lswpd"]
-[ext_resource type="Texture2D" uid="uid://bw2s8u0lmsdgb" path="res://assets/images/backgrounds/bg_large_tiles-white.svg" id="4_y7675"]
+[ext_resource type="Texture2D" uid="uid://d24i345p25ku8" path="res://assets/images/backgrounds/bg_large_tiles_lines.svg" id="4_y7675"]
 [ext_resource type="Texture2D" uid="uid://ckaxbscp3tave" path="res://assets/images/buttons/options/options-over.svg" id="5_lswpd"]
 
 [node name="GameBoard" type="Control" unique_id=1095715867]
