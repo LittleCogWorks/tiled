@@ -12,7 +12,8 @@ signal lobby_back_to_home
 signal lobby_back_to_setup
 
 const p_badge = preload("res://scenes/components/player_badge.tscn")
-const SimpleQrCode = preload("res://scripts/utils/simple_qr_code.gd")
+const QR_CODE_SCRIPT = preload("res://addons/godot-qrcode-generator/classes/qr_code.gd")
+
 var _setup_settings: Dictionary = {}
 var ready_by_device: Dictionary = {}
 
@@ -30,15 +31,7 @@ func _ready() -> void:
 	# Display controller URL for players to join
 	var controller_url = ControllerServer.get_controller_url()
 	instructions_label.text = "Open on your phone:\n[b]%s[/b]\n\nEnter the code above to join" % controller_url
-	var qr_texture = SimpleQrCode.make_texture(controller_url)
-	if qr_texture:
-		qr_code_rect.texture = qr_texture
-	else:
-		qr_code_rect.visible = false
-		instructions_label.text += "\n\nQR unavailable for this URL"
-		var qr_reason := _describe_qr_failure(controller_url)
-		if not qr_reason.is_empty():
-			instructions_label.text += "\nReason: %s" % qr_reason
+
 
 	if NetworkManager.is_local == false:
 		NetworkManager.start_server()
@@ -52,18 +45,16 @@ func _ready() -> void:
 	else:
 		room_code_label.text = "Offline Lobby (Multiplayer mode not active)"
 
+	var qr_code = QR_CODE_SCRIPT.new()
+	qr_code.error_correct_level = QR_CODE_SCRIPT.ErrorCorrectionLevel.MEDIUM
+	var qr_texture: ImageTexture = qr_code.get_texture(controller_url)
+	qr_code.queue_free()
 
-func _describe_qr_failure(value: String) -> String:
-	# simple_qr_code.gd currently supports QR version 1 and 2 only.
-	if value.length() > 47:
-		return "URL too long for built-in QR (%d chars, max 47)." % value.length()
-
-	const ALLOWED := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
-	for ch in value.to_upper():
-		if ALLOWED.find(ch) == -1:
-			return "Unsupported character '%s' in URL." % ch
-
-	return "Unknown generator limitation."
+	if qr_texture:
+		qr_code_rect.texture = qr_texture
+		qr_code_rect.visible = true
+	else:
+		qr_code_rect.visible = false
 
 
 func _on_player_joined(device_id: String, player_name: String, avatar_index: int) -> void:
