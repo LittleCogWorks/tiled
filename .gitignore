@@ -8,6 +8,9 @@ _builds/
 android/
 ios/
 
+# Explicitly ignore Android build outputs under `tiled/`
+tiled/android/
+
 # Editor/IDE files
 .idea/
 # .vscode/
