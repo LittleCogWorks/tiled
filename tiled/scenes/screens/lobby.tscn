@@ -150,7 +150,7 @@ horizontal_alignment = 1
 offset_left = 33.0
 offset_top = 417.0
 offset_right = 886.0
-offset_bottom = 783.0
+offset_bottom = 1028.0
 
 [node name="Label2" type="Label" parent="JoinContainer" unique_id=654853190]
 layout_mode = 2
@@ -170,7 +170,6 @@ blah [b]blah[/b] blah
 fit_content = true
 
 [node name="QrCode" type="TextureRect" parent="JoinContainer" unique_id=2060616051]
-visible = false
 custom_minimum_size = Vector2(220, 220)
 layout_mode = 2
-stretch_mode = 5
+stretch_mode = 2

@@ -13,6 +13,7 @@ signal lobby_back_to_setup
 
 const p_badge = preload("res://scenes/components/player_badge.tscn")
 const QR_CODE_SCRIPT = preload("res://addons/godot-qrcode-generator/classes/qr_code.gd")
+const QR_TARGET_PIXEL_SIZE := 200
 
 var _setup_settings: Dictionary = {}
 var ready_by_device: Dictionary = {}
@@ -30,7 +31,8 @@ func _ready() -> void:
 
 	# Display controller URL for players to join
 	var controller_url = ControllerServer.get_controller_url()
-	instructions_label.text = "Open on your phone:\n[b]%s[/b]\n\nEnter the code above to join" % controller_url
+	instructions_label.text = "Open on your phone:\n[b]%s[/b]" % controller_url
+	qr_code_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 	if NetworkManager.is_local == false:
@@ -51,10 +53,27 @@ func _ready() -> void:
 	qr_code.queue_free()
 
 	if qr_texture:
-		qr_code_rect.texture = qr_texture
+		qr_code_rect.texture = _make_crisp_qr_texture(qr_texture, QR_TARGET_PIXEL_SIZE)
+		qr_code_rect.custom_minimum_size = Vector2(QR_TARGET_PIXEL_SIZE, QR_TARGET_PIXEL_SIZE)
 		qr_code_rect.visible = true
 	else:
 		qr_code_rect.visible = false
+
+
+func _make_crisp_qr_texture(source_texture: ImageTexture, target_size_px: int) -> ImageTexture:
+	var source_image := source_texture.get_image()
+	if source_image == null:
+		return source_texture
+
+	var source_width := source_image.get_width()
+	if source_width <= 0:
+		return source_texture
+
+	# Use integer scaling to keep hard module edges (no blur).
+	var scale := maxi(1, int(floor(float(target_size_px) / float(source_width))))
+	var final_size := source_width * scale
+	source_image.resize(final_size, final_size, Image.INTERPOLATE_NEAREST)
+	return ImageTexture.create_from_image(source_image)
 
 
 func _on_player_joined(device_id: String, player_name: String, avatar_index: int) -> void:
