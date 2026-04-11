@@ -46,7 +46,8 @@ body {
 	font-weight: 800;
 	margin: 0 0 4px;
 	color: blue;
-	-webkit-text-stroke-color: #ffffff;
+	text-shadow: 4px 4px 0 #000000;
+	-webkit-text-stroke-color: #e6e6e6;
 	-webkit-text-stroke-width: 1px;
 }
 
