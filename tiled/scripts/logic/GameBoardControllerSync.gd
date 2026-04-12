@@ -25,7 +25,7 @@ func broadcast_turn() -> void:
 
 	NetworkManager.broadcast_turn_changed(current.id)
 	if current.device_id != "":
-		NetworkManager.broadcast_your_turn(current.device_id)
+		NetworkManager.broadcast_your_turn(current.device_id, current.id)
 
 
 func broadcast_new_round() -> void:

@@ -17,6 +17,7 @@ export const state = {
 	joined: false,
 	inGame: false,
 	ready: false,
+	deviceId: "",
 	playerId: "",
 	isYourTurn: false,
 	turnStateKnown: false,

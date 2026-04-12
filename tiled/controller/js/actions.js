@@ -132,6 +132,10 @@ export function sendSliderClick(index) {
 		log(`Invalid slider index ${index}`);
 		return;
 	}
+	const controlsEnabled = state.connected && state.joined && state.turnStateKnown && state.isYourTurn && !state.overlayActive;
+	if (!controlsEnabled) {
+		return;
+	}
 	if (state.forcedGuess) {
 		log("You must submit a guess now");
 		return;

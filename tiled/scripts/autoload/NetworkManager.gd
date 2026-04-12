@@ -131,8 +131,11 @@ func broadcast_game_started() -> void:
 func broadcast_new_round(round_num: int, slider_count: int) -> void:
 	broadcast({"type": "new_round", "round_num": round_num, "slider_count": slider_count})
 
-func broadcast_your_turn(device_id: String) -> void:
-	send_to_player(device_id, {"type": "your_turn"})
+func broadcast_your_turn(device_id: String, player_id: String = "") -> void:
+	var payload := {"type": "your_turn"}
+	if player_id != "":
+		payload["player_id"] = player_id
+	send_to_player(device_id, payload)
 
 func broadcast_slider_revealed(index: int, word: String, revealer_id: String) -> void:
 	broadcast({"type": "slider_revealed", "index": index, "word": word, "revealer_id": revealer_id})

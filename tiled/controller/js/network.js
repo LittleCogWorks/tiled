@@ -76,6 +76,7 @@ export function connect() {
 		state.joined = false;
 		state.inGame = false;
 		state.ready = false;
+		state.deviceId = "";
 		state.playerId = "";
 		state.isYourTurn = false;
 		state.turnStateKnown = false;
@@ -121,6 +122,7 @@ export function disconnect(manual = true, clearReconnectIntent = true) {
 	state.joined = false;
 	state.inGame = false;
 	state.ready = false;
+	state.deviceId = "";
 	state.playerId = "";
 	state.isYourTurn = false;
 	state.turnStateKnown = false;
@@ -168,7 +170,10 @@ export async function handleServerMessage(rawData) {
 		const msg = JSON.parse(text);
 		if (msg.type === "room_joined") {
 			state.joined = true;
-			state.playerId = String(msg.player_id || "");
+			state.deviceId = String(msg.player_id || "");
+			state.playerId = "";
+			state.isYourTurn = false;
+			state.turnStateKnown = false;
 			updateControllerState();
 			render();
 			log("Joined lobby");
@@ -186,6 +191,7 @@ export async function handleServerMessage(rawData) {
 			resetSliderButtons();
 			state.overlayActive = false;
 			state.turnStateKnown = false;
+			state.isYourTurn = false;
 			state.guessMode = false;
 			state.forcedGuess = false;
 			resetVoteState();
@@ -194,6 +200,10 @@ export async function handleServerMessage(rawData) {
 			render();
 		}
 		if (msg.type === "your_turn") {
+			const yourPlayerId = String(msg.player_id || "");
+			if (yourPlayerId !== "") {
+				state.playerId = yourPlayerId;
+			}
 			state.turnStateKnown = true;
 			state.isYourTurn = true;
 			// Normal turn ownership should not keep forced-guess lock unless a
@@ -205,14 +215,18 @@ export async function handleServerMessage(rawData) {
 			log("It is your turn");
 		}
 		if (msg.type === "turn_changed") {
-			state.turnStateKnown = true;
-			state.isYourTurn = String(msg.player_id || "") === state.playerId;
-			// Turn changes represent normal flow; clear forced-guess latch here.
+			const turnPlayerId = String(msg.player_id || "");
+			state.turnStateKnown = turnPlayerId !== "";
+			if (turnPlayerId !== "") {
+				if (state.playerId !== "") {
+					state.isYourTurn = turnPlayerId === state.playerId;
+				} else {
+					state.isYourTurn = false;
+				}
+			}
+			// Clear forced-guess on any turn change (normal flow).
 			state.forcedGuess = false;
 			state.guessMode = false;
-			if (!state.isYourTurn) {
-				state.guessMode = false;
-			}
 			updateControllerState();
 			render();
 		}
