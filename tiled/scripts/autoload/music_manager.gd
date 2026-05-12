@@ -95,7 +95,9 @@ func _exit_tree() -> void:
 	if is_instance_valid(_player):
 		if _player.finished.is_connected(_on_track_finished):
 			_player.finished.disconnect(_on_track_finished)
-		_player.queue_free()
+		# Break stream/playback references before freeing to avoid MP3 resource leaks on shutdown.
+		_player.stream = null
+		_player.free()
 	_player = null
 	if UserSettings.settings_changed.is_connected(_on_settings_changed):
 		UserSettings.settings_changed.disconnect(_on_settings_changed)

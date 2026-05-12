@@ -55,7 +55,7 @@ func stop_server() -> void:
 		if peer and peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
 			peer.disconnect_from_host()
 	if _tcp_server:
-		_tcp_server.close()
+		_tcp_server.stop()
 		_tcp_server = null
 		_is_listening = false
 		_pending_clients.clear()

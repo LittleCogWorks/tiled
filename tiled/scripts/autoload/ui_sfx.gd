@@ -63,3 +63,13 @@ func _apply_bus_settings(bus_name: String, volume_db: float, enabled: bool) -> v
 		return
 	AudioServer.set_bus_volume_db(bus_index, volume_db)
 	AudioServer.set_bus_mute(bus_index, not enabled)
+
+
+func _exit_tree() -> void:
+	if UserSettings.settings_changed.is_connected(_on_settings_changed):
+		UserSettings.settings_changed.disconnect(_on_settings_changed)
+	if is_instance_valid(_ui_player):
+		if _ui_player.playing:
+			_ui_player.stop()
+		_ui_player.queue_free()
+	_ui_player = null

@@ -88,10 +88,18 @@ func start_server() -> bool:
 ## Stop the server and clear all connection state.
 func stop_server() -> void:
 	if _server != null:
+		if _server.peer_connected.is_connected(_on_peer_connected):
+			_server.peer_connected.disconnect(_on_peer_connected)
+		if _server.peer_disconnected.is_connected(_on_peer_disconnected):
+			_server.peer_disconnected.disconnect(_on_peer_disconnected)
 		_server.close()
 		_server = null
 	_peer_ids.clear()
 	room_code = ""
+
+
+func _exit_tree() -> void:
+	stop_server()
 
 # ---------------------------------------------------------------------------
 # Public API — send helpers
