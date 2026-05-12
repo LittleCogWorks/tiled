@@ -70,7 +70,7 @@ func start_server() -> bool:
 		return false
 
 	_server = WebSocketMultiplayerPeer.new()
-	var err := _server.create_server(GameConfig.WEBSOCKET_PORT)
+	var err := _server.create_server(GameConfig.WEBSOCKET_PORT, "0.0.0.0")
 	if err != OK:
 		push_error("NetworkManager: failed to start server on port %d (err %d)" % [GameConfig.WEBSOCKET_PORT, err])
 		_server = null
