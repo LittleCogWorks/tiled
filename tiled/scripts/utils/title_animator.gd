@@ -4,11 +4,11 @@ class_name TitleAnimator
 static func animate_title_in(host: Node, title: CanvasItem, style: String = "clean", options: Dictionary = {}) -> void:
 	match style:
 		"playful":
-			await _animate_title_in_playful(host, title, options)
+			_animate_title_in_playful(host, title, options)
 		"dramatic":
-			await _animate_title_in_dramatic(host, title, options)
+			_animate_title_in_dramatic(host, title, options)
 		_:
-			await _animate_title_in_clean(host, title, options)
+			_animate_title_in_clean(host, title, options)
 
 
 static func _optf(options: Dictionary, key: String, fallback: float) -> float:
@@ -27,14 +27,12 @@ static func _animate_title_in_clean(host: Node, title: CanvasItem, options: Dict
 	title.position = end_pos + Vector2(-distance_x, 0.0)
 	title.modulate.a = 0.0
 
-	await host.get_tree().create_timer(delay).timeout
-
 	var tween := host.create_tween()
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(title, "position", end_pos, duration)
-	tween.tween_property(title, "modulate:a", 1.0, fade_duration)
+	tween.tween_property(title, "position", end_pos, duration).set_delay(delay)
+	tween.tween_property(title, "modulate:a", 1.0, fade_duration).set_delay(delay)
 
 
 static func _animate_title_in_playful(host: Node, title: CanvasItem, options: Dictionary) -> void:
@@ -54,24 +52,16 @@ static func _animate_title_in_playful(host: Node, title: CanvasItem, options: Di
 	title.scale = end_scale * start_scale_factor
 	title.modulate.a = 0.0
 
-	await host.get_tree().create_timer(delay).timeout
-
 	var tween := host.create_tween()
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(title, "position", end_pos + Vector2(overshoot_x, 0.0), duration)
-	tween.tween_property(title, "modulate:a", 1.0, fade_duration)
-	tween.tween_property(title, "scale", end_scale * overshoot_scale_factor, duration)
-
-	await tween.finished
-
-	var settle := host.create_tween()
-	settle.set_parallel(true)
-	settle.set_trans(Tween.TRANS_QUAD)
-	settle.set_ease(Tween.EASE_OUT)
-	settle.tween_property(title, "position", end_pos, settle_duration)
-	settle.tween_property(title, "scale", end_scale, settle_duration)
+	tween.tween_property(title, "position", end_pos + Vector2(overshoot_x, 0.0), duration).set_delay(delay)
+	tween.tween_property(title, "modulate:a", 1.0, fade_duration).set_delay(delay)
+	tween.tween_property(title, "scale", end_scale * overshoot_scale_factor, duration).set_delay(delay)
+	tween.chain().set_parallel(true)
+	tween.tween_property(title, "position", end_pos, settle_duration)
+	tween.tween_property(title, "scale", end_scale, settle_duration)
 
 
 static func _animate_title_in_dramatic(host: Node, title: CanvasItem, options: Dictionary) -> void:
@@ -95,26 +85,18 @@ static func _animate_title_in_dramatic(host: Node, title: CanvasItem, options: D
 	title.scale = end_scale * start_scale_factor
 	title.modulate.a = 0.0
 
-	await host.get_tree().create_timer(delay).timeout
-
 	var tween := host.create_tween()
 	tween.set_parallel(true)
 	tween.set_trans(Tween.TRANS_EXPO)
 	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(title, "position", end_pos + Vector2(overshoot_x, 0.0), duration)
-	tween.tween_property(title, "rotation_degrees", end_rotation + overshoot_rotation, duration)
-	tween.tween_property(title, "scale", end_scale * overshoot_scale_factor, duration)
-	tween.tween_property(title, "modulate:a", 1.0, fade_duration)
-
-	await tween.finished
-
-	var settle := host.create_tween()
-	settle.set_parallel(true)
-	settle.set_trans(Tween.TRANS_SINE)
-	settle.set_ease(Tween.EASE_OUT)
-	settle.tween_property(title, "position", end_pos, settle_duration)
-	settle.tween_property(title, "rotation_degrees", end_rotation, settle_duration)
-	settle.tween_property(title, "scale", end_scale, settle_duration)
+	tween.tween_property(title, "position", end_pos + Vector2(overshoot_x, 0.0), duration).set_delay(delay)
+	tween.tween_property(title, "rotation_degrees", end_rotation + overshoot_rotation, duration).set_delay(delay)
+	tween.tween_property(title, "scale", end_scale * overshoot_scale_factor, duration).set_delay(delay)
+	tween.tween_property(title, "modulate:a", 1.0, fade_duration).set_delay(delay)
+	tween.chain().set_parallel(true)
+	tween.tween_property(title, "position", end_pos, settle_duration)
+	tween.tween_property(title, "rotation_degrees", end_rotation, settle_duration)
+	tween.tween_property(title, "scale", end_scale, settle_duration)
 
 
 static func animate_nodes_in(host: Node, nodes: Array, options: Dictionary = {}) -> void:
@@ -149,10 +131,6 @@ static func animate_nodes_in(host: Node, nodes: Array, options: Dictionary = {})
 
 	if index <= 0:
 		return
-
-	var longest_duration := maxf(duration, fade_duration)
-	var total_wait := delay + (float(index - 1) * stagger) + longest_duration
-	await host.get_tree().create_timer(total_wait).timeout
 
 
 static func start_idle_motion(host: Node, node: CanvasItem, style: String = "wobble", options: Dictionary = {}) -> Tween:

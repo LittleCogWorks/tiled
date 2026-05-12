@@ -58,8 +58,8 @@ func _ready() -> void:
 	options_btn.disabled = false
 	exit_btn.focus_mode = Control.FOCUS_ALL
 
-	await _animate_title_in()
-	await _animate_home_controls_in()
+	_animate_title_in()
+	_animate_home_controls_in()
 	_title_idle_tween = TitleAnimatorScript.start_idle_motion(
 		self ,
 		$Title,
@@ -69,11 +69,11 @@ func _ready() -> void:
 	start_game_btn.grab_focus()
 
 func _animate_title_in() -> void:
-	await TitleAnimatorScript.animate_title_in(self , $Title, TITLE_ANIMATION_STYLE, TITLE_ANIMATION_OVERRIDES)
+	TitleAnimatorScript.animate_title_in(self , $Title, TITLE_ANIMATION_STYLE, TITLE_ANIMATION_OVERRIDES)
 
 
 func _animate_home_controls_in() -> void:
-	await TitleAnimatorScript.animate_nodes_in(
+	TitleAnimatorScript.animate_nodes_in(
 		self ,
 		[start_game_btn, options_btn, credits_btn, exit_btn],
 		UI_REVEAL_OVERRIDES

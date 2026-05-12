@@ -13,13 +13,13 @@ extends Node
 # - the same gameplay track is not chosen twice in a row
 # - when a gameplay track finishes, the next gameplay track is re-rolled
 
-const MENU_MUSIC_STREAM := preload("res://assets/sound/music/8bit Bossa.mp3")
-const GAME_MUSIC_TRACKS := [
-	preload("res://assets/sound/music/game/regrowth wip.wav"),
-	preload("res://assets/sound/music/game/shop.wav"),
-	preload("res://assets/sound/music/game/boss battle.wav"),
+const MENU_MUSIC_PATH := "res://assets/sound/music/8bit Bossa.mp3"
+const GAME_MUSIC_PATHS := [
+	"res://assets/sound/music/game/regrowth wip.wav",
+	"res://assets/sound/music/game/shop.wav",
+	"res://assets/sound/music/game/boss battle.wav",
 ]
-const VOTE_MUSIC_STREAM := preload("res://assets/sound/music/8Bit Adventure Loop.ogg")
+const VOTE_MUSIC_PATH := "res://assets/sound/music/8Bit Adventure Loop.ogg"
 
 const MASTER_BUS_NAME := "Master"
 const MUSIC_BUS_NAME := "Music"
@@ -32,10 +32,21 @@ var _active_track: String = ""
 var _current_song: int = -1
 var _loop_timer: SceneTreeTimer = null
 var _fade_tween: Tween = null
+var _menu_music_stream: AudioStream = null
+var _game_music_tracks: Array[AudioStream] = []
+var _vote_music_stream: AudioStream = null
 
 
 func _ready() -> void:
 	# Create the single shared music player and sync it with saved audio settings.
+	_menu_music_stream = load(MENU_MUSIC_PATH)
+	_game_music_tracks.clear()
+	for path in GAME_MUSIC_PATHS:
+		var stream: AudioStream = load(path)
+		if stream != null:
+			_game_music_tracks.append(stream)
+	_vote_music_stream = load(VOTE_MUSIC_PATH)
+
 	_player = AudioStreamPlayer.new()
 	_player.name = "MusicPlayer"
 	_player.bus = MUSIC_BUS_NAME
@@ -50,25 +61,25 @@ func _ready() -> void:
 	
 func play_menu_music() -> void:
 	# Start or switch to the fixed menu music track.
-	_switch_track_with_fade("menu", MENU_MUSIC_STREAM)
+	_switch_track_with_fade("menu", _menu_music_stream)
 	print("Playing menu music")
 
 
 func play_game_music() -> void:
 	# Pick a gameplay track with a simple no-immediate-repeat rule.
-	if GAME_MUSIC_TRACKS.size() == 0:
+	if _game_music_tracks.size() == 0:
 		push_error("No game music tracks available to play.")
 		return
-	var random_index = randi() % GAME_MUSIC_TRACKS.size()
+	var random_index = randi() % _game_music_tracks.size()
 	if random_index == _current_song:
-		random_index = (random_index + 1) % GAME_MUSIC_TRACKS.size()
+		random_index = (random_index + 1) % _game_music_tracks.size()
 	_current_song = random_index
-	_switch_track_with_fade("game", GAME_MUSIC_TRACKS[random_index])
+	_switch_track_with_fade("game", _game_music_tracks[random_index])
 	print("Playing game music")
 
 func play_vote_music() -> void:
 	# Start or switch to the dedicated voting loop.
-	_switch_track_with_fade("vote", VOTE_MUSIC_STREAM)
+	_switch_track_with_fade("vote", _vote_music_stream)
 	print("Playing vote music")
 
 func stop_music() -> void:
@@ -101,6 +112,9 @@ func _exit_tree() -> void:
 	_player = null
 	if UserSettings.settings_changed.is_connected(_on_settings_changed):
 		UserSettings.settings_changed.disconnect(_on_settings_changed)
+	_menu_music_stream = null
+	_vote_music_stream = null
+	_game_music_tracks.clear()
 	_loop_timer = null
 	_active_track = ""
 

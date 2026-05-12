@@ -344,6 +344,7 @@ scale = Vector2(0.5261088, 0.6506926)
 texture = ExtResource("16_okqwt")
 
 [node name="ConfirmModal" type="Control" parent="." unique_id=201032704]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 312.0
