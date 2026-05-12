@@ -13,11 +13,11 @@ extends Node
 # - the same gameplay track is not chosen twice in a row
 # - when a gameplay track finishes, the next gameplay track is re-rolled
 
-const MENU_MUSIC_PATH := "res://assets/sound/music/8bit Bossa.mp3"
+const MENU_MUSIC_PATH := "res://assets/sound/music/8bit Bossa.ogg"
 const GAME_MUSIC_PATHS := [
-	"res://assets/sound/music/game/regrowth wip.wav",
-	"res://assets/sound/music/game/shop.wav",
-	"res://assets/sound/music/game/boss battle.wav",
+	"res://assets/sound/music/game/regrowth wip.ogg",
+	"res://assets/sound/music/game/shop.ogg",
+	"res://assets/sound/music/game/boss battle.ogg",
 ]
 const VOTE_MUSIC_PATH := "res://assets/sound/music/8Bit Adventure Loop.ogg"
 
@@ -39,13 +39,13 @@ var _vote_music_stream: AudioStream = null
 
 func _ready() -> void:
 	# Create the single shared music player and sync it with saved audio settings.
-	_menu_music_stream = load(MENU_MUSIC_PATH)
+	_menu_music_stream = ResourceLoader.load(MENU_MUSIC_PATH, "", ResourceLoader.CACHE_MODE_IGNORE)
 	_game_music_tracks.clear()
 	for path in GAME_MUSIC_PATHS:
-		var stream: AudioStream = load(path)
+		var stream: AudioStream = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
 		if stream != null:
 			_game_music_tracks.append(stream)
-	_vote_music_stream = load(VOTE_MUSIC_PATH)
+	_vote_music_stream = ResourceLoader.load(VOTE_MUSIC_PATH, "", ResourceLoader.CACHE_MODE_IGNORE)
 
 	_player = AudioStreamPlayer.new()
 	_player.name = "MusicPlayer"
