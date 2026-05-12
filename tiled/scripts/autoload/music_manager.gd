@@ -13,11 +13,11 @@ extends Node
 # - the same gameplay track is not chosen twice in a row
 # - when a gameplay track finishes, the next gameplay track is re-rolled
 
-const MENU_MUSIC_PATH := "res://assets/sound/music/8bit Bossa.ogg"
+const MENU_MUSIC_PATH := "res://assets/sound/music/8bit-Bossa.ogg"
 const GAME_MUSIC_PATHS := [
-	"res://assets/sound/music/game/regrowth wip.ogg",
+	"res://assets/sound/music/game/regrowth-wip.ogg",
 	"res://assets/sound/music/game/shop.ogg",
-	"res://assets/sound/music/game/boss battle.ogg",
+	"res://assets/sound/music/game/boss-battle.ogg",
 ]
 const VOTE_MUSIC_PATH := "res://assets/sound/music/8Bit Adventure Loop.ogg"
 
