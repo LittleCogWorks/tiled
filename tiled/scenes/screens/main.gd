@@ -23,6 +23,7 @@ const GAME_MODE_MULTI = "multi"
 @onready var scene_container = $SceneContainer
 var scene_loader: MainSceneLoader
 var session_coordinator
+var _is_quitting: bool = false
 
 func _ready() -> void:
 	print("Main scene ready, loading SplashScreen")
@@ -56,7 +57,22 @@ func _on_start_game() -> void:
 
 func _on_exit_game() -> void:
 	print("Exit game signal received, quitting application")
+	_prepare_for_quit()
 	get_tree().quit()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_prepare_for_quit()
+
+
+func _prepare_for_quit() -> void:
+	if _is_quitting:
+		return
+	_is_quitting = true
+	MusicManager.shutdown_for_quit()
+	NetworkManager.stop_server()
+	ControllerServer.stop_server()
 
 
 func _on_open_options() -> void:

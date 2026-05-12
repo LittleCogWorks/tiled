@@ -13,7 +13,7 @@ extends Node
 # - the same gameplay track is not chosen twice in a row
 # - when a gameplay track finishes, the next gameplay track is re-rolled
 
-const MENU_MUSIC_PATH := "res://assets/sound/music/8Bit Adventure Loop.ogg"
+const MENU_MUSIC_PATH := "res://assets/sound/music/8bit Bossa.mp3"
 const GAME_MUSIC_PATHS := [
 	"res://assets/sound/music/game/regrowth wip.wav",
 	"res://assets/sound/music/game/shop.wav",
@@ -101,12 +101,13 @@ func _on_track_finished() -> void:
 	_loop_timer.timeout.connect(_restart_active_track)
 
 
-func _exit_tree() -> void:
+func shutdown_for_quit() -> void:
+	# Explicit teardown path that can be called before get_tree().quit().
 	stop_music()
 	if is_instance_valid(_player):
 		if _player.finished.is_connected(_on_track_finished):
 			_player.finished.disconnect(_on_track_finished)
-		# Break stream/playback references before freeing to avoid MP3 resource leaks on shutdown.
+		_player.stream_paused = true
 		_player.stream = null
 		_player.free()
 	_player = null
@@ -117,6 +118,10 @@ func _exit_tree() -> void:
 	_game_music_tracks.clear()
 	_loop_timer = null
 	_active_track = ""
+
+
+func _exit_tree() -> void:
+	shutdown_for_quit()
 
 
 func _restart_active_track() -> void:
