@@ -91,8 +91,14 @@ func _on_track_finished() -> void:
 
 
 func _exit_tree() -> void:
-	_stop_loop_timer()
-	_kill_fade_tween()
+	stop_music()
+	if is_instance_valid(_player):
+		if _player.finished.is_connected(_on_track_finished):
+			_player.finished.disconnect(_on_track_finished)
+		_player.queue_free()
+	_player = null
+	if UserSettings.settings_changed.is_connected(_on_settings_changed):
+		UserSettings.settings_changed.disconnect(_on_settings_changed)
 	_loop_timer = null
 	_active_track = ""
 

@@ -50,11 +50,20 @@ func start_server() -> void:
 		print("✓ Available at: http://%s:%d" % [_host_ip, _port])
 
 func stop_server() -> void:
+	for entry in _pending_clients:
+		var peer: StreamPeerTCP = entry.get("peer", null)
+		if peer and peer.get_status() == StreamPeerTCP.STATUS_CONNECTED:
+			peer.disconnect_from_host()
 	if _tcp_server:
 		_tcp_server.close()
+		_tcp_server = null
 		_is_listening = false
 		_pending_clients.clear()
 		print("✓ Controller server stopped")
+
+
+func _exit_tree() -> void:
+	stop_server()
 
 func get_host_ip() -> String:
 	return _host_ip
