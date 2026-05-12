@@ -36,7 +36,7 @@ func _ready() -> void:
 		ws_host = "localhost"
 	var ws_url = "ws://%s:%d" % [ws_host, GameConfig.WEBSOCKET_PORT]
 	var controller_url = "%s/?host=%s&autoconnect=1" % [controller_base_url, ws_url.uri_encode()]
-	instructions_label.text = "Grab your phone and scan the QR code or point your browser to: [b]%s[/b]" % controller_url
+	instructions_label.text = "Grab your phone and scan the QR code or point your browser to: [b]%s[/b]" % controller_base_url
 	qr_code_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
