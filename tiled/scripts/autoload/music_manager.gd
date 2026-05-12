@@ -26,6 +26,11 @@ const MUSIC_BUS_NAME := "Music"
 const SILENT_DB := -80.0
 const LOOP_DELAY_SECONDS: float = 1.5
 const DEFAULT_FADE_SECONDS: float = 0.5
+const TRACK_TARGET_VOLUME_DB := {
+	"menu": 0.0,
+	"game": 4.0,
+	"vote": 0.0,
+}
 
 var _player: AudioStreamPlayer
 var _active_track: String = ""
@@ -149,7 +154,7 @@ func _play_track(track_key: String, stream: AudioStream) -> void:
 	_player.play()
 	_active_track = track_key
 	_apply_settings()
-	_player.volume_db = 0.0
+	_player.volume_db = _target_track_volume_db(track_key)
 
 
 func _fade_in_track(track_key: String, stream: AudioStream, fade_time: float = DEFAULT_FADE_SECONDS) -> void:
@@ -168,7 +173,7 @@ func _fade_in_track(track_key: String, stream: AudioStream, fade_time: float = D
 	_apply_settings()
 
 	_fade_tween = create_tween()
-	_fade_tween.tween_property(_player, "volume_db", 0.0, max(fade_time, 0.01)) \
+	_fade_tween.tween_property(_player, "volume_db", _target_track_volume_db(track_key), max(fade_time, 0.01)) \
 		.set_trans(Tween.TRANS_LINEAR) \
 		.set_ease(Tween.EASE_IN)
 
@@ -224,6 +229,10 @@ func _play_track_after_fade_out(track_key: String, stream: AudioStream, fade_in_
 	_player.stop()
 	_player.volume_db = 0.0
 	_fade_in_track(track_key, stream, fade_in_time)
+
+
+func _target_track_volume_db(track_key: String) -> float:
+	return float(TRACK_TARGET_VOLUME_DB.get(track_key, 0.0))
 
 
 func _finish_fade_out() -> void:
