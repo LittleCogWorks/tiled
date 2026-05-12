@@ -45,7 +45,6 @@ const VoteMessageBuilderScript = preload("res://scripts/logic/vote_message_build
 const OVERLAY_AUTO_DISMISS_SECONDS: float = 3.0
 const VOTE_PREP_LEAD_IN_SECONDS: float = 2.0
 const VOTE_RESULT_AUTO_DISMISS_SECONDS: float = 1.4
-const WINNER_TO_GAME_END_DELAY_SECONDS: float = 1.25
 const WINNER_SUSPENSE_MESSAGE: String = "Looks like there may be a winner..."
 const ROUND_INTRO_BASE_POINTS: int = 50
 const SHOW_ROUND_INTRO_BONUS_HINT: bool = true
@@ -354,7 +353,6 @@ func _handle_correct_result(result: Dictionary) -> void:
 		if result.has("message") and str(result["message"]).strip_edges() != "":
 			await _update_overlay(str(result["message"]))
 		await _update_overlay(WINNER_SUSPENSE_MESSAGE)
-		await get_tree().create_timer(WINNER_TO_GAME_END_DELAY_SECONDS).timeout
 		GameManager.game_ended.emit(result["winner"])
 		game_ended.emit(result["winner"])
 	else:
