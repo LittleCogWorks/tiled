@@ -45,6 +45,8 @@ const VoteMessageBuilderScript = preload("res://scripts/logic/vote_message_build
 const OVERLAY_AUTO_DISMISS_SECONDS: float = 3.0
 const VOTE_PREP_LEAD_IN_SECONDS: float = 2.0
 const VOTE_RESULT_AUTO_DISMISS_SECONDS: float = 1.4
+const WINNER_TO_GAME_END_DELAY_SECONDS: float = 1.25
+const WINNER_SUSPENSE_MESSAGE: String = "Looks like there may be a winner..."
 const ROUND_INTRO_BASE_POINTS: int = 50
 const SHOW_ROUND_INTRO_BONUS_HINT: bool = true
 
@@ -157,6 +159,7 @@ func _update_overlay(msg: String) -> void:
 	if question_transition == null:
 		push_error("QuestionTransition overlay is not configured correctly")
 		return
+	_set_badges_visible(false)
 
 	_overlay_accepting_remote = true
 	_broadcast_turn_to_controllers()
@@ -165,6 +168,7 @@ func _update_overlay(msg: String) -> void:
 
 	_overlay_accepting_remote = false
 	_broadcast_overlay_prompt(false, "")
+	_set_badges_visible(true)
 
 func _input(event):
 	# Allow A button / Enter to dismiss overlay
@@ -184,6 +188,7 @@ func _input(event):
 func show_vote_preparing_overlay(submitted_answer: String, guesser_name: String = "") -> void:
 	if vote_transition == null:
 		return
+	_set_badges_visible(false)
 	if _vote_copy == null:
 		_vote_copy = VoteMessageBuilderScript.new()
 
@@ -200,6 +205,7 @@ func show_vote_preparing_overlay(submitted_answer: String, guesser_name: String 
 func show_vote_active_overlay(timeout_seconds: float) -> void:
 	if vote_transition == null:
 		return
+	_set_badges_visible(false)
 	if _vote_copy == null:
 		_vote_copy = VoteMessageBuilderScript.new()
 	vote_transition.show_countdown(_vote_copy.build("vote_active_title"), _vote_copy.build("vote_active_body"), timeout_seconds)
@@ -208,11 +214,13 @@ func hide_vote_overlay() -> void:
 	if vote_transition == null:
 		return
 	vote_transition.dismiss()
+	_set_badges_visible(true)
 
 
 func show_vote_result_overlay(accepted: bool, was_tie: bool = false) -> void:
 	if vote_transition == null:
 		return
+	_set_badges_visible(false)
 	if _vote_copy == null:
 		_vote_copy = VoteMessageBuilderScript.new()
 
@@ -224,6 +232,12 @@ func show_vote_result_overlay(accepted: bool, was_tie: bool = false) -> void:
 			body = _vote_copy.build("vote_result_tie_rejected")
 
 	await vote_transition.show_message(title, body, VOTE_RESULT_AUTO_DISMISS_SECONDS, false)
+	_set_badges_visible(true)
+
+
+func _set_badges_visible(show_badges: bool) -> void:
+	if is_instance_valid(player_badges):
+		player_badges.visible = show_badges
 
 ## Sets up HUD: instantiates player badges (small) and displays them.
 func _setup_players_hud() -> void:
@@ -337,6 +351,10 @@ func _handle_correct_result(result: Dictionary) -> void:
 	if result["has_winner"]:
 		GameManager.game.record_round_result(GameManager.game.current_round, GameManager.game.current_question, result)
 		round_area.set_process_input(false)
+		if result.has("message") and str(result["message"]).strip_edges() != "":
+			await _update_overlay(str(result["message"]))
+		await _update_overlay(WINNER_SUSPENSE_MESSAGE)
+		await get_tree().create_timer(WINNER_TO_GAME_END_DELAY_SECONDS).timeout
 		GameManager.game_ended.emit(result["winner"])
 		game_ended.emit(result["winner"])
 	else:
