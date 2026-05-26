@@ -21,12 +21,19 @@ const DEFAULT_STYLE := "casual"
 
 const MESSAGE_TEMPLATE_SETS: Dictionary = {
 	"casual": {
-		"wrong_frozen": [
+		"wrong_frozen_penalty": [
 			"%s is wrong!\nYou lose %d points and are frozen out of the round.",
 			"Not this time, %s.\n-%d points and you're frozen for this round.",
 			"%s misses the mark!\nYou lose %d points and sit this round out.",
 			"Nope, %s!\nYou drop %d points and are benched for this round.",
 			"Swing and a miss, %s.\n-%d points and you're iced."
+		],
+		"wrong_frozen_no_penalty": [
+			"%s is wrong!\nYou are frozen out of the rest of the round.",
+			"Not this time, %s.\nYou're frozen for this round.",
+			"%s misses the mark!\nYou sit the rest of this question out.",
+			"Nope, %s!\nYou are benched for now.",
+			"Swing and a miss, %s.\nYou're iced."
 		],
 		"last_standing": [
 			"Last player standing!\n%s gets a free guess!",
@@ -145,14 +152,17 @@ func handle_wrong_answer(player: Player, base_prize: int, current_question: Reso
 	}
 
 	var active_players = PlayerManager.get_active_players()
-
 	if active_players.size() > 1:
-		var penalty = int(base_prize * GameConfig.PENALTY_MULTIPLIER)
-		PlayerManager.award_points(player, -penalty)
+		var penalty = max(int(round(base_prize * GameConfig.PENALTY_MULTIPLIER)), 0)
 		PlayerManager.freeze_player(player)
 		result["penalty"] = penalty
 		result["is_frozen"] = true
-		result["message"] = _message("wrong_frozen", [result["submitted_answer"], penalty])
+
+		if penalty > 0:
+			PlayerManager.award_points(player, -penalty)
+			result["message"] = _message("wrong_frozen_penalty", [result["submitted_answer"], penalty])
+		else:
+			result["message"] = _message("wrong_frozen_no_penalty", [result["submitted_answer"]])
 		print("Player %s is now frozen for this question." % player.name)
 
 		active_players = PlayerManager.get_active_players()

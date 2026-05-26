@@ -6,7 +6,7 @@ const CONTROLLER_HTTP_PORT: int = 8000
 # Scoring
 const BASE_POT: float = 100.0
 const MINIMUM_POT_PERCENT: float = 0.1
-const PENALTY_MULTIPLIER: float = 0.5
+var PENALTY_MULTIPLIER: float = 0.0 # 0.0 means no penalty, 1.0 means full base pot as penalty
 
 # Difficulty multipliers
 const DIFFICULTY_MULTIPLIERS: Dictionary = {
